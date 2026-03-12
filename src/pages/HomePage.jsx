@@ -1,11 +1,60 @@
 function HomePage() {
   return (
-    <section>
-      <h1>AlgoVista</h1>
-      <p>
-        A visual lab for learning Data Structures and Algorithms step by step.
-      </p>
-    </section>
+    <div>
+      <section id="hero" style={{ marginBottom: '3rem' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+          Learn DSA by watching every step happen
+        </h1>
+        <p style={{ maxWidth: '32rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+          AlgoVista is a small visual lab where you can play with arrays, stacks,
+          queues, and classic algorithms instead of just reading about them.
+        </p>
+        <div>
+          <button
+            style={{
+              padding: '0.75rem 1.5rem',
+              marginRight: '1rem',
+              borderRadius: '999px',
+              border: 'none',
+              background: '#22c55e',
+              color: '#020617',
+              cursor: 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            Explore concepts
+          </button>
+          <button
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: '999px',
+              border: '1px solid #374151',
+              background: 'transparent',
+              color: '#e5e7eb',
+              cursor: 'pointer',
+              fontWeight: 500,
+            }}
+          >
+            Try live simulator
+          </button>
+        </div>
+      </section>
+
+      <section id="concepts">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+          Core topics planned for v1
+        </h2>
+        <p style={{ marginBottom: '1rem' }}>
+          The first version focuses on a small but solid set of data structures and algorithms.
+        </p>
+        <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', lineHeight: 1.8 }}>
+          <li>Arrays: insert, delete, update, traverse, linear search</li>
+          <li>Linked lists: basic operations and traversal</li>
+          <li>Stacks and queues with push / pop / enqueue / dequeue</li>
+          <li>Sorting basics: bubble, insertion, and merge sort previews</li>
+        </ul>
+      </section>
+    </div>
   );
 }
 
