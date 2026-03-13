@@ -1,3 +1,5 @@
+import ArrayVisualizer from '../modules/array/ArrayVisualizer';
+
 function HomePage() {
   return (
     <div>
@@ -40,7 +42,7 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="concepts">
+      <section id="concepts" style={{ marginBottom: '3rem' }}>
         <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
           Core topics planned for v1
         </h2>
@@ -53,6 +55,17 @@ function HomePage() {
           <li>Stacks and queues with push / pop / enqueue / dequeue</li>
           <li>Sorting basics: bubble, insertion, and merge sort previews</li>
         </ul>
+      </section>
+
+      <section id="simulator">
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+          Start with arrays
+        </h2>
+        <p style={{ marginBottom: '1rem' }}>
+          Use this early prototype to add numbers and see how the array changes in memory.
+        </p>
+
+        <ArrayVisualizer />
       </section>
     </div>
   );
