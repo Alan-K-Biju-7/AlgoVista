@@ -4,6 +4,7 @@ function ArrayControls({
   message,
   searchValue,
   isSearching,
+  isStepMode,
   onInputChange,
   onIndexChange,
   onSearchValueChange,
@@ -11,7 +12,9 @@ function ArrayControls({
   onUpdate,
   onDelete,
   onReset,
-  onLinearSearch,
+  onLinearSearch,       // auto‑run
+  onPrepareStepSearch,  // step mode
+  onNextSearchStep,     // step mode
 }) {
   return (
     <div
@@ -76,17 +79,40 @@ function ArrayControls({
         <button onClick={onReset} style={{ padding: '0.5rem 1rem' }}>
           Reset array
         </button>
+
+        {/* auto‑run search */}
         <button
           onClick={onLinearSearch}
           style={{ padding: '0.5rem 1rem' }}
-          disabled={isSearching}
+          disabled={isSearching && !isStepMode}
         >
-          {isSearching ? 'Searching...' : 'Run linear search'}
+          {isSearching && !isStepMode ? 'Searching...' : 'Run linear search'}
+        </button>
+
+        {/* manual step mode */}
+        <button
+          onClick={onPrepareStepSearch}
+          style={{ padding: '0.5rem 1rem' }}
+        >
+          Prepare step search
+        </button>
+        <button
+          onClick={onNextSearchStep}
+          style={{ padding: '0.5rem 1rem' }}
+          disabled={!isStepMode}
+        >
+          Next step
         </button>
       </div>
 
       {message && (
-        <p style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: '#a5b4fc' }}>
+        <p
+          style={{
+            marginTop: '0.75rem',
+            fontSize: '0.9rem',
+            color: '#a5b4fc',
+          }}
+        >
           {message}
         </p>
       )}

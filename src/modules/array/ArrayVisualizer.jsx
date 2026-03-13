@@ -14,6 +14,8 @@ function ArrayVisualizer() {
   const [currentSearchIndex, setCurrentSearchIndex] = useState(null);
   const [searchFoundIndex, setSearchFoundIndex] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [isStepMode, setIsStepMode] = useState(false);
+  const [stepTarget, setStepTarget] = useState(null);
 
   const resetMessage = () => setMessage('');
 
@@ -84,8 +86,11 @@ function ArrayVisualizer() {
     setMessage(msg);
     setHistory([]);
     setIsSearching(false);
+    setIsStepMode(false);
+    setStepTarget(null);
   };
 
+  // Auto‑run linear search
   const handleLinearSearch = () => {
     if (searchValue.trim() === '') {
       setMessage('Please enter a value to search for.');
@@ -99,6 +104,7 @@ function ArrayVisualizer() {
     const target = Number(searchValue);
 
     setIsSearching(true);
+    setIsStepMode(false);
     setCurrentSearchIndex(0);
     setSearchFoundIndex(null);
     setMessage(`Starting linear search for ${target}.`);
@@ -131,6 +137,69 @@ function ArrayVisualizer() {
     }, 600);
   };
 
+  // Manual step‑by‑step mode
+  const handlePrepareStepSearch = () => {
+    if (searchValue.trim() === '') {
+      setMessage('Please enter a value to search for.');
+      return;
+    }
+    if (values.length === 0) {
+      setMessage('The array is empty. Add some values first.');
+      return;
+    }
+
+    const target = Number(searchValue);
+
+    setIsSearching(true);
+    setIsStepMode(true);
+    setStepTarget(target);
+    setCurrentSearchIndex(0);
+    setSearchFoundIndex(null);
+    setMessage(
+      `Linear search ready for ${target}. Click "Next step" to walk through.`
+    );
+  };
+
+  const handleNextSearchStep = () => {
+    if (!isStepMode || stepTarget == null) {
+      setMessage('Click "Prepare step search" first.');
+      return;
+    }
+
+    if (currentSearchIndex == null || currentSearchIndex >= values.length) {
+      setMessage('Search has already finished.');
+      return;
+    }
+
+    const idx = currentSearchIndex;
+    const target = stepTarget;
+
+    if (values[idx] === target) {
+      const msg = `Found ${target} at index ${idx} (manual step mode).`;
+      setMessage(msg);
+      pushHistory(msg);
+      setSearchFoundIndex(idx);
+      setIsSearching(false);
+      setIsStepMode(false);
+      return;
+    }
+
+    const nextIndex = idx + 1;
+
+    if (nextIndex >= values.length) {
+      const msg = `Did not find ${target} in the current array (manual mode).`;
+      setMessage(msg);
+      pushHistory(msg);
+      setIsSearching(false);
+      setIsStepMode(false);
+      setCurrentSearchIndex(null);
+      return;
+    }
+
+    setCurrentSearchIndex(nextIndex);
+    setMessage(`Checking index ${nextIndex}...`);
+  };
+
   return (
     <section style={{ marginTop: '2rem' }}>
       <h2 style={{ marginBottom: '1rem' }}>Array visualizer (early draft)</h2>
@@ -149,6 +218,7 @@ function ArrayVisualizer() {
           message={message}
           searchValue={searchValue}
           isSearching={isSearching}
+          isStepMode={isStepMode}
           onInputChange={(e) => setInputValue(e.target.value)}
           onIndexChange={(e) => setIndexValue(e.target.value)}
           onSearchValueChange={(e) => setSearchValue(e.target.value)}
@@ -156,7 +226,9 @@ function ArrayVisualizer() {
           onUpdate={handleUpdate}
           onDelete={handleDelete}
           onReset={handleReset}
-          onLinearSearch={handleLinearSearch}
+          onLinearSearch={handleLinearSearch}          // auto‑run
+          onPrepareStepSearch={handlePrepareStepSearch} // step mode
+          onNextSearchStep={handleNextSearchStep}
         />
 
         <ArrayView
