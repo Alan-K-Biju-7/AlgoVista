@@ -2,12 +2,16 @@ function ArrayControls({
   inputValue,
   indexValue,
   message,
+  searchValue,
+  isSearching,
   onInputChange,
   onIndexChange,
+  onSearchValueChange,
   onInsert,
   onUpdate,
   onDelete,
   onReset,
+  onLinearSearch,
 }) {
   return (
     <div
@@ -46,6 +50,19 @@ function ArrayControls({
         />
       </div>
 
+      <div style={{ marginBottom: '0.75rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.25rem' }}>
+          Search value (linear search)
+        </label>
+        <input
+          type="number"
+          value={searchValue}
+          onChange={onSearchValueChange}
+          placeholder="number to find"
+          style={{ padding: '0.5rem', width: '100%' }}
+        />
+      </div>
+
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
         <button onClick={onInsert} style={{ padding: '0.5rem 1rem' }}>
           Insert at end
@@ -58,6 +75,13 @@ function ArrayControls({
         </button>
         <button onClick={onReset} style={{ padding: '0.5rem 1rem' }}>
           Reset array
+        </button>
+        <button
+          onClick={onLinearSearch}
+          style={{ padding: '0.5rem 1rem' }}
+          disabled={isSearching}
+        >
+          {isSearching ? 'Searching...' : 'Run linear search'}
         </button>
       </div>
 
