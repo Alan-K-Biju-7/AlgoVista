@@ -5,8 +5,16 @@ function ArrayVisualizer() {
   const [inputValue, setInputValue] = useState('');
   const [indexValue, setIndexValue] = useState('');
   const [message, setMessage] = useState('');
+  const [history, setHistory] = useState([]);
 
   const resetMessage = () => setMessage('');
+
+  const pushHistory = (text) => {
+    setHistory((prev) => [
+      { id: prev.length + 1, text },
+      ...prev.slice(0, 9), // keep last 10 actions
+    ]);
+  };
 
   const handleInsert = () => {
     resetMessage();
@@ -18,8 +26,10 @@ function ArrayVisualizer() {
 
     const next = [...values, Number(inputValue)];
     setValues(next);
+    const msg = `Inserted ${Number(inputValue)} at index ${next.length - 1}.`;
+    setMessage(msg);
+    pushHistory(msg);
     setInputValue('');
-    setMessage(`Inserted ${Number(inputValue)} at index ${next.length - 1}.`);
   };
 
   const handleUpdate = () => {
@@ -39,7 +49,9 @@ function ArrayVisualizer() {
     const old = next[idx];
     next[idx] = Number(inputValue);
     setValues(next);
-    setMessage(`Updated index ${idx} from ${old} to ${Number(inputValue)}.`);
+    const msg = `Updated index ${idx} from ${old} to ${Number(inputValue)}.`;
+    setMessage(msg);
+    pushHistory(msg);
   };
 
   const handleDelete = () => {
@@ -51,16 +63,21 @@ function ArrayVisualizer() {
       return;
     }
 
+    const deleted = values[idx];
     const next = values.filter((_, i) => i !== idx);
     setValues(next);
-    setMessage(`Deleted the value at index ${idx}.`);
+    const msg = `Deleted value ${deleted} at index ${idx}.`;
+    setMessage(msg);
+    pushHistory(msg);
   };
 
   const handleReset = () => {
     setValues([3, 7, 1, 9, 5]);
     setInputValue('');
     setIndexValue('');
-    setMessage('Reset the array back to its starting state.');
+    const msg = 'Reset the array back to its starting state.';
+    setMessage(msg);
+    setHistory([]);
   };
 
   return (
@@ -70,7 +87,7 @@ function ArrayVisualizer() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '2fr 3fr',
+          gridTemplateColumns: '2fr 3fr 2fr',
           gap: '1.5rem',
           alignItems: 'flex-start',
         }}
@@ -145,7 +162,7 @@ function ArrayVisualizer() {
         >
           <h3 style={{ marginBottom: '0.75rem' }}>Array view</h3>
 
-          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
             {values.map((value, index) => (
               <div
                 key={index}
@@ -169,6 +186,29 @@ function ArrayVisualizer() {
             update overwrites the value at a given index, and delete removes the
             element at that index and shifts everything after it to the left.
           </p>
+        </div>
+
+        {/* History panel */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>Recent steps</h3>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              Perform an operation to see it appear here.
+            </p>
+          ) : (
+            <ul style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+              {history.map((item) => (
+                <li key={item.id}>{item.text}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </section>
