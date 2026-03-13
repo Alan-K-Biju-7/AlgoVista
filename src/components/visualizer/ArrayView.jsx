@@ -10,7 +10,14 @@ function ArrayView({ values }) {
     >
       <h3 style={{ marginBottom: '0.75rem' }}>Array view</h3>
 
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.75rem',
+          marginBottom: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
         {values.map((value, index) => (
           <div
             key={index}
@@ -34,16 +41,23 @@ function ArrayView({ values }) {
         update overwrites the value at a given index, and delete removes the
         element at that index and shifts everything after it to the left.
       </p>
-            <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
+
+      <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
         <strong>Typical time complexity (array, by index)</strong>
-        <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+        <ul
+          style={{
+            listStyle: 'disc',
+            paddingLeft: '1.5rem',
+            marginTop: '0.5rem',
+            lineHeight: 1.6,
+          }}
+        >
           <li>Read by index: O(1)</li>
           <li>Update by index: O(1)</li>
           <li>Insert / delete at end: O(1) amortized</li>
           <li>Insert / delete in the middle: O(n)</li>
         </ul>
       </div>
-
     </div>
   );
 }
