@@ -110,6 +110,71 @@ function QueueVisualizer() {
             </p>
           )}
         </div>
+
+        {/* Queue view */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>
+            Queue view (front on the left, rear on the right)
+          </h3>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              minHeight: '4rem',
+              alignItems: 'center',
+            }}
+          >
+            {items.length === 0 ? (
+              <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+                Queue is currently empty.
+              </p>
+            ) : (
+              items.map((value, index) => {
+                const isFront = index === 0;
+                const isRear = index === items.length - 1;
+
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      minWidth: '3rem',
+                      padding: '0.75rem 0.5rem',
+                      textAlign: 'center',
+                      borderRadius: '0.5rem',
+                      background: isFront || isRear ? '#1d4ed8' : '#111827',
+                      border: '1px solid #374151',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: '#9ca3af',
+                        marginBottom: '0.25rem',
+                      }}
+                    >
+                      {isFront && isRear
+                        ? 'front / rear'
+                        : isFront
+                        ? 'front'
+                        : isRear
+                        ? 'rear'
+                        : index}
+                    </div>
+                    <div>{value}</div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
