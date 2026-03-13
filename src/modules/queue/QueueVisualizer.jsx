@@ -174,6 +174,42 @@ function QueueVisualizer() {
               })
             )}
           </div>
+
+          <p style={{ fontSize: '0.9rem', marginTop: '1rem', lineHeight: 1.6 }}>
+            A queue is a First In, First Out (FIFO) structure. New elements are
+            added at the rear using enqueue, and removed from the front using
+            dequeue.
+          </p>
+
+          <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
+            <strong>Front:</strong>{' '}
+            {items.length === 0 ? 'none' : `"${items[0]}"`} |{' '}
+            <strong>Rear:</strong>{' '}
+            {items.length === 0 ? 'none' : `"${items[items.length - 1]}"`}
+          </div>
+        </div>
+
+        {/* Recent operations */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>Recent steps</h3>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              Perform an enqueue or dequeue to see it appear here.
+            </p>
+          ) : (
+            <ul style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+              {history.map((item) => (
+                <li key={item.id}>{item.text}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </section>
