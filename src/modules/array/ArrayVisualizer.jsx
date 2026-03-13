@@ -9,11 +9,11 @@ function ArrayVisualizer() {
   const [indexValue, setIndexValue] = useState('');
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState([]);
+
   const [searchValue, setSearchValue] = useState('');
   const [currentSearchIndex, setCurrentSearchIndex] = useState(null);
   const [searchFoundIndex, setSearchFoundIndex] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-
 
   const resetMessage = () => setMessage('');
 
@@ -77,51 +77,59 @@ function ArrayVisualizer() {
     setValues([3, 7, 1, 9, 5]);
     setInputValue('');
     setIndexValue('');
+    setSearchValue('');
+    setCurrentSearchIndex(null);
+    setSearchFoundIndex(null);
     const msg = 'Reset the array back to its starting state.';
     setMessage(msg);
     setHistory([]);
+    setIsSearching(false);
   };
+
   const handleLinearSearch = () => {
-  if (searchValue.trim() === '') {
-    setMessage('Please enter a value to search for.');
-    return;
-  }
-
-  setIsSearching(true);
-  setCurrentSearchIndex(0);
-  setSearchFoundIndex(null);
-  setMessage(`Starting linear search for ${Number(searchValue)}.`);
-
-  const target = Number(searchValue);
-
-  let i = 0;
-
-  const intervalId = setInterval(() => {
-    setCurrentSearchIndex(i);
-
-    if (values[i] === target) {
-      const msg = `Found ${target} at index ${i} using linear search.`;
-      setMessage(msg);
-      pushHistory(msg);
-      setSearchFoundIndex(i);
-      setIsSearching(false);
-      clearInterval(intervalId);
+    if (searchValue.trim() === '') {
+      setMessage('Please enter a value to search for.');
+      return;
+    }
+    if (values.length === 0) {
+      setMessage('The array is empty. Add some values first.');
       return;
     }
 
-    i += 1;
+    const target = Number(searchValue);
 
-    if (i >= values.length) {
-      const msg = `Did not find ${target} in the current array.`;
-      setMessage(msg);
-      pushHistory(msg);
-      setIsSearching(false);
-      setCurrentSearchIndex(null);
-      clearInterval(intervalId);
-    }
-  }, 600);
-};
+    setIsSearching(true);
+    setCurrentSearchIndex(0);
+    setSearchFoundIndex(null);
+    setMessage(`Starting linear search for ${target}.`);
 
+    let i = 0;
+
+    const intervalId = setInterval(() => {
+      setCurrentSearchIndex(i);
+
+      if (values[i] === target) {
+        const msg = `Found ${target} at index ${i} using linear search.`;
+        setMessage(msg);
+        pushHistory(msg);
+        setSearchFoundIndex(i);
+        setIsSearching(false);
+        clearInterval(intervalId);
+        return;
+      }
+
+      i += 1;
+
+      if (i >= values.length) {
+        const msg = `Did not find ${target} in the current array.`;
+        setMessage(msg);
+        pushHistory(msg);
+        setIsSearching(false);
+        setCurrentSearchIndex(null);
+        clearInterval(intervalId);
+      }
+    }, 600);
+  };
 
   return (
     <section style={{ marginTop: '2rem' }}>
@@ -136,27 +144,26 @@ function ArrayVisualizer() {
         }}
       >
         <ArrayControls
-             inputValue={inputValue}
-             indexValue={indexValue}
-             message={message}
-             searchValue={searchValue}
-             isSearching={isSearching}
-             onInputChange={(e) => setInputValue(e.target.value)}
-             onIndexChange={(e) => setIndexValue(e.target.value)}
-             onSearchValueChange={(e) => setSearchValue(e.target.value)}
-             onInsert={handleInsert}
-             onUpdate={handleUpdate}
-             onDelete={handleDelete}
-             onReset={handleReset}
-             onLinearSearch={handleLinearSearch}
- 
+          inputValue={inputValue}
+          indexValue={indexValue}
+          message={message}
+          searchValue={searchValue}
+          isSearching={isSearching}
+          onInputChange={(e) => setInputValue(e.target.value)}
+          onIndexChange={(e) => setIndexValue(e.target.value)}
+          onSearchValueChange={(e) => setSearchValue(e.target.value)}
+          onInsert={handleInsert}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+          onReset={handleReset}
+          onLinearSearch={handleLinearSearch}
         />
 
-         <ArrayView
-        values={values}
-        currentSearchIndex={currentSearchIndex}
-        searchFoundIndex={searchFoundIndex}
-      />
+        <ArrayView
+          values={values}
+          currentSearchIndex={currentSearchIndex}
+          searchFoundIndex={searchFoundIndex}
+        />
 
         <ArrayHistory history={history} />
       </div>
