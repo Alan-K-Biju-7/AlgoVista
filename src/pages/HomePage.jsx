@@ -1,5 +1,5 @@
 import ArrayVisualizer from '../modules/array/ArrayVisualizer';
-
+import StackVisualizer from '../modules/stack/StackVisualizer';
 function HomePage() {
   return (
     <div>
@@ -67,6 +67,13 @@ function HomePage() {
 
         <ArrayVisualizer />
       </section>
+      <section style={{ marginTop: '3rem' }}>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+         Try the stack next
+       </h2>
+        <StackVisualizer />
+      </section>
+
     </div>
   );
 }
