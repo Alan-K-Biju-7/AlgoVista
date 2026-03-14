@@ -252,3 +252,57 @@ function InsertionSortVisualizer() {
               );
             })}
           </div>
+          <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
+            <strong>Insertion sort idea</strong>
+            <p style={{ marginTop: '0.25rem', lineHeight: 1.6 }}>
+              We treat the left part of the array as sorted and repeatedly take
+              the next element (key) from the right, shifting larger elements to
+              the right until we find the correct spot for the key.
+            </p>
+          </div>
+
+          <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
+            <strong>Time complexity (insertion sort)</strong>
+            <ul
+              style={{
+                listStyle: 'disc',
+                paddingLeft: '1.5rem',
+                marginTop: '0.5rem',
+                lineHeight: 1.6,
+              }}
+            >
+              <li>Worst / average: O(n²)</li>
+              <li>Best (already sorted): O(n)</li>
+              <li>Space: O(1) extra</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Recent steps */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>Recent steps</h3>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              Click "Step" or "Auto run" to see actions here.
+            </p>
+          ) : (
+            <ul style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+              {history.map((item) => (
+                <li key={item.id}>{item.text}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default InsertionSortVisualizer;
