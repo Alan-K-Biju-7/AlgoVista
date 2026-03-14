@@ -106,3 +106,23 @@ function InsertionSortVisualizer() {
     if (phase === 'done') return;
     setIsRunning((prev) => !prev);
   };
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        performStep();
+      }, 500);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRunning, i, j, phase, key]);
+
+  const isInSortedPortion = (index) => index < i || phase === 'done';
+  const isKeyPosition = (index) =>
+    (phase === 'compare' || phase === 'insert') && index === i;
