@@ -126,3 +126,129 @@ function InsertionSortVisualizer() {
   const isInSortedPortion = (index) => index < i || phase === 'done';
   const isKeyPosition = (index) =>
     (phase === 'compare' || phase === 'insert') && index === i;
+  return (
+    <section style={{ marginTop: '2rem' }}>
+      <h2 style={{ marginBottom: '1rem' }}>Insertion sort visualizer</h2>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 3fr 2fr',
+          gap: '1.5rem',
+          alignItems: 'flex-start',
+        }}
+      >
+        {/* Controls */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>Controls</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <button
+              onClick={handleRandomize}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
+              Randomize
+            </button>
+            <button
+              onClick={handleStep}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
+              Step
+            </button>
+            <button
+              onClick={toggleAutoRun}
+              style={{ padding: '0.5rem 1rem' }}
+            >
+              {isRunning ? 'Pause' : 'Auto run'}
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
+              Reset
+            </button>
+          </div>
+          <p
+            style={{
+              marginTop: '0.75rem',
+              fontSize: '0.9rem',
+              color: '#a5b4fc',
+            }}
+          >
+            {message}
+          </p>
+          <p
+            style={{
+              marginTop: '0.5rem',
+              fontSize: '0.8rem',
+              color: '#9ca3af',
+            }}
+          >
+            Current i = {i}, j = {j}, phase = {phase}
+          </p>
+        </div>
+
+        {/* Array view */}
+        <div
+          style={{
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.75rem' }}>Current array</h3>
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.75rem',
+              alignItems: 'flex-end',
+              minHeight: '6rem',
+            }}
+          >
+            {values.map((value, index) => {
+              let background = '#111827';
+
+              if (isInSortedPortion(index)) {
+                background = '#16a34a'; // sorted region
+              }
+              if (index === j) {
+                background = '#f97316'; // element being compared
+              }
+              if (index === j + 1 && phase === 'compare') {
+                background = '#1d4ed8'; // potential insert position
+              }
+              if (isKeyPosition(index)) {
+                background = '#eab308'; // current key
+              }
+
+              return (
+                <div
+                  key={index}
+                  style={{
+                    minWidth: '2.5rem',
+                    height: \`\${value * 6}px\`,
+                    background,
+                    borderRadius: '0.5rem 0.5rem 0 0',
+                    border: '1px solid #374151',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'center',
+                    color: '#e5e7eb',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  {value}
+                </div>
+              );
+            })}
+          </div>
