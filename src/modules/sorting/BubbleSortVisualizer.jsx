@@ -10,6 +10,19 @@ function BubbleSortVisualizer() {
     'Click "Step" to move one comparison at a time, or "Auto run" to animate.'
   );
   const [history, setHistory] = useState([]);
+  const [activePseudoLine, setActivePseudoLine] = useState(0);
+  const intervalRef = useRef(null);
+
+function BubbleSortVisualizer() {
+  const [values, setValues] = useState([5, 1, 4, 2, 8]);
+  const [i, setI] = useState(0);
+  const [j, setJ] = useState(0);
+  const [isSorted, setIsSorted] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+  const [message, setMessage] = useState(
+    'Click "Step" to move one comparison at a time, or "Auto run" to animate.'
+  );
+  const [history, setHistory] = useState([]);
   const intervalRef = useRef(null);
 
   const pushHistory = (text) => {
