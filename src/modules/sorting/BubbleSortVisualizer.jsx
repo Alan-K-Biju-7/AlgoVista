@@ -13,18 +13,6 @@ function BubbleSortVisualizer() {
   const [activePseudoLine, setActivePseudoLine] = useState(0);
   const intervalRef = useRef(null);
 
-function BubbleSortVisualizer() {
-  const [values, setValues] = useState([5, 1, 4, 2, 8]);
-  const [i, setI] = useState(0);
-  const [j, setJ] = useState(0);
-  const [isSorted, setIsSorted] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
-  const [message, setMessage] = useState(
-    'Click "Step" to move one comparison at a time, or "Auto run" to animate.'
-  );
-  const [history, setHistory] = useState([]);
-  const intervalRef = useRef(null);
-
   const pushHistory = (text) => {
     setHistory((prev) => [
       { id: prev.length + 1, text },
@@ -36,6 +24,7 @@ function BubbleSortVisualizer() {
     setI(0);
     setJ(0);
     setIsSorted(false);
+    setActivePseudoLine(0);
   };
 
   const handleReset = () => {
@@ -59,7 +48,6 @@ function BubbleSortVisualizer() {
     setHistory([]);
   };
 
-  // One *comparison* step: compare (j, j+1), maybe swap, then advance j/i
   const performStep = () => {
     if (isSorted) {
       setIsRunning(false);
@@ -67,9 +55,11 @@ function BubbleSortVisualizer() {
       return;
     }
 
+    setActivePseudoLine(2);
     setValues((prev) => {
       const arr = [...prev];
 
+      setActivePseudoLine(3);
       if (arr[j] > arr[j + 1]) {
         const tmp = arr[j];
         arr[j] = arr[j + 1];
@@ -79,18 +69,17 @@ function BubbleSortVisualizer() {
         pushHistory(`No swap needed for positions ${j} and ${j + 1}.`);
       }
 
-      // Move to next comparison
       let nextI = i;
       let nextJ = j + 1;
 
-      // End of this pass: j reached arr.length - i - 2
       if (nextJ >= arr.length - nextI - 1) {
+        setActivePseudoLine(4);
         nextI += 1;
         nextJ = 0;
         pushHistory(`Completed pass i = ${nextI - 1}.`);
 
-        // After each pass, the last i elements are in place
         if (nextI >= arr.length - 1) {
+          setActivePseudoLine(5);
           setIsSorted(true);
           setIsRunning(false);
           setMessage('Bubble sort finished. Array is sorted.');
@@ -112,11 +101,9 @@ function BubbleSortVisualizer() {
 
   const toggleAutoRun = () => {
     if (isSorted) return;
-
     setIsRunning((prev) => !prev);
   };
 
-  // Auto-run with setInterval
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
@@ -146,7 +133,6 @@ function BubbleSortVisualizer() {
           alignItems: 'flex-start',
         }}
       >
-        {/* Controls */}
         <div
           style={{
             padding: '1rem',
@@ -199,7 +185,6 @@ function BubbleSortVisualizer() {
           </p>
         </div>
 
-        {/* Array view */}
         <div
           style={{
             padding: '1rem',
@@ -269,7 +254,6 @@ function BubbleSortVisualizer() {
           </div>
         </div>
 
-        {/* Recent steps */}
         <div
           style={{
             padding: '1rem',
@@ -290,6 +274,48 @@ function BubbleSortVisualizer() {
               ))}
             </ul>
           )}
+
+          <div
+            style={{
+              marginTop: '1rem',
+              paddingTop: '1rem',
+              borderTop: '1px solid #374151',
+            }}
+          >
+            <h3 style={{ marginBottom: '0.5rem' }}>Pseudocode</h3>
+            <pre
+              style={{
+                fontSize: '0.8rem',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              <code>
+                {[
+                  'for i from 0 to n - 2',
+                  '  for j from 0 to n - i - 2',
+                  '    if A[j] > A[j + 1]',
+                  '      swap A[j], A[j + 1]',
+                  '  end inner loop (one pass done)',
+                  'end outer loop',
+                ].map((line, index) => {
+                  const isActive = index === activePseudoLine;
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        backgroundColor: isActive ? '#1f2937' : 'transparent',
+                        padding: '2px 4px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {line}
+                    </div>
+                  );
+                })}
+              </code>
+            </pre>
+          </div>
         </div>
       </div>
     </section>
