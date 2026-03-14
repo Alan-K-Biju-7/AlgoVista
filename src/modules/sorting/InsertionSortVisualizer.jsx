@@ -19,3 +19,32 @@ function InsertionSortVisualizer() {
       ...prev.slice(0, 9),
     ]);
   };
+  const handleReset = () => {
+    const base = [7, 3, 5, 2, 1];
+    setValues(base);
+    setI(1);
+    setJ(0);
+    setKey(base[1]);
+    setPhase('compare');
+    setIsRunning(false);
+    setMessage(
+      'Array reset. First element is treated as sorted. Use "Step" to insert each next element.'
+    );
+    setHistory([]);
+  };
+
+  const handleRandomize = () => {
+    const next = Array.from({ length: 6 }, () =>
+      Math.floor(Math.random() * 20) + 1
+    );
+    setValues(next);
+    setI(1);
+    setJ(0);
+    setKey(next[1]);
+    setPhase('compare');
+    setIsRunning(false);
+    setMessage(
+      'Random array generated. First element is the starting sorted portion.'
+    );
+    setHistory([]);
+  };
