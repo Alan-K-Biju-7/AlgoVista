@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 function BubbleSortVisualizer() {
   const [values, setValues] = useState([5, 1, 4, 2, 8]);
-  const [currentI, setCurrentI] = useState(null);
-  const [currentJ, setCurrentJ] = useState(null);
+  const [i, setI] = useState(0);
+  const [j, setJ] = useState(0);
   const [isSorted, setIsSorted] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
   const [message, setMessage] = useState(
-    'Click "Run one pass" to start walking through bubble sort.'
+    'Click "Step" to move one comparison at a time, or "Auto run" to animate.'
   );
   const [history, setHistory] = useState([]);
+  const intervalRef = useRef(null);
 
   const pushHistory = (text) => {
     setHistory((prev) => [
@@ -17,12 +19,19 @@ function BubbleSortVisualizer() {
     ]);
   };
 
+  const resetPointers = () => {
+    setI(0);
+    setJ(0);
+    setIsSorted(false);
+  };
+
   const handleReset = () => {
     setValues([5, 1, 4, 2, 8]);
-    setCurrentI(null);
-    setCurrentJ(null);
-    setIsSorted(false);
-    setMessage('Click "Run one pass" to start walking through bubble sort.');
+    resetPointers();
+    setIsRunning(false);
+    setMessage(
+      'Array reset. Click "Step" or "Auto run" to walk through bubble sort.'
+    );
     setHistory([]);
   };
 
@@ -31,51 +40,90 @@ function BubbleSortVisualizer() {
       Math.floor(Math.random() * 20) + 1
     );
     setValues(next);
-    setCurrentI(null);
-    setCurrentJ(null);
-    setIsSorted(false);
-    setMessage('Random array generated. Click "Run one pass" to sort it slowly.');
+    resetPointers();
+    setIsRunning(false);
+    setMessage('Random array generated. Click "Step" to start sorting.');
     setHistory([]);
   };
 
-  const runOnePass = () => {
+  // One *comparison* step: compare (j, j+1), maybe swap, then advance j/i
+  const performStep = () => {
     if (isSorted) {
-      setMessage('Array already looks sorted. Reset or randomize to try again.');
+      setIsRunning(false);
+      setMessage('Array is fully sorted. Reset or randomize to try again.');
       return;
     }
 
-    const arr = [...values];
-    let swapped = false;
+    setValues((prev) => {
+      const arr = [...prev];
 
-    for (let j = 0; j < arr.length - 1; j += 1) {
       if (arr[j] > arr[j + 1]) {
         const tmp = arr[j];
         arr[j] = arr[j + 1];
         arr[j + 1] = tmp;
-        swapped = true;
+        pushHistory(`Swapped positions ${j} and ${j + 1}.`);
+      } else {
+        pushHistory(`No swap needed for positions ${j} and ${j + 1}.`);
       }
-    }
 
-    setValues(arr);
-    setCurrentI(null);
-    setCurrentJ(null);
+      // Move to next comparison
+      let nextI = i;
+      let nextJ = j + 1;
 
-    if (!swapped) {
-      setIsSorted(true);
-      const msg = 'No swaps in this pass, so the array is now sorted.';
-      setMessage(msg);
-      pushHistory(msg);
-    } else {
-      const msg =
-        'Completed one full pass over the array. Larger values are drifting to the right.';
-      setMessage(msg);
-      pushHistory(msg);
-    }
+      // End of this pass: j reached arr.length - i - 2
+      if (nextJ >= arr.length - nextI - 1) {
+        nextI += 1;
+        nextJ = 0;
+        pushHistory(`Completed pass i = ${nextI - 1}.`);
+
+        // After each pass, the last i elements are in place
+        if (nextI >= arr.length - 1) {
+          setIsSorted(true);
+          setIsRunning(false);
+          setMessage('Bubble sort finished. Array is sorted.');
+          pushHistory('Array is sorted; no more passes needed.');
+        }
+      }
+
+      setI(nextI);
+      setJ(nextJ);
+
+      return arr;
+    });
   };
+
+  const handleStep = () => {
+    if (isRunning) return;
+    performStep();
+  };
+
+  const toggleAutoRun = () => {
+    if (isSorted) return;
+
+    setIsRunning((prev) => !prev);
+  };
+
+  // Auto-run with setInterval
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        performStep();
+      }, 500);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRunning, i, j]);
 
   return (
     <section style={{ marginTop: '2rem' }}>
-      <h2 style={{ marginBottom: '1rem' }}>Bubble sort visualizer (very early)</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Bubble sort visualizer (step-by-step)</h2>
 
       <div
         style={{
@@ -96,13 +144,31 @@ function BubbleSortVisualizer() {
         >
           <h3 style={{ marginBottom: '0.75rem' }}>Controls</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <button onClick={handleRandomize} style={{ padding: '0.5rem 1rem' }}>
+            <button
+              onClick={handleRandomize}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
               Randomize
             </button>
-            <button onClick={runOnePass} style={{ padding: '0.5rem 1rem' }}>
-              Run one pass
+            <button
+              onClick={handleStep}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
+              Step
             </button>
-            <button onClick={handleReset} style={{ padding: '0.5rem 1rem' }}>
+            <button
+              onClick={toggleAutoRun}
+              style={{ padding: '0.5rem 1rem' }}
+            >
+              {isRunning ? 'Pause' : 'Auto run'}
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={isRunning}
+              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
+            >
               Reset
             </button>
           </div>
@@ -114,6 +180,9 @@ function BubbleSortVisualizer() {
             }}
           >
             {message}
+          </p>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
+            Current pass i = {i}, comparison j = {j}
           </p>
         </div>
 
@@ -136,9 +205,8 @@ function BubbleSortVisualizer() {
             }}
           >
             {values.map((value, index) => {
-              const isI = index === currentI;
-              const isJ = index === currentJ;
-              const background = isI || isJ ? '#1d4ed8' : '#111827';
+              const isJ = index === j || index === j + 1;
+              const background = isJ ? '#1d4ed8' : '#111827';
 
               return (
                 <div
@@ -165,9 +233,9 @@ function BubbleSortVisualizer() {
           <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
             <strong>Bubble sort idea</strong>
             <p style={{ marginTop: '0.25rem', lineHeight: 1.6 }}>
-              Bubble sort repeatedly walks through the array and swaps adjacent
-              elements if they are in the wrong order. Large values slowly
-              &quot;bubble&quot; to the end.
+              On each pass i, we walk with j from 0 up to n - i - 2 and compare
+              adjacent elements. Large elements bubble toward the end; after each pass,
+              the last i elements are in their final position.
             </p>
           </div>
 
@@ -197,10 +265,10 @@ function BubbleSortVisualizer() {
             background: '#020617',
           }}
         >
-          <h3 style={{ marginBottom: '0.75rem' }}>Recent passes</h3>
+          <h3 style={{ marginBottom: '0.75rem' }}>Recent steps</h3>
           {history.length === 0 ? (
             <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-              Run a pass to see a summary here.
+              Click "Step" or "Auto run" to see actions here.
             </p>
           ) : (
             <ul style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
