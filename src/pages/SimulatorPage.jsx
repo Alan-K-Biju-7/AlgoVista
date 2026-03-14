@@ -4,8 +4,6 @@ import QueueVisualizer from '../modules/queue/QueueVisualizer';
 import BubbleSortVisualizer from '../modules/sorting/BubbleSortVisualizer';
 import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer';
 
-import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer';
-
 function SimulatorPage() {
   return (
     <div>
