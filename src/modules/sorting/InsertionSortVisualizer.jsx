@@ -48,3 +48,61 @@ function InsertionSortVisualizer() {
     );
     setHistory([]);
   };
+  const moveToNextElement = (arr) => {
+    const n = arr.length;
+    if (i + 1 >= n) {
+      setPhase('done');
+      setIsRunning(false);
+      setMessage('Insertion sort finished. The array is fully sorted.');
+      pushHistory('All elements have been inserted into the sorted portion.');
+      return;
+    }
+
+    const nextI = i + 1;
+    setI(nextI);
+    setKey(arr[nextI]);
+    setJ(nextI - 1);
+    setPhase('compare');
+    pushHistory(
+      \`Now inserting element at index \${nextI} into the sorted portion [0..\${nextI - 1}].\`
+    );
+  };
+
+  const performStep = () => {
+    if (phase === 'done') {
+      setIsRunning(false);
+      return;
+    }
+
+    setValues((prev) => {
+      const arr = [...prev];
+
+      if (phase === 'compare') {
+        if (j >= 0 && arr[j] > key) {
+          arr[j + 1] = arr[j];
+          pushHistory(
+            \`Shifted value \${arr[j]} from index \${j} to index \${j + 1}.\`
+          );
+          setJ(j - 1);
+        } else {
+          arr[j + 1] = key;
+          pushHistory(\`Inserted key \${key} at index \${j + 1}.\`);
+          setPhase('insert');
+        }
+      } else if (phase === 'insert') {
+        moveToNextElement(arr);
+      }
+
+      return arr;
+    });
+  };
+
+  const handleStep = () => {
+    if (isRunning) return;
+    performStep();
+  };
+
+  const toggleAutoRun = () => {
+    if (phase === 'done') return;
+    setIsRunning((prev) => !prev);
+  };
