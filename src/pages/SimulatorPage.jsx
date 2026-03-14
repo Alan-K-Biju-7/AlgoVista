@@ -2,6 +2,7 @@ import ArrayVisualizer from '../modules/array/ArrayVisualizer';
 import StackVisualizer from '../modules/stack/StackVisualizer';
 import QueueVisualizer from '../modules/queue/QueueVisualizer';
 import BubbleSortVisualizer from '../modules/sorting/BubbleSortVisualizer';
+import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer';
 
 function SimulatorPage() {
   return (
@@ -31,9 +32,10 @@ function SimulatorPage() {
 
       <section style={{ marginBottom: '3rem' }}>
         <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-          Sorting (bubble sort)
+          Sorting (bubble & insertion)
         </h2>
         <BubbleSortVisualizer />
+        <InsertionSortVisualizer />
       </section>
     </div>
   );
