@@ -34,8 +34,16 @@ function SimulatorPage() {
         <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
           Sorting (bubble & insertion)
         </h2>
-        <BubbleSortVisualizer />
-        <InsertionSortVisualizer />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2rem',
+          }}
+        >
+          <BubbleSortVisualizer />
+          <InsertionSortVisualizer />
+        </div>
         <div
           style={{
             marginTop: '1.5rem',
