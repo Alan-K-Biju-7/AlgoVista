@@ -36,6 +36,24 @@ function SimulatorPage() {
         </h2>
         <BubbleSortVisualizer />
         <InsertionSortVisualizer />
+        <div
+          style={{
+            marginTop: '1.5rem',
+            padding: '1rem',
+            borderRadius: '0.75rem',
+            border: '1px solid #374151',
+            background: '#020617',
+            fontSize: '0.85rem',
+          }}
+        >
+          <h3 style={{ marginBottom: '0.5rem' }}>Comparison hint</h3>
+          <p style={{ lineHeight: 1.6, color: '#e5e7eb' }}>
+            Use the counters in each card to compare how many comparisons and
+            swaps/shifts bubble sort and insertion sort perform on the same
+            input. Insertion sort usually does fewer writes than bubble sort,
+            especially when the array is partially sorted.
+          </p>
+        </div>
       </section>
     </div>
   );
