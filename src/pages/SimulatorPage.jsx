@@ -30,7 +30,7 @@ function SimulatorPage() {
         <QueueVisualizer />
       </section>
 
-      <section style={{ marginBottom: '3rem' }}>
+      <section style={{ marginBottom: '3.5rem' }}>
         <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
           Sorting (bubble & insertion)
         </h2>
@@ -38,7 +38,7 @@ function SimulatorPage() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '2rem',
+            gap: '2.5rem',
           }}
         >
           <BubbleSortVisualizer />
@@ -46,7 +46,7 @@ function SimulatorPage() {
         </div>
         <div
           style={{
-            marginTop: '1.5rem',
+            marginTop: '1.75rem',
             padding: '1rem',
             borderRadius: '0.75rem',
             border: '1px solid #374151',
@@ -54,7 +54,9 @@ function SimulatorPage() {
             fontSize: '0.85rem',
           }}
         >
-          <h3 style={{ marginBottom: '0.5rem' }}>Comparison hint</h3>
+          <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>
+            Comparison hint
+          </h3>
           <p style={{ lineHeight: 1.6, color: '#e5e7eb' }}>
             Use the counters in each card to compare how many comparisons and
             swaps/shifts bubble sort and insertion sort perform on the same
