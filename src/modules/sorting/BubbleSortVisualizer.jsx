@@ -1,5 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 
+const card = {
+  background: '#0f172a',
+  border: '1px solid #1e293b',
+  borderRadius: '0.75rem',
+  padding: '1.25rem',
+};
+
+const cardLabel = {
+  fontSize: '0.7rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  color: '#64748b',
+  marginBottom: '0.75rem',
+};
+
 function BubbleSortVisualizer() {
   const [values, setValues] = useState([5, 1, 4, 2, 8]);
   const [i, setI] = useState(0);
@@ -16,10 +32,7 @@ function BubbleSortVisualizer() {
   const intervalRef = useRef(null);
 
   const pushHistory = (text) => {
-    setHistory((prev) => [
-      { id: prev.length + 1, text },
-      ...prev.slice(0, 9),
-    ]);
+    setHistory((prev) => [{ id: prev.length + 1, text }, ...prev.slice(0, 9)]);
   };
 
   const resetPointers = () => {
@@ -35,16 +48,12 @@ function BubbleSortVisualizer() {
     setValues([5, 1, 4, 2, 8]);
     resetPointers();
     setIsRunning(false);
-    setMessage(
-      'Array reset. Click "Step" or "Auto run" to walk through bubble sort.'
-    );
+    setMessage('Array reset. Click "Step" or "Auto run" to walk through bubble sort.');
     setHistory([]);
   };
 
   const handleRandomize = () => {
-    const next = Array.from({ length: 6 }, () =>
-      Math.floor(Math.random() * 20) + 1
-    );
+    const next = Array.from({ length: 6 }, () => Math.floor(Math.random() * 20) + 1);
     setValues(next);
     resetPointers();
     setIsRunning(false);
@@ -62,7 +71,6 @@ function BubbleSortVisualizer() {
     setActivePseudoLine(2);
     setValues((prev) => {
       const arr = [...prev];
-
       setActivePseudoLine(3);
       setComparisonCount((c) => c + 1);
       if (arr[j] > arr[j + 1]) {
@@ -83,7 +91,6 @@ function BubbleSortVisualizer() {
         nextI += 1;
         nextJ = 0;
         pushHistory(`Completed pass i = ${nextI - 1}.`);
-
         if (nextI >= arr.length - 1) {
           setActivePseudoLine(5);
           setIsSorted(true);
@@ -95,7 +102,6 @@ function BubbleSortVisualizer() {
 
       setI(nextI);
       setJ(nextJ);
-
       return arr;
     });
   };
@@ -112,224 +118,124 @@ function BubbleSortVisualizer() {
 
   useEffect(() => {
     if (isRunning) {
-      intervalRef.current = setInterval(() => {
-        performStep();
-      }, 500);
+      intervalRef.current = setInterval(() => { performStep(); }, 500);
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [isRunning, i, j]);
 
   return (
-    <section style={{ marginTop: '1rem' }}>
-      <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem' }}>
-        Bubble sort visualizer
-      </h2>
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Bubble sort
+      </p>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 3fr 2fr',
-          gap: '1.5rem',
-          alignItems: 'flex-start',
-        }}
-      >
-        <div
-          style={{
-            padding: '1rem',
-            borderRadius: '0.75rem',
-            border: '1px solid #374151',
-            background: '#020617',
-          }}
-        >
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Controls</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <button
-              onClick={handleRandomize}
-              disabled={isRunning}
-              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
-            >
-              Randomize
-            </button>
-            <button
-              onClick={handleStep}
-              disabled={isRunning}
-              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
-            >
-              Step
-            </button>
-            <button
-              onClick={toggleAutoRun}
-              style={{ padding: '0.5rem 1rem' }}
-            >
-              {isRunning ? 'Pause' : 'Auto run'}
-            </button>
-            <button
-              onClick={handleReset}
-              disabled={isRunning}
-              style={{ padding: '0.5rem 1rem', opacity: isRunning ? 0.6 : 1 }}
-            >
-              Reset
-            </button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+        <div style={card}>
+          <p style={cardLabel}>Controls</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            <button onClick={handleRandomize} disabled={isRunning}>Randomize</button>
+            <button onClick={handleStep} disabled={isRunning}>Step</button>
+            <button onClick={toggleAutoRun}>{isRunning ? 'Pause' : 'Auto run'}</button>
+            <button onClick={handleReset} disabled={isRunning}>Reset</button>
           </div>
-          <p
-            style={{
-              marginTop: '0.75rem',
-              fontSize: '0.9rem',
-              color: '#a5b4fc',
-            }}
-          >
-            {message}
-          </p>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
-            Current pass i = {i}, comparison j = {j}
-          </p>
-          <p style={{ marginTop: '0.25rem', fontSize: '0.8rem', color: '#9ca3af' }}>
-            Comparisons: {comparisonCount}, Swaps: {swapCount}
-          </p>
+          <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.8 }}>
+            <div>Pass i = {i} &nbsp;|&nbsp; Compare j = {j}</div>
+            <div>Comparisons: <span style={{ color: '#818cf8' }}>{comparisonCount}</span></div>
+            <div>Swaps: <span style={{ color: '#f472b6' }}>{swapCount}</span></div>
+          </div>
         </div>
 
-        <div
-          style={{
-            padding: '1rem',
-            borderRadius: '0.75rem',
-            border: '1px solid #374151',
-            background: '#020617',
-          }}
-        >
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Current array</h3>
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.75rem',
-              alignItems: 'flex-end',
-              minHeight: '6rem',
-            }}
-          >
+        <div style={card}>
+          <p style={cardLabel}>Array</p>
+          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-end', minHeight: '8rem' }}>
             {values.map((value, index) => {
-              const isJ = index === j || index === j + 1;
-              const background = isJ ? '#1d4ed8' : '#111827';
-
+              const isActive = index === j || index === j + 1;
               return (
-                <div
-                  key={index}
-                  style={{
-                    minWidth: '2.5rem',
-                    height: `${value * 6}px`,
-                    background,
-                    borderRadius: '0.5rem 0.5rem 0 0',
-                    border: '1px solid #374151',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    color: '#e5e7eb',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  {value}
+                <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem' }}>
+                  <div
+                    style={{
+                      width: '2.75rem',
+                      height: `${value * 9}px`,
+                      background: isActive ? '#4f46e5' : '#1e293b',
+                      borderRadius: '0.4rem 0.4rem 0 0',
+                      border: isActive ? '1px solid #818cf8' : '1px solid #334155',
+                      transition: 'background 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      paddingBottom: '4px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.75rem', color: isActive ? '#e0e7ff' : '#94a3b8', fontWeight: '600' }}>
+                      {value}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.65rem', color: '#475569' }}>{index}</span>
                 </div>
               );
             })}
           </div>
 
-          <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
-            <strong>Bubble sort idea</strong>
-            <p style={{ marginTop: '0.25rem', lineHeight: 1.6 }}>
-              On each pass i, we walk with j from 0 up to n - i - 2 and compare
-              adjacent elements. Large elements bubble toward the end; after each pass,
-              the last i elements are in their final position.
-            </p>
+          <div style={{ marginTop: '1.25rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+            On each pass i, compare adjacent elements j and j+1.
+            Swap if out of order. After pass i, the last i elements are in place.
           </div>
 
-          <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
-            <strong>Time complexity (bubble sort)</strong>
-            <ul
-              style={{
-                listStyle: 'disc',
-                paddingLeft: '1.5rem',
-                marginTop: '0.5rem',
-                lineHeight: 1.6,
-              }}
-            >
-              <li>Worst / average: O(n²)</li>
-              <li>Best (already sorted): O(n)</li>
-              <li>Space: O(1) extra</li>
-            </ul>
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#34d399' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
         </div>
 
-        <div
-          style={{
-            padding: '1rem',
-            borderRadius: '0.75rem',
-            border: '1px solid #374151',
-            background: '#020617',
-          }}
-        >
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Recent steps</h3>
+        <div style={card}>
+          <p style={cardLabel}>Steps</p>
           {history.length === 0 ? (
-            <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
-              Click "Step" or "Auto run" to see actions here.
-            </p>
+            <p style={{ fontSize: '0.8rem', color: '#475569' }}>Run a step to see actions here.</p>
           ) : (
-            <ul style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               {history.map((item) => (
-                <li key={item.id}>{item.text}</li>
+                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem' }}>
+                  {item.text}
+                </p>
               ))}
-            </ul>
+            </div>
           )}
 
-          <div
-            style={{
-              marginTop: '1rem',
-              paddingTop: '1rem',
-              borderTop: '1px solid #374151',
-            }}
-          >
-            <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>Pseudocode</h3>
-            <pre
-              style={{
-                fontSize: '0.8rem',
-                lineHeight: 1.6,
-                whiteSpace: 'pre-wrap',
-              }}
-            >
-              <code>
-                {[
-                  'for i from 0 to n - 2',
-                  '  for j from 0 to n - i - 2',
-                  '    if A[j] > A[j + 1]',
-                  '      swap A[j], A[j + 1]',
-                  '  end inner loop (one pass done)',
-                  'end outer loop',
-                ].map((line, index) => {
-                  const isActive = index === activePseudoLine;
-                  return (
-                    <div
-                      key={index}
-                      style={{
-                        backgroundColor: isActive ? '#1f2937' : 'transparent',
-                        padding: '2px 4px',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      {line}
-                    </div>
-                  );
-                })}
-              </code>
-            </pre>
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1e293b' }}>
+            <p style={{ ...cardLabel, marginBottom: '0.5rem' }}>Pseudocode</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.8 }}>
+              {[
+                'for i from 0 to n - 2',
+                '  for j from 0 to n - i - 2',
+                '    if A[j] > A[j + 1]',
+                '      swap A[j], A[j + 1]',
+                '  end pass',
+                'end',
+              ].map((line, index) => (
+                <div
+                  key={index}
+                  style={{
+                    background: index === activePseudoLine ? '#1e293b' : 'transparent',
+                    color: index === activePseudoLine ? '#818cf8' : '#475569',
+                    padding: '1px 6px',
+                    borderRadius: '3px',
+                    borderLeft: index === activePseudoLine ? '2px solid #818cf8' : '2px solid transparent',
+                  }}
+                >
+                  {line}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
