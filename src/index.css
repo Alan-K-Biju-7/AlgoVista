@@ -17,6 +17,36 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
+input, textarea {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: #6366f1;
+}
+
+input::placeholder {
+  color: #475569;
+}
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #64748b;
+  margin-bottom: 0.35rem;
+}
+
 button {
   cursor: pointer;
   border: 1px solid #4f46e5;
