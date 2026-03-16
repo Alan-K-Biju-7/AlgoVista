@@ -6,7 +6,7 @@ import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer'
 
 function SimulatorPage() {
   return (
-    <div>
+    <div style={{ paddingInline: '0.5rem' }}>
       <h1 style={{ marginBottom: '1.5rem' }}>Live DSA simulator</h1>
 
       <section style={{ marginBottom: '3rem' }}>
