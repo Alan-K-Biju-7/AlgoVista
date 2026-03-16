@@ -6,63 +6,63 @@ import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer'
 
 function SimulatorPage() {
   return (
-    <div style={{ paddingInline: '0.5rem' }}>
-      <h1 style={{ marginBottom: '1.5rem' }}>Live DSA simulator</h1>
+    <div
+      style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '2rem 1.5rem',
+      }}
+    >
+      <h1 style={{ marginBottom: '0.4rem', fontSize: '2rem' }}>
+        Live DSA simulator
+      </h1>
+      <p style={{ color: '#94a3b8', marginBottom: '2.5rem', fontSize: '0.95rem' }}>
+        Step through data structures and algorithms one operation at a time.
+      </p>
 
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+      <section style={{ marginBottom: '3.5rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>
           Arrays
         </h2>
         <ArrayVisualizer />
       </section>
 
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+      <section style={{ marginBottom: '3.5rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>
           Stack
         </h2>
         <StackVisualizer />
       </section>
 
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+      <section style={{ marginBottom: '3.5rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>
           Queue
         </h2>
         <QueueVisualizer />
       </section>
 
       <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
-          Sorting (bubble & insertion)
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>
+          Sorting
         </h2>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '3rem',
-          }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           <BubbleSortVisualizer />
           <InsertionSortVisualizer />
         </div>
         <div
           style={{
             marginTop: '1.75rem',
-            padding: '1rem',
+            padding: '1rem 1.25rem',
             borderRadius: '0.75rem',
-            border: '1px solid #374151',
-            background: '#020617',
+            border: '1px solid #1e293b',
+            background: '#0f172a',
             fontSize: '0.85rem',
+            color: '#94a3b8',
           }}
         >
-          <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>
-            Comparison hint
-          </h3>
-          <p style={{ lineHeight: 1.6, color: '#e5e7eb' }}>
-            Use the counters in each card to compare how many comparisons and
-            swaps/shifts bubble sort and insertion sort perform on the same
-            input. Insertion sort usually does fewer writes than bubble sort,
-            especially when the array is partially sorted.
-          </p>
+          <strong style={{ color: '#e2e8f0' }}>Comparison hint — </strong>
+          Insertion sort usually does fewer writes than bubble sort, especially
+          when the array is partially sorted. Watch the Shifts vs Swaps counters.
         </div>
       </section>
     </div>
