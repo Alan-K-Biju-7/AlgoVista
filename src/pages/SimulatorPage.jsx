@@ -38,7 +38,7 @@ function SimulatorPage() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '2.5rem',
+            gap: '3rem',
           }}
         >
           <BubbleSortVisualizer />
