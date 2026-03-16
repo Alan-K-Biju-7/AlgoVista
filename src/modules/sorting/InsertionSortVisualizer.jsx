@@ -146,8 +146,10 @@ function InsertionSortVisualizer() {
     (phase === 'compare' || phase === 'insert') && index === i;
 
   return (
-    <section style={{ marginTop: '2rem' }}>
-      <h2 style={{ marginBottom: '1rem' }}>Insertion sort visualizer</h2>
+    <section style={{ marginTop: '1rem' }}>
+      <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem' }}>
+        Insertion sort visualizer
+      </h2>
 
       <div
         style={{
@@ -165,7 +167,7 @@ function InsertionSortVisualizer() {
             background: '#020617',
           }}
         >
-          <h3 style={{ marginBottom: '0.75rem' }}>Controls</h3>
+          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Controls</h3>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             <button
               onClick={handleRandomize}
@@ -207,7 +209,7 @@ function InsertionSortVisualizer() {
           <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
             Current i = {i}, j = {j}, phase = {phase}
           </p>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
+          <p style={{ marginTop: '0.25rem', fontSize: '0.8rem', color: '#9ca3af' }}>
             Comparisons: {comparisonCount}, Shifts: {shiftCount}
           </p>
         </div>
@@ -220,7 +222,7 @@ function InsertionSortVisualizer() {
             background: '#020617',
           }}
         >
-          <h3 style={{ marginBottom: '0.75rem' }}>Current array</h3>
+          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Current array</h3>
           <div
             style={{
               display: 'flex',
@@ -301,7 +303,7 @@ function InsertionSortVisualizer() {
             background: '#020617',
           }}
         >
-          <h3 style={{ marginBottom: '0.75rem' }}>Recent steps</h3>
+          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>Recent steps</h3>
           {history.length === 0 ? (
             <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
               Click "Step" or "Auto run" to see actions here.
@@ -321,7 +323,7 @@ function InsertionSortVisualizer() {
               borderTop: '1px solid #374151',
             }}
           >
-            <h3 style={{ marginBottom: '0.5rem' }}>Pseudocode</h3>
+            <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>Pseudocode</h3>
             <pre
               style={{
                 fontSize: '0.8rem',
