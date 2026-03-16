@@ -11,6 +11,8 @@ function BubbleSortVisualizer() {
   );
   const [history, setHistory] = useState([]);
   const [activePseudoLine, setActivePseudoLine] = useState(0);
+  const [comparisonCount, setComparisonCount] = useState(0);
+  const [swapCount, setSwapCount] = useState(0);
   const intervalRef = useRef(null);
 
   const pushHistory = (text) => {
@@ -25,6 +27,8 @@ function BubbleSortVisualizer() {
     setJ(0);
     setIsSorted(false);
     setActivePseudoLine(0);
+    setComparisonCount(0);
+    setSwapCount(0);
   };
 
   const handleReset = () => {
@@ -60,10 +64,12 @@ function BubbleSortVisualizer() {
       const arr = [...prev];
 
       setActivePseudoLine(3);
+      setComparisonCount((c) => c + 1);
       if (arr[j] > arr[j + 1]) {
         const tmp = arr[j];
         arr[j] = arr[j + 1];
         arr[j + 1] = tmp;
+        setSwapCount((s) => s + 1);
         pushHistory(`Swapped positions ${j} and ${j + 1}.`);
       } else {
         pushHistory(`No swap needed for positions ${j} and ${j + 1}.`);
@@ -182,6 +188,9 @@ function BubbleSortVisualizer() {
           </p>
           <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
             Current pass i = {i}, comparison j = {j}
+          </p>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
+            Comparisons: {comparisonCount}, Swaps: {swapCount}
           </p>
         </div>
 
