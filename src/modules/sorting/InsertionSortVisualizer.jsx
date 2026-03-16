@@ -12,6 +12,8 @@ function InsertionSortVisualizer() {
   );
   const [history, setHistory] = useState([]);
   const [activePseudoLine, setActivePseudoLine] = useState(0);
+  const [comparisonCount, setComparisonCount] = useState(0);
+  const [shiftCount, setShiftCount] = useState(0);
   const intervalRef = useRef(null);
 
   const pushHistory = (text) => {
@@ -20,11 +22,7 @@ function InsertionSortVisualizer() {
       ...prev.slice(0, 9),
     ]);
   };
-    setHistory((prev) => [
-      { id: prev.length + 1, text },
-      ...prev.slice(0, 9),
-    ]);
-  };
+
   const handleReset = () => {
     const base = [7, 3, 5, 2, 1];
     setValues(base);
@@ -37,6 +35,9 @@ function InsertionSortVisualizer() {
       'Array reset. First element is treated as sorted. Use "Step" to insert each next element.'
     );
     setHistory([]);
+    setActivePseudoLine(0);
+    setComparisonCount(0);
+    setShiftCount(0);
   };
 
   const handleRandomize = () => {
@@ -53,7 +54,11 @@ function InsertionSortVisualizer() {
       'Random array generated. First element is the starting sorted portion.'
     );
     setHistory([]);
+    setActivePseudoLine(0);
+    setComparisonCount(0);
+    setShiftCount(0);
   };
+
   const moveToNextElement = (arr) => {
     const n = arr.length;
     if (i + 1 >= n) {
@@ -61,6 +66,7 @@ function InsertionSortVisualizer() {
       setIsRunning(false);
       setMessage('Insertion sort finished. The array is fully sorted.');
       pushHistory('All elements have been inserted into the sorted portion.');
+      setActivePseudoLine(0);
       return;
     }
 
@@ -69,8 +75,9 @@ function InsertionSortVisualizer() {
     setKey(arr[nextI]);
     setJ(nextI - 1);
     setPhase('compare');
+    setActivePseudoLine(1);
     pushHistory(
-      \`Now inserting element at index \${nextI} into the sorted portion [0..\${nextI - 1}].\`
+      `Now inserting element at index ${nextI} into the sorted portion [0..${nextI - 1}].`
     );
   };
 
@@ -84,15 +91,19 @@ function InsertionSortVisualizer() {
       const arr = [...prev];
 
       if (phase === 'compare') {
+        setActivePseudoLine(4);
+        setComparisonCount((c) => c + 1);
         if (j >= 0 && arr[j] > key) {
+          setActivePseudoLine(5);
           arr[j + 1] = arr[j];
-          pushHistory(
-            \`Shifted value \${arr[j]} from index \${j} to index \${j + 1}.\`
-          );
+          setShiftCount((s) => s + 1);
+          pushHistory(`Shifted value ${arr[j]} from index ${j} to index ${j + 1}.`);
+          setActivePseudoLine(6);
           setJ(j - 1);
         } else {
+          setActivePseudoLine(7);
           arr[j + 1] = key;
-          pushHistory(\`Inserted key \${key} at index \${j + 1}.\`);
+          pushHistory(`Inserted key ${key} at index ${j + 1}.`);
           setPhase('insert');
         }
       } else if (phase === 'insert') {
@@ -112,6 +123,7 @@ function InsertionSortVisualizer() {
     if (phase === 'done') return;
     setIsRunning((prev) => !prev);
   };
+
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
@@ -132,6 +144,7 @@ function InsertionSortVisualizer() {
   const isInSortedPortion = (index) => index < i || phase === 'done';
   const isKeyPosition = (index) =>
     (phase === 'compare' || phase === 'insert') && index === i;
+
   return (
     <section style={{ marginTop: '2rem' }}>
       <h2 style={{ marginBottom: '1rem' }}>Insertion sort visualizer</h2>
@@ -144,7 +157,6 @@ function InsertionSortVisualizer() {
           alignItems: 'flex-start',
         }}
       >
-        {/* Controls */}
         <div
           style={{
             padding: '1rem',
@@ -192,18 +204,14 @@ function InsertionSortVisualizer() {
           >
             {message}
           </p>
-          <p
-            style={{
-              marginTop: '0.5rem',
-              fontSize: '0.8rem',
-              color: '#9ca3af',
-            }}
-          >
+          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
             Current i = {i}, j = {j}, phase = {phase}
+          </p>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#9ca3af' }}>
+            Comparisons: {comparisonCount}, Shifts: {shiftCount}
           </p>
         </div>
 
-        {/* Array view */}
         <div
           style={{
             padding: '1rem',
@@ -225,16 +233,16 @@ function InsertionSortVisualizer() {
               let background = '#111827';
 
               if (isInSortedPortion(index)) {
-                background = '#16a34a'; // sorted region
+                background = '#16a34a';
               }
               if (index === j) {
-                background = '#f97316'; // element being compared
+                background = '#f97316';
               }
               if (index === j + 1 && phase === 'compare') {
-                background = '#1d4ed8'; // potential insert position
+                background = '#1d4ed8';
               }
               if (isKeyPosition(index)) {
-                background = '#eab308'; // current key
+                background = '#eab308';
               }
 
               return (
@@ -242,7 +250,7 @@ function InsertionSortVisualizer() {
                   key={index}
                   style={{
                     minWidth: '2.5rem',
-                    height: \`\${value * 6}px\`,
+                    height: `${value * 6}px`,
                     background,
                     borderRadius: '0.5rem 0.5rem 0 0',
                     border: '1px solid #374151',
@@ -258,6 +266,7 @@ function InsertionSortVisualizer() {
               );
             })}
           </div>
+
           <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
             <strong>Insertion sort idea</strong>
             <p style={{ marginTop: '0.25rem', lineHeight: 1.6 }}>
@@ -284,7 +293,6 @@ function InsertionSortVisualizer() {
           </div>
         </div>
 
-        {/* Recent steps */}
         <div
           style={{
             padding: '1rem',
@@ -305,6 +313,50 @@ function InsertionSortVisualizer() {
               ))}
             </ul>
           )}
+
+          <div
+            style={{
+              marginTop: '1rem',
+              paddingTop: '1rem',
+              borderTop: '1px solid #374151',
+            }}
+          >
+            <h3 style={{ marginBottom: '0.5rem' }}>Pseudocode</h3>
+            <pre
+              style={{
+                fontSize: '0.8rem',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              <code>
+                {[
+                  'for i from 1 to n - 1',
+                  '  key = A[i]',
+                  '  j = i - 1',
+                  '  while j >= 0 and A[j] > key',
+                  '    A[j + 1] = A[j]',
+                  '    j = j - 1',
+                  '  A[j + 1] = key',
+                ].map((line, index) => {
+                  const lineNumber = index + 1;
+                  const isActive = lineNumber === activePseudoLine;
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        backgroundColor: isActive ? '#1f2937' : 'transparent',
+                        padding: '2px 4px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {line}
+                    </div>
+                  );
+                })}
+              </code>
+            </pre>
+          </div>
         </div>
       </div>
     </section>
