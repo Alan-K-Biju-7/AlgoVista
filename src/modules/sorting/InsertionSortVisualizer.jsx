@@ -24,9 +24,7 @@ function InsertionSortVisualizer() {
   const [phase, setPhase] = useState('compare');
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(500);
-  const [message, setMessage] = useState(
-    'Click "Step" to walk through insertion sort, or "Auto run" to animate.'
-  );
+  const [message, setMessage] = useState('Click "Step" or "Auto run" to animate.');
   const [history, setHistory] = useState([]);
   const [activePseudoLine, setActivePseudoLine] = useState(0);
   const [comparisonCount, setComparisonCount] = useState(0);
@@ -42,41 +40,26 @@ function InsertionSortVisualizer() {
 
   const handleReset = () => {
     const base = [7, 3, 5, 2, 1];
-    setValues(base);
-    setI(1);
-    setJ(0);
-    setKey(base[1]);
-    setPhase('compare');
+    setValues(base); setI(1); setJ(0); setKey(base[1]); setPhase('compare');
     setIsRunning(false);
     setMessage('Array reset. Use "Step" to insert each next element.');
-    setHistory([]);
-    setActivePseudoLine(0);
-    setComparisonCount(0);
-    setShiftCount(0);
+    setHistory([]); setActivePseudoLine(0); setComparisonCount(0); setShiftCount(0);
     setStepExplanation('First element is treated as sorted. We now insert the next one.');
   };
 
   const handleRandomize = () => {
     const next = Array.from({ length: 6 }, () => Math.floor(Math.random() * 20) + 1);
-    setValues(next);
-    setI(1);
-    setJ(0);
-    setKey(next[1]);
-    setPhase('compare');
+    setValues(next); setI(1); setJ(0); setKey(next[1]); setPhase('compare');
     setIsRunning(false);
     setMessage('Random array generated. First element is the starting sorted portion.');
-    setHistory([]);
-    setActivePseudoLine(0);
-    setComparisonCount(0);
-    setShiftCount(0);
+    setHistory([]); setActivePseudoLine(0); setComparisonCount(0); setShiftCount(0);
     setStepExplanation('First element is treated as sorted. We now insert the next one.');
   };
 
   const moveToNextElement = (arr) => {
     const n = arr.length;
     if (i + 1 >= n) {
-      setPhase('done');
-      setIsRunning(false);
+      setPhase('done'); setIsRunning(false);
       setMessage('Insertion sort finished. The array is fully sorted.');
       pushHistory('All elements inserted into sorted portion.');
       setActivePseudoLine(0);
@@ -84,13 +67,10 @@ function InsertionSortVisualizer() {
       return;
     }
     const nextI = i + 1;
-    setI(nextI);
-    setKey(arr[nextI]);
-    setJ(nextI - 1);
-    setPhase('compare');
+    setI(nextI); setKey(arr[nextI]); setJ(nextI - 1); setPhase('compare');
     setActivePseudoLine(1);
-    setStepExplanation(\`Take \${arr[nextI]} as the key and insert it into the sorted left part.\`);
-    pushHistory(\`Inserting index \${nextI} into sorted portion [0..\${nextI - 1}].\`);
+    setStepExplanation('Take ' + arr[nextI] + ' as the key and insert it into the sorted left part.');
+    pushHistory('Inserting index ' + nextI + ' into sorted portion [0..' + (nextI - 1) + '].');
   };
 
   const performStep = () => {
@@ -104,17 +84,17 @@ function InsertionSortVisualizer() {
         setComparisonCount((c) => c + 1);
         if (j >= 0 && arr[j] > key) {
           setActivePseudoLine(5);
-          setStepExplanation(\`Since \${key} < \${arr[j]}, shift \${arr[j]} one position to the right.\`);
+          setStepExplanation('Since ' + key + ' < ' + arr[j] + ', shift ' + arr[j] + ' one position to the right.');
           arr[j + 1] = arr[j];
           setShiftCount((s) => s + 1);
-          pushHistory(\`Shifted \${arr[j]} from index \${j} to \${j + 1}.\`);
+          pushHistory('Shifted ' + arr[j] + ' from index ' + j + ' to ' + (j + 1) + '.');
           setActivePseudoLine(6);
           setJ(j - 1);
         } else {
           setActivePseudoLine(7);
-          setStepExplanation(\`Place \${key} at position \${j + 1} in the sorted part.\`);
+          setStepExplanation('Place ' + key + ' at position ' + (j + 1) + ' in the sorted part.');
           arr[j + 1] = key;
-          pushHistory(\`Inserted key \${key} at index \${j + 1}.\`);
+          pushHistory('Inserted key ' + key + ' at index ' + (j + 1) + '.');
           setPhase('insert');
         }
       } else if (phase === 'insert') {
@@ -148,6 +128,7 @@ function InsertionSortVisualizer() {
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+
         <div style={card}>
           <p style={cardLabel}>Controls</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -207,10 +188,10 @@ function InsertionSortVisualizer() {
                   <div
                     style={{
                       width: '2.75rem',
-                      height: \`\${value * 9}px\`,
+                      height: (value * 9) + 'px',
                       background: bg,
                       borderRadius: '0.4rem 0.4rem 0 0',
-                      border: \`1px solid \${borderColor}\`,
+                      border: '1px solid ' + borderColor,
                       transition: 'background 0.2s ease',
                       display: 'flex',
                       alignItems: 'flex-end',
@@ -272,8 +253,7 @@ function InsertionSortVisualizer() {
                 '    j = j - 1',
                 '  A[j + 1] = key',
               ].map((line, index) => {
-                const lineNumber = index + 1;
-                const isActive = lineNumber === activePseudoLine;
+                const isActive = (index + 1) === activePseudoLine;
                 return (
                   <div
                     key={index}
@@ -292,6 +272,7 @@ function InsertionSortVisualizer() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
