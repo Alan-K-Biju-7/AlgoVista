@@ -119,3 +119,94 @@ function BubbleSortVisualizer() {
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [isRunning, i, j, speed]);
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Bubble sort
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+        <div style={card}>
+          <p style={cardLabel}>Controls</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            <button onClick={handleRandomize} disabled={isRunning}>Randomize</button>
+            <button onClick={handleStep} disabled={isRunning}>Step</button>
+            <button onClick={toggleAutoRun}>{isRunning ? 'Pause' : 'Auto run'}</button>
+            <button onClick={handleReset} disabled={isRunning}>Reset</button>
+          </div>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <p style={{ ...cardLabel, marginBottom: '0.4rem' }}>Speed</p>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {[{ label: 'Slow', value: 900 }, { label: 'Normal', value: 500 }, { label: 'Fast', value: 150 }].map((s) => (
+                <button
+                  key={s.value}
+                  onClick={() => setSpeed(s.value)}
+                  style={{
+                    padding: '0.3rem 0.65rem',
+                    fontSize: '0.75rem',
+                    background: speed === s.value ? '#4f46e5' : 'transparent',
+                    color: speed === s.value ? '#fff' : '#64748b',
+                    border: '1px solid',
+                    borderColor: speed === s.value ? '#4f46e5' : '#334155',
+                    borderRadius: '0.4rem',
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.8 }}>
+            <div>Pass i = {i} &nbsp;|&nbsp; Compare j = {j}</div>
+            <div>Comparisons: <span style={{ color: '#818cf8' }}>{comparisonCount}</span></div>
+            <div>Swaps: <span style={{ color: '#f472b6' }}>{swapCount}</span></div>
+          </div>
+        </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Array</p>
+          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-end', minHeight: '8rem' }}>
+            {values.map((value, index) => {
+              const isActive = index === j || index === j + 1;
+              return (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem' }}>
+                  <div
+                    style={{
+                      width: '2.75rem',
+                      height: \`\${value * 9}px\`,
+                      background: isActive ? '#4f46e5' : '#1e293b',
+                      borderRadius: '0.4rem 0.4rem 0 0',
+                      border: isActive ? '1px solid #818cf8' : '1px solid #334155',
+                      transition: 'background 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      paddingBottom: '4px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.75rem', color: isActive ? '#e0e7ff' : '#94a3b8', fontWeight: '600' }}>
+                      {value}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.65rem', color: '#475569' }}>{index}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: '1.25rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+            On each pass i, compare adjacent elements j and j+1.
+            Swap if out of order. After pass i, the last i elements are in place.
+          </div>
+
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#34d399' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+          </div>
+        </div>
