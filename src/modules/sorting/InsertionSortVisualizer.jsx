@@ -71,3 +71,72 @@ function InsertionSortVisualizer() {
     setShiftCount(0);
     setStepExplanation('First element is treated as sorted. We now insert the next one.');
   };
+
+  const moveToNextElement = (arr) => {
+    const n = arr.length;
+    if (i + 1 >= n) {
+      setPhase('done');
+      setIsRunning(false);
+      setMessage('Insertion sort finished. The array is fully sorted.');
+      pushHistory('All elements inserted into sorted portion.');
+      setActivePseudoLine(0);
+      setStepExplanation('Array is sorted. No more insertions needed.');
+      return;
+    }
+    const nextI = i + 1;
+    setI(nextI);
+    setKey(arr[nextI]);
+    setJ(nextI - 1);
+    setPhase('compare');
+    setActivePseudoLine(1);
+    setStepExplanation(\`Take \${arr[nextI]} as the key and insert it into the sorted left part.\`);
+    pushHistory(\`Inserting index \${nextI} into sorted portion [0..\${nextI - 1}].\`);
+  };
+
+  const performStep = () => {
+    if (phase === 'done') { setIsRunning(false); return; }
+
+    setValues((prev) => {
+      const arr = [...prev];
+
+      if (phase === 'compare') {
+        setActivePseudoLine(4);
+        setComparisonCount((c) => c + 1);
+        if (j >= 0 && arr[j] > key) {
+          setActivePseudoLine(5);
+          setStepExplanation(\`Since \${key} < \${arr[j]}, shift \${arr[j]} one position to the right.\`);
+          arr[j + 1] = arr[j];
+          setShiftCount((s) => s + 1);
+          pushHistory(\`Shifted \${arr[j]} from index \${j} to \${j + 1}.\`);
+          setActivePseudoLine(6);
+          setJ(j - 1);
+        } else {
+          setActivePseudoLine(7);
+          setStepExplanation(\`Place \${key} at position \${j + 1} in the sorted part.\`);
+          arr[j + 1] = key;
+          pushHistory(\`Inserted key \${key} at index \${j + 1}.\`);
+          setPhase('insert');
+        }
+      } else if (phase === 'insert') {
+        moveToNextElement(arr);
+      }
+
+      return arr;
+    });
+  };
+
+  const handleStep = () => { if (isRunning) return; performStep(); };
+  const toggleAutoRun = () => { if (phase === 'done') return; setIsRunning((prev) => !prev); };
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => { performStep(); }, speed);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isRunning, i, j, phase, key, speed]);
+
+  const isInSortedPortion = (index) => index < i || phase === 'done';
+  const isKeyPosition = (index) => (phase === 'compare' || phase === 'insert') && index === i;
