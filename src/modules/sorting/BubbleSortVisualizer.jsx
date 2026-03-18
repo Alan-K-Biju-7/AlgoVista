@@ -61,3 +61,61 @@ function BubbleSortVisualizer() {
     setMessage('Random array generated. Click "Step" to start sorting.');
     setHistory([]);
   };
+
+  const performStep = () => {
+    if (isSorted) {
+      setIsRunning(false);
+      setMessage('Array is fully sorted. Reset or randomize to try again.');
+      return;
+    }
+
+    setActivePseudoLine(2);
+    setValues((prev) => {
+      const arr = [...prev];
+      setActivePseudoLine(3);
+      setComparisonCount((c) => c + 1);
+      if (arr[j] > arr[j + 1]) {
+        const tmp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = tmp;
+        setSwapCount((s) => s + 1);
+        pushHistory(\`Swapped positions \${j} and \${j + 1}.\`);
+      } else {
+        pushHistory(\`No swap needed for positions \${j} and \${j + 1}.\`);
+      }
+
+      let nextI = i;
+      let nextJ = j + 1;
+
+      if (nextJ >= arr.length - nextI - 1) {
+        setActivePseudoLine(4);
+        nextI += 1;
+        nextJ = 0;
+        pushHistory(\`Completed pass i = \${nextI - 1}.\`);
+        if (nextI >= arr.length - 1) {
+          setActivePseudoLine(5);
+          setIsSorted(true);
+          setIsRunning(false);
+          setMessage('Bubble sort finished. Array is sorted.');
+          pushHistory('Array is sorted; no more passes needed.');
+        }
+      }
+
+      setI(nextI);
+      setJ(nextJ);
+      return arr;
+    });
+  };
+
+  const handleStep = () => { if (isRunning) return; performStep(); };
+  const toggleAutoRun = () => { if (isSorted) return; setIsRunning((prev) => !prev); };
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => { performStep(); }, speed);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isRunning, i, j, speed]);
