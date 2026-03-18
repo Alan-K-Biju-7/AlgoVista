@@ -35,3 +35,39 @@ function InsertionSortVisualizer() {
     'First element is treated as sorted. We now insert the next element into the left side.'
   );
   const intervalRef = useRef(null);
+
+  const pushHistory = (text) => {
+    setHistory((prev) => [{ id: prev.length + 1, text }, ...prev.slice(0, 9)]);
+  };
+
+  const handleReset = () => {
+    const base = [7, 3, 5, 2, 1];
+    setValues(base);
+    setI(1);
+    setJ(0);
+    setKey(base[1]);
+    setPhase('compare');
+    setIsRunning(false);
+    setMessage('Array reset. Use "Step" to insert each next element.');
+    setHistory([]);
+    setActivePseudoLine(0);
+    setComparisonCount(0);
+    setShiftCount(0);
+    setStepExplanation('First element is treated as sorted. We now insert the next one.');
+  };
+
+  const handleRandomize = () => {
+    const next = Array.from({ length: 6 }, () => Math.floor(Math.random() * 20) + 1);
+    setValues(next);
+    setI(1);
+    setJ(0);
+    setKey(next[1]);
+    setPhase('compare');
+    setIsRunning(false);
+    setMessage('Random array generated. First element is the starting sorted portion.');
+    setHistory([]);
+    setActivePseudoLine(0);
+    setComparisonCount(0);
+    setShiftCount(0);
+    setStepExplanation('First element is treated as sorted. We now insert the next one.');
+  };
