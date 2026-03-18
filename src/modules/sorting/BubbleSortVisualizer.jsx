@@ -210,3 +210,51 @@ function BubbleSortVisualizer() {
             <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Steps</p>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.8rem', color: '#475569' }}>Run a step to see actions here.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              {history.map((item) => (
+                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem' }}>
+                  {item.text}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1e293b' }}>
+            <p style={{ ...cardLabel, marginBottom: '0.5rem' }}>Pseudocode</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.8 }}>
+              {[
+                'for i from 0 to n - 2',
+                '  for j from 0 to n - i - 2',
+                '    if A[j] > A[j + 1]',
+                '      swap A[j], A[j + 1]',
+                '  end pass',
+                'end',
+              ].map((line, index) => (
+                <div
+                  key={index}
+                  style={{
+                    background: index === activePseudoLine ? '#1e293b' : 'transparent',
+                    color: index === activePseudoLine ? '#818cf8' : '#475569',
+                    padding: '1px 6px',
+                    borderRadius: '3px',
+                    borderLeft: index === activePseudoLine ? '2px solid #818cf8' : '2px solid transparent',
+                  }}
+                >
+                  {line}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BubbleSortVisualizer;
