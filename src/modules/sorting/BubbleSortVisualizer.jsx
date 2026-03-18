@@ -23,9 +23,7 @@ function BubbleSortVisualizer() {
   const [isSorted, setIsSorted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(500);
-  const [message, setMessage] = useState(
-    'Click "Step" to move one comparison at a time, or "Auto run" to animate.'
-  );
+  const [message, setMessage] = useState('Click "Step" or "Auto run" to animate.');
   const [history, setHistory] = useState([]);
   const [activePseudoLine, setActivePseudoLine] = useState(0);
   const [comparisonCount, setComparisonCount] = useState(0);
@@ -37,19 +35,15 @@ function BubbleSortVisualizer() {
   };
 
   const resetPointers = () => {
-    setI(0);
-    setJ(0);
-    setIsSorted(false);
-    setActivePseudoLine(0);
-    setComparisonCount(0);
-    setSwapCount(0);
+    setI(0); setJ(0); setIsSorted(false);
+    setActivePseudoLine(0); setComparisonCount(0); setSwapCount(0);
   };
 
   const handleReset = () => {
     setValues([5, 1, 4, 2, 8]);
     resetPointers();
     setIsRunning(false);
-    setMessage('Array reset. Click "Step" or "Auto run" to walk through bubble sort.');
+    setMessage('Array reset. Click "Step" or "Auto run".');
     setHistory([]);
   };
 
@@ -74,14 +68,15 @@ function BubbleSortVisualizer() {
       const arr = [...prev];
       setActivePseudoLine(3);
       setComparisonCount((c) => c + 1);
+
       if (arr[j] > arr[j + 1]) {
         const tmp = arr[j];
         arr[j] = arr[j + 1];
         arr[j + 1] = tmp;
         setSwapCount((s) => s + 1);
-        pushHistory(\`Swapped positions \${j} and \${j + 1}.\`);
+        pushHistory('Swapped positions ' + j + ' and ' + (j + 1) + '.');
       } else {
-        pushHistory(\`No swap needed for positions \${j} and \${j + 1}.\`);
+        pushHistory('No swap needed for positions ' + j + ' and ' + (j + 1) + '.');
       }
 
       let nextI = i;
@@ -91,13 +86,13 @@ function BubbleSortVisualizer() {
         setActivePseudoLine(4);
         nextI += 1;
         nextJ = 0;
-        pushHistory(\`Completed pass i = \${nextI - 1}.\`);
+        pushHistory('Completed pass ' + (nextI - 1) + '.');
         if (nextI >= arr.length - 1) {
           setActivePseudoLine(5);
           setIsSorted(true);
           setIsRunning(false);
           setMessage('Bubble sort finished. Array is sorted.');
-          pushHistory('Array is sorted; no more passes needed.');
+          pushHistory('Array is sorted. No more passes needed.');
         }
       }
 
@@ -127,6 +122,7 @@ function BubbleSortVisualizer() {
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+
         <div style={card}>
           <p style={cardLabel}>Controls</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -177,7 +173,7 @@ function BubbleSortVisualizer() {
                   <div
                     style={{
                       width: '2.75rem',
-                      height: \`\${value * 9}px\`,
+                      height: (value * 9) + 'px',
                       background: isActive ? '#4f46e5' : '#1e293b',
                       borderRadius: '0.4rem 0.4rem 0 0',
                       border: isActive ? '1px solid #818cf8' : '1px solid #334155',
@@ -200,8 +196,8 @@ function BubbleSortVisualizer() {
 
           <div style={{ marginTop: '1.25rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
             <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
-            On each pass i, compare adjacent elements j and j+1.
-            Swap if out of order. After pass i, the last i elements are in place.
+            On each pass i, compare adjacent elements j and j+1. Swap if out of order.
+            After pass i, the last i elements are in their final position.
           </div>
 
           <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
@@ -252,6 +248,7 @@ function BubbleSortVisualizer() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
