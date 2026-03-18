@@ -202,7 +202,7 @@ function ArrayVisualizer() {
 
   return (
     <section style={{ marginTop: '2rem' }}>
-      <h2 style={{ marginBottom: '1rem' }}>Array visualizer (early draft)</h2>
+      <h2 style={{ marginBottom: '1rem' }}>Array visualizer</h2>
 
       <div
         style={{
