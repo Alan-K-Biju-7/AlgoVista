@@ -41,3 +41,17 @@ function StackVisualizer() {
     pushHistory(msg);
     setInputValue('');
   };
+
+  const handlePop = () => {
+    if (items.length === 0) {
+      setMessage('Stack underflow: there is nothing to pop.');
+      pushHistory('Tried to pop from an empty stack (underflow).');
+      return;
+    }
+    const next = [...items];
+    const popped = next.pop();
+    setItems(next);
+    const msg = 'Popped "' + popped + '" from the top. Remaining size: ' + next.length + '.';
+    setMessage(msg);
+    pushHistory(msg);
+  };
