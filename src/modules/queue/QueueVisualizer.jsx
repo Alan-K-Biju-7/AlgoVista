@@ -69,3 +69,31 @@ function QueueVisualizer() {
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+
+        <div style={card}>
+          <p style={cardLabel}>Controls</p>
+
+          <div style={{ marginBottom: '0.85rem' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.4rem', display: 'block' }}>
+              Value
+            </label>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="value to enqueue"
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <button onClick={handleEnqueue}>Enqueue</button>
+            <button onClick={handleDequeue}>Dequeue</button>
+            <button onClick={handleReset}>Reset</button>
+          </div>
+
+          {message && (
+            <p style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>
+              {message}
+            </p>
+          )}
+        </div>
