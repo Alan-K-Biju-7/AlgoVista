@@ -41,3 +41,16 @@ function QueueVisualizer() {
     pushHistory(msg);
     setInputValue('');
   };
+
+  const handleDequeue = () => {
+    if (items.length === 0) {
+      setMessage('Queue underflow: there is nothing to dequeue.');
+      pushHistory('Tried to dequeue from an empty queue (underflow).');
+      return;
+    }
+    const [frontItem, ...rest] = items;
+    setItems(rest);
+    const msg = 'Dequeued "' + frontItem + '" from the front. Remaining: ' + rest.length + '.';
+    setMessage(msg);
+    pushHistory(msg);
+  };
