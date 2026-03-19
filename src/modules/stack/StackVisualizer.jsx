@@ -21,3 +21,10 @@ function StackVisualizer() {
   const [inputValue, setInputValue] = useState('');
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState([]);
+
+  const pushHistory = (text) => {
+    setHistory((prev) => [
+      { id: prev.length + 1, text },
+      ...prev.slice(0, 9),
+    ]);
+  };
