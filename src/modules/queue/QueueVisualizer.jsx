@@ -28,3 +28,16 @@ function QueueVisualizer() {
       ...prev.slice(0, 9),
     ]);
   };
+
+  const handleEnqueue = () => {
+    if (inputValue.trim() === '') {
+      setMessage('Please type a value before enqueueing into the queue.');
+      return;
+    }
+    const next = [...items, inputValue];
+    setItems(next);
+    const msg = 'Enqueued "' + inputValue + '" at the rear. Queue size: ' + next.length + '.';
+    setMessage(msg);
+    pushHistory(msg);
+    setInputValue('');
+  };
