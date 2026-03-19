@@ -116,6 +116,7 @@ function InsertionSortVisualizer() {
       intervalRef.current = null;
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, i, j, phase, key, speed]);
 
   const isInSortedPortion = (index) => index < i || phase === 'done';
