@@ -54,3 +54,10 @@ function QueueVisualizer() {
     setMessage(msg);
     pushHistory(msg);
   };
+
+  const handleReset = () => {
+    setItems([]);
+    setInputValue('');
+    setMessage('Cleared the queue back to empty.');
+    setHistory([]);
+  };
