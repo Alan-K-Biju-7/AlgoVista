@@ -134,3 +134,23 @@ function StackVisualizer() {
               })
             )}
           </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+            A stack is a Last In, First Out (LIFO) structure. Push adds a new
+            element on top; pop removes the current top element.
+          </p>
+
+          <div style={{ marginTop: '0.85rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Push: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Pop: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Peek: <span style={{ color: '#34d399' }}>O(1)</span></span>
+          </div>
+
+          <div style={{ marginTop: '0.85rem', fontSize: '0.82rem' }}>
+            <strong style={{ color: '#e2e8f0' }}>Top element: </strong>
+            <span style={{ color: topItem == null ? '#475569' : '#a5b4fc' }}>
+              {topItem == null ? 'none (stack is empty)' : '"' + topItem + '"'}
+            </span>
+          </div>
+        </div>
