@@ -134,3 +134,27 @@ function QueueVisualizer() {
               })
             )}
           </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+            A queue is a First In, First Out (FIFO) structure. New elements join
+            at the rear via enqueue and leave from the front via dequeue.
+          </p>
+
+          <div style={{ marginTop: '0.85rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Enqueue: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Dequeue: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Peek: <span style={{ color: '#34d399' }}>O(1)</span></span>
+          </div>
+
+          <div style={{ marginTop: '0.85rem', fontSize: '0.82rem' }}>
+            <strong style={{ color: '#e2e8f0' }}>Front: </strong>
+            <span style={{ color: '#86efac' }}>
+              {items.length === 0 ? 'none' : '"' + items[0] + '"'}
+            </span>
+            <strong style={{ color: '#e2e8f0', marginLeft: '1rem' }}>Rear: </strong>
+            <span style={{ color: '#a5b4fc' }}>
+              {items.length === 0 ? 'none' : '"' + items[items.length - 1] + '"'}
+            </span>
+          </div>
+        </div>
