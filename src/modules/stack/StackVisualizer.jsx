@@ -55,3 +55,12 @@ function StackVisualizer() {
     setMessage(msg);
     pushHistory(msg);
   };
+
+  const handleReset = () => {
+    setItems([]);
+    setInputValue('');
+    setMessage('Cleared the stack back to empty.');
+    setHistory([]);
+  };
+
+  const topItem = items.length > 0 ? items[items.length - 1] : null;
