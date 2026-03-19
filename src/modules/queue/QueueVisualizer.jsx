@@ -97,3 +97,40 @@ function QueueVisualizer() {
             </p>
           )}
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Queue view — front left, rear right</p>
+
+          <div style={{ display: 'flex', gap: '0.5rem', minHeight: '5rem', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+            {items.length === 0 ? (
+              <p style={{ fontSize: '0.8rem', color: '#475569' }}>Queue is currently empty.</p>
+            ) : (
+              items.map((value, index) => {
+                const isFront = index === 0;
+                const isRear = index === items.length - 1;
+                const isHighlighted = isFront || isRear;
+
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      minWidth: '3rem',
+                      padding: '0.6rem 0.5rem',
+                      textAlign: 'center',
+                      borderRadius: '0.5rem',
+                      background: isFront ? '#14532d' : isRear ? '#312e81' : '#1e293b',
+                      border: isFront ? '1px solid #16a34a' : isRear ? '1px solid #818cf8' : '1px solid #334155',
+                      transition: 'background 0.2s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.65rem', color: isHighlighted ? '#a5b4fc' : '#475569', marginBottom: '0.2rem' }}>
+                      {isFront && isRear ? 'front/rear' : isFront ? 'front' : isRear ? 'rear' : index}
+                    </div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '600', color: isHighlighted ? '#e0e7ff' : '#94a3b8' }}>
+                      {value}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
