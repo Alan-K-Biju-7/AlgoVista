@@ -100,3 +100,37 @@ function StackVisualizer() {
             </p>
           )}
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Stack view — top at the right</p>
+
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem', minHeight: '5rem', marginBottom: '1.25rem' }}>
+            {items.length === 0 ? (
+              <p style={{ fontSize: '0.8rem', color: '#475569' }}>Stack is currently empty.</p>
+            ) : (
+              items.map((value, index) => {
+                const isTop = index === items.length - 1;
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      minWidth: '3rem',
+                      padding: '0.6rem 0.5rem',
+                      textAlign: 'center',
+                      borderRadius: '0.5rem',
+                      background: isTop ? '#312e81' : '#1e293b',
+                      border: isTop ? '1px solid #818cf8' : '1px solid #334155',
+                      transition: 'background 0.2s ease',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.65rem', color: isTop ? '#a5b4fc' : '#475569', marginBottom: '0.2rem' }}>
+                      {isTop ? 'top' : index}
+                    </div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '600', color: isTop ? '#e0e7ff' : '#94a3b8' }}>
+                      {value}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
