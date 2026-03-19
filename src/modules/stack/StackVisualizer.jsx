@@ -28,3 +28,16 @@ function StackVisualizer() {
       ...prev.slice(0, 9),
     ]);
   };
+
+  const handlePush = () => {
+    if (inputValue.trim() === '') {
+      setMessage('Please type a value before pushing onto the stack.');
+      return;
+    }
+    const next = [...items, inputValue];
+    setItems(next);
+    const msg = 'Pushed "' + inputValue + '" onto the stack. New size: ' + next.length + '.';
+    setMessage(msg);
+    pushHistory(msg);
+    setInputValue('');
+  };
