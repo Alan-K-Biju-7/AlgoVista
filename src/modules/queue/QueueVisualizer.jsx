@@ -61,3 +61,11 @@ function QueueVisualizer() {
     setMessage('Cleared the queue back to empty.');
     setHistory([]);
   };
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Queue
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
