@@ -64,3 +64,11 @@ function StackVisualizer() {
   };
 
   const topItem = items.length > 0 ? items[items.length - 1] : null;
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Stack
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
