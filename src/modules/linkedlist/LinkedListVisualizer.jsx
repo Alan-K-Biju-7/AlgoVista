@@ -555,3 +555,56 @@ export default LinkedListVisualizer;
           )}
         </div>
       </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+
+        <div style={card}>
+          <p style={cardLabel}>How a linked list works</p>
+          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.8 }}>
+            Each <strong style={{ color: '#e2e8f0' }}>node</strong> stores a value and a <strong style={{ color: '#e2e8f0' }}>next pointer</strong> to the following node.
+            The list starts at the <strong style={{ color: '#818cf8' }}>HEAD</strong> pointer. The last node's next pointer is <strong style={{ color: '#f87171' }}>NULL</strong>, marking the end.
+            Unlike arrays, nodes are not stored contiguously — you must traverse from HEAD to reach any node.
+          </p>
+          <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Insert head: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Insert tail: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Delete by value: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Search: <span style={{ color: '#f87171' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(n)</span></span>
+          </div>
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
+            <span>🟣 HEAD</span>
+            <span>🔵 Traversal pointer</span>
+            <span>🟢 Found</span>
+            <span>🟤 Newly inserted</span>
+            <span style={{ color: '#f87171' }}>∅ NULL</span>
+          </div>
+        </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Pseudocode — traversal / search</p>
+          <div style={{ fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.9, color: '#475569' }}>
+            {[
+              'curr = HEAD',
+              'while curr != NULL:',
+              '  if curr.val == target:',
+              '    return curr   // found',
+              '  curr = curr.next',
+              'return NULL       // not found',
+            ].map((line, index) => (
+              <div
+                key={index}
+                style={{
+                  background: isSearching && traversalIndex !== null && index === 1 ? '#1e293b' : 'transparent',
+                  color: isSearching && traversalIndex !== null && index === 1 ? '#818cf8' : '#475569',
+                  padding: '1px 6px',
+                  borderRadius: '3px',
+                  borderLeft: isSearching && index === 1 ? '2px solid #818cf8' : '2px solid transparent',
+                }}
+              >
+                {line}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
