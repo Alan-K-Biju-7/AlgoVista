@@ -318,3 +318,34 @@ function LinkedListVisualizer() {
 }
 
 export default LinkedListVisualizer;
+
+  const handleInsertTail = () => {
+    if (inputValue.trim() === '') { setMessage('Enter a value to insert at the tail.'); return; }
+    const val = Number(inputValue);
+    setNodes((prev) => [...prev, val]);
+    const msg = 'Inserted ' + val + ' at the TAIL. It now points to NULL.';
+    setMessage(msg);
+    pushHistory(msg);
+    setInputValue('');
+    setHighlightIndex(nodes.length);
+    setTimeout(() => setHighlightIndex(null), 1200);
+  };
+
+  const handleInsertAt = () => {
+    if (inputValue.trim() === '') { setMessage('Enter a value to insert.'); return; }
+    const idx = Number(indexValue);
+    if (isNaN(idx) || idx < 0 || idx > nodes.length) {
+      setMessage('Index must be between 0 and ' + nodes.length + '.');
+      return;
+    }
+    const val = Number(inputValue);
+    const next = [...nodes];
+    next.splice(idx, 0, val);
+    setNodes(next);
+    const msg = 'Inserted ' + val + ' at index ' + idx + '. Previous node now points to it.';
+    setMessage(msg);
+    pushHistory(msg);
+    setInputValue('');
+    setHighlightIndex(idx);
+    setTimeout(() => setHighlightIndex(null), 1200);
+  };
