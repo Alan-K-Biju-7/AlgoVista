@@ -390,3 +390,36 @@ export default LinkedListVisualizer;
     setMessage('List reset to default. HEAD points to 10.');
     setHistory([]);
   };
+
+  const handleSearch = () => {
+    if (inputValue.trim() === '') { setMessage('Enter a value to search for.'); return; }
+    if (nodes.length === 0) { setMessage('The list is empty.'); return; }
+    if (isSearching) return;
+
+    const target = Number(inputValue);
+    setIsSearching(true);
+    setTraversalIndex(0);
+    setSearchFoundIndex(null);
+    setMessage('Starting traversal from HEAD looking for ' + target + '...');
+
+    let i = 0;
+    intervalRef.current = setInterval(() => {
+      setTraversalIndex(i);
+      if (nodes[i] === target) {
+        setSearchFoundIndex(i);
+        setIsSearching(false);
+        setMessage('Found ' + target + ' at index ' + i + ' after traversing ' + (i + 1) + ' node(s).');
+        pushHistory('Search found ' + target + ' at index ' + i + '.');
+        clearInterval(intervalRef.current);
+        return;
+      }
+      i += 1;
+      if (i >= nodes.length) {
+        setIsSearching(false);
+        setTraversalIndex(null);
+        setMessage(target + ' was not found. Reached NULL after traversing all ' + nodes.length + ' nodes.');
+        pushHistory('Search for ' + target + ' reached NULL — not found.');
+        clearInterval(intervalRef.current);
+      }
+    }, 700);
+  };
