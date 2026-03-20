@@ -608,3 +608,26 @@ export default LinkedListVisualizer;
           </div>
         </div>
       </div>
+
+      <div style={{ marginTop: '1rem' }}>
+        <div style={card}>
+          <p style={cardLabel}>Recent steps</p>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.8rem', color: '#475569' }}>Operations will appear here as you interact with the list.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              {history.map((item) => (
+                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
+                  {item.text}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+export default LinkedListVisualizer;
