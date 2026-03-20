@@ -39,6 +39,10 @@ function SimulatorPage() {
           <BubbleSortVisualizer />
           <InsertionSortVisualizer />
         </div>
+        <div style={{ marginTop: '1.75rem', padding: '1rem 1.25rem', borderRadius: '0.75rem', border: '1px solid #1e293b', background: '#0f172a', fontSize: '0.85rem', color: '#94a3b8' }}>
+          <strong style={{ color: '#e2e8f0' }}>Comparison hint — </strong>
+          Insertion sort usually does fewer writes than bubble sort, especially when the array is partially sorted. Watch the Shifts vs Swaps counters.
+        </div>
       </section>
     </div>
   );
