@@ -349,3 +349,44 @@ export default LinkedListVisualizer;
     setHighlightIndex(idx);
     setTimeout(() => setHighlightIndex(null), 1200);
   };
+
+  const handleDeleteValue = () => {
+    if (inputValue.trim() === '') { setMessage('Enter a value to delete.'); return; }
+    const val = Number(inputValue);
+    const idx = nodes.indexOf(val);
+    if (idx === -1) { setMessage('Value ' + val + ' not found in the list.'); return; }
+    const next = nodes.filter((_, i) => i !== idx);
+    setNodes(next);
+    const msg = 'Deleted node with value ' + val + ' at index ' + idx + '. Pointers relinked.';
+    setMessage(msg);
+    pushHistory(msg);
+    setInputValue('');
+  };
+
+  const handleDeleteAt = () => {
+    const idx = Number(indexValue);
+    if (isNaN(idx) || idx < 0 || idx >= nodes.length) {
+      setMessage('Index must be between 0 and ' + (nodes.length - 1) + '.');
+      return;
+    }
+    const val = nodes[idx];
+    const next = nodes.filter((_, i) => i !== idx);
+    setNodes(next);
+    const msg = 'Deleted node ' + val + ' at index ' + idx + '. Pointers relinked.';
+    setMessage(msg);
+    pushHistory(msg);
+    setIndexValue('');
+  };
+
+  const handleReset = () => {
+    setNodes([10, 20, 30, 40]);
+    setInputValue('');
+    setIndexValue('');
+    setHighlightIndex(null);
+    setTraversalIndex(null);
+    setSearchFoundIndex(null);
+    setIsSearching(false);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setMessage('List reset to default. HEAD points to 10.');
+    setHistory([]);
+  };
