@@ -465,3 +465,93 @@ export default LinkedListVisualizer;
 
           <p style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>List visualization</p>
+
+          {nodes.length === 0 ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', background: '#4f46e5', border: '1px solid #818cf8', fontSize: '0.82rem', color: '#e0e7ff', fontWeight: '700' }}>
+                HEAD
+              </div>
+              <div style={{ color: '#4f46e5', fontSize: '1.2rem' }}>→</div>
+              <div style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid #334155', fontSize: '0.82rem', color: '#475569', fontStyle: 'italic' }}>
+                NULL
+              </div>
+              <p style={{ marginLeft: '1rem', fontSize: '0.8rem', color: '#475569' }}>List is empty — HEAD points directly to NULL.</p>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0', minWidth: 'max-content' }}>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '0.25rem' }}>
+                  <div style={{ padding: '0.3rem 0.65rem', borderRadius: '0.4rem', background: '#4f46e5', border: '1px solid #818cf8', fontSize: '0.72rem', color: '#e0e7ff', fontWeight: '700', marginBottom: '0.3rem' }}>
+                    HEAD
+                  </div>
+                  <div style={{ color: '#4f46e5', fontSize: '1.1rem' }}>↓</div>
+                </div>
+
+                {nodes.map((value, index) => {
+                  const isHighlighted = index === highlightIndex;
+                  const isTraversal = index === traversalIndex && !searchFoundIndex;
+                  const isFound = index === searchFoundIndex;
+
+                  let nodeBg = '#1e293b';
+                  let nodeBorder = '#334155';
+                  let nodeTextColor = '#94a3b8';
+                  let pointerBg = '#0f172a';
+                  let pointerBorder = '#1e293b';
+
+                  if (isHighlighted) { nodeBg = '#312e81'; nodeBorder = '#818cf8'; nodeTextColor = '#e0e7ff'; }
+                  if (isTraversal) { nodeBg = '#1e3a5f'; nodeBorder = '#3b82f6'; nodeTextColor = '#93c5fd'; pointerBg = '#1e3a5f'; pointerBorder = '#3b82f6'; }
+                  if (isFound) { nodeBg = '#14532d'; nodeBorder = '#16a34a'; nodeTextColor = '#86efac'; pointerBg = '#14532d'; pointerBorder = '#16a34a'; }
+
+                  return (
+                    <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        {index === 0 && (
+                          <div style={{ fontSize: '0.6rem', color: '#4f46e5', marginBottom: '0.2rem', fontWeight: '700' }}>0</div>
+                        )}
+                        {index !== 0 && (
+                          <div style={{ fontSize: '0.6rem', color: '#475569', marginBottom: '0.2rem' }}>{index}</div>
+                        )}
+                        <div style={{ display: 'flex', borderRadius: '0.5rem', overflow: 'hidden', border: '1px solid ' + nodeBorder, transition: 'all 0.2s ease' }}>
+                          <div style={{ padding: '0.6rem 0.9rem', background: nodeBg, minWidth: '2.8rem', textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.65rem', color: '#475569', marginBottom: '0.2rem' }}>val</div>
+                            <div style={{ fontSize: '1rem', fontWeight: '700', color: nodeTextColor }}>{value}</div>
+                          </div>
+                          <div style={{ padding: '0.6rem 0.5rem', background: pointerBg, borderLeft: '1px solid ' + pointerBorder, minWidth: '2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <div style={{ fontSize: '0.6rem', color: '#475569', marginBottom: '0.15rem' }}>next</div>
+                            <div style={{ fontSize: '0.75rem', color: index === nodes.length - 1 ? '#f87171' : '#60a5fa' }}>
+                              {index === nodes.length - 1 ? '∅' : '→'}
+                            </div>
+                          </div>
+                        </div>
+                        {isTraversal && (
+                          <div style={{ fontSize: '0.65rem', color: '#60a5fa', marginTop: '0.3rem', fontWeight: '600' }}>◀ curr</div>
+                        )}
+                        {isFound && (
+                          <div style={{ fontSize: '0.65rem', color: '#4ade80', marginTop: '0.3rem', fontWeight: '600' }}>✓ found</div>
+                        )}
+                      </div>
+
+                      {index < nodes.length - 1 && (
+                        <div style={{ color: '#334155', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                <div style={{ color: '#334155', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ fontSize: '0.6rem', color: '#475569', marginBottom: '0.2rem' }}>&nbsp;</div>
+                  <div style={{ padding: '0.6rem 0.85rem', borderRadius: '0.5rem', border: '1px solid #334155', background: '#0f172a', fontSize: '0.82rem', color: '#f87171', fontStyle: 'italic', fontWeight: '600' }}>
+                    NULL
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
