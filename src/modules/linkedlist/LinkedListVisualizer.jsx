@@ -423,3 +423,45 @@ export default LinkedListVisualizer;
       }
     }, 700);
   };
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Linked list
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 4fr', gap: '1rem', marginBottom: '1rem' }}>
+
+        <div style={card}>
+          <p style={cardLabel}>Controls</p>
+
+          <div style={{ marginBottom: '0.75rem' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>Value</label>
+            <input type="number" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="enter a number" />
+          </div>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>Index (for insert / delete at)</label>
+            <input type="number" value={indexValue} onChange={(e) => setIndexValue(e.target.value)} placeholder="0, 1, 2 ..." />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button onClick={handleInsertHead}>Insert head</button>
+              <button onClick={handleInsertTail}>Insert tail</button>
+              <button onClick={handleInsertAt}>Insert at index</button>
+            </div>
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button onClick={handleDeleteValue}>Delete value</button>
+              <button onClick={handleDeleteAt}>Delete at index</button>
+              <button onClick={handleReset}>Reset</button>
+            </div>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              <button onClick={handleSearch} disabled={isSearching}>
+                {isSearching ? 'Searching...' : 'Search value'}
+              </button>
+            </div>
+          </div>
+
+          <p style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
+        </div>
