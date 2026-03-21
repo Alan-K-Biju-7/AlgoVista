@@ -114,3 +114,16 @@ function SelectionSortVisualizer() {
       stateRef.current = { i: ci, j: cj + 1, minIndex: nextMin, values: arr };
     }
   };
+
+  const handleStep = () => { if (isRunning || isSorted) return; performStep(); };
+  const toggleAutoRun = () => { if (isSorted) return; setIsRunning((prev) => !prev); };
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => { performStep(); }, speed);
+    } else {
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning, speed]);
