@@ -179,3 +179,70 @@ function SelectionSortVisualizer() {
             <div>Swaps: <span style={{ color: '#f472b6' }}>{swapCount}</span></div>
           </div>
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Array</p>
+
+          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-end', minHeight: '9rem' }}>
+            {values.map((value, index) => {
+              const isSortedPos  = index <= sortedUpTo;
+              const isCurrentMin = index === minIndex && !isSortedPos;
+              const isScanning   = index === j && !isSortedPos;
+              const isPassStart  = index === i && !isSortedPos;
+
+              let bg = '#1e293b';
+              let borderColor = '#334155';
+              let textColor = '#94a3b8';
+
+              if (isSortedPos)  { bg = '#14532d'; borderColor = '#16a34a'; textColor = '#86efac'; }
+              if (isPassStart && !isSortedPos)  { borderColor = '#818cf8'; }
+              if (isScanning)   { bg = '#1e3a5f'; borderColor = '#3b82f6'; textColor = '#93c5fd'; }
+              if (isCurrentMin) { bg = '#713f12'; borderColor = '#eab308'; textColor = '#fde047'; }
+
+              return (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                  <div style={{ fontSize: '0.6rem', height: '0.9rem', color: isCurrentMin ? '#fde047' : 'transparent', fontWeight: '700' }}>
+                    {isCurrentMin ? 'min' : '·'}
+                  </div>
+                  <div
+                    style={{
+                      width: '2.75rem',
+                      height: (value * 4 + 8) + 'px',
+                      background: bg,
+                      borderRadius: '0.4rem 0.4rem 0 0',
+                      border: '1px solid ' + borderColor,
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      paddingBottom: '4px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.75rem', color: textColor, fontWeight: '600' }}>{value}</span>
+                  </div>
+                  <span style={{ fontSize: '0.6rem', color: '#475569' }}>{index}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
+            <span>🟢 Sorted</span>
+            <span>🟡 Current min</span>
+            <span>🔵 Scanning j</span>
+            <span style={{ color: '#818cf8' }}>▏ Pass start i</span>
+          </div>
+
+          <div style={{ marginTop: '1rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+            On each pass i, scan from i to the end to find the minimum element.
+            Swap it into position i. After each pass, one more element is permanently placed.
+          </div>
+
+          <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
+            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: '#64748b' }}>Swaps: <span style={{ color: '#34d399' }}>O(n)</span></span>
+            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+          </div>
+        </div>
