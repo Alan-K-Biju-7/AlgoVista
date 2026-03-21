@@ -32,3 +32,32 @@ function SelectionSortVisualizer() {
   const [swapCount, setSwapCount] = useState(0);
   const intervalRef = useRef(null);
   const stateRef = useRef({ i: 0, j: 1, minIndex: 0, values: [29, 10, 14, 37, 13, 8, 22] });
+
+  const pushHistory = (text) => {
+    setHistory((prev) => [{ id: prev.length + 1, text }, ...prev.slice(0, 9)]);
+  };
+
+  const resetPointers = (arr) => {
+    setI(0); setJ(1); setMinIndex(0); setSortedUpTo(-1);
+    setIsSorted(false); setActivePseudoLine(0);
+    setComparisonCount(0); setSwapCount(0);
+    stateRef.current = { i: 0, j: 1, minIndex: 0, values: arr };
+  };
+
+  const handleReset = () => {
+    const base = [29, 10, 14, 37, 13, 8, 22];
+    setValues(base);
+    resetPointers(base);
+    setIsRunning(false);
+    setMessage('Array reset. Click "Step" or "Auto run" to begin.');
+    setHistory([]);
+  };
+
+  const handleRandomize = () => {
+    const next = Array.from({ length: 7 }, () => Math.floor(Math.random() * 40) + 1);
+    setValues(next);
+    resetPointers(next);
+    setIsRunning(false);
+    setMessage('New array generated. Find the minimum on each pass and place it at the front.');
+    setHistory([]);
+  };
