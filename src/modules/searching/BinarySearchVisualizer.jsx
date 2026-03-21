@@ -295,3 +295,64 @@ function BinarySearchVisualizer() {
         </div>
 
       </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+
+        <div style={card}>
+          <p style={cardLabel}>How binary search works</p>
+          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.8 }}>
+            Binary search only works on a <strong style={{ color: '#e2e8f0' }}>sorted array</strong>.
+            It picks the <strong style={{ color: '#a78bfa' }}>middle element</strong> and compares it to the target.
+            If the target is smaller, discard the right half. If larger, discard the left half.
+            Each step halves the search space — making it dramatically faster than linear search for large arrays.
+          </p>
+          <div style={{ marginTop: '0.85rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem', flexWrap: 'wrap' }}>
+            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
+            <span style={{ color: '#64748b' }}>Average: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
+            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+          </div>
+          <div style={{ marginTop: '0.85rem', padding: '0.75rem', borderRadius: '0.5rem', background: '#0a0f1e', border: '1px solid #1e293b', fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.7 }}>
+            <strong style={{ color: '#e2e8f0' }}>Example — </strong>
+            Searching 100 items with linear search needs up to 100 checks.
+            Binary search needs at most <span style={{ color: '#a78bfa' }}>7 checks</span> (log₂ 100 ≈ 7).
+          </div>
+        </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Pseudocode</p>
+          <div style={{ fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.9 }}>
+            {[
+              'low = 0, high = n - 1',
+              'while low <= high:',
+              '  mid = (low + high) / 2',
+              '  if A[mid] == target: return mid',
+              '  if A[mid] < target:  low = mid + 1',
+              '  else:                high = mid - 1',
+              'return -1  // not found',
+            ].map((line, index) => {
+              const isActive = activePseudoLine !== null && index === activePseudoLine;
+              return (
+                <div
+                  key={index}
+                  style={{
+                    background: isActive ? '#1e293b' : 'transparent',
+                    color: isActive ? '#818cf8' : '#475569',
+                    padding: '1px 6px',
+                    borderRadius: '3px',
+                    borderLeft: isActive ? '2px solid #818cf8' : '2px solid transparent',
+                  }}
+                >
+                  {line}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default BinarySearchVisualizer;
