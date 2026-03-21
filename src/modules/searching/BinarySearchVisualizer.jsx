@@ -33,3 +33,33 @@ function BinarySearchVisualizer() {
   const [comparisonCount, setComparisonCount] = useState(0);
   const intervalRef = useRef(null);
   const stateRef = useRef({ low: 0, high: 0, target: 0 });
+
+  const pushHistory = (text) => {
+    setHistory((prev) => [{ id: prev.length + 1, text }, ...prev.slice(0, 9)]);
+  };
+
+  const clearSearch = () => {
+    setLow(null); setHigh(null); setMid(null);
+    setFoundIndex(null); setNotFound(false);
+    setIsPrepared(false); setIsRunning(false);
+    setActivePseudoLine(null); setComparisonCount(0);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+
+  const handleReset = () => {
+    setValues([2, 5, 8, 12, 16, 23, 38, 45, 56, 72]);
+    setTarget('');
+    clearSearch();
+    setMessage('Array reset. Enter a target and click "Prepare".');
+    setHistory([]);
+  };
+
+  const handleRandomize = () => {
+    const arr = Array.from({ length: 10 }, () => Math.floor(Math.random() * 99) + 1);
+    arr.sort((a, b) => a - b);
+    setValues(arr);
+    setTarget('');
+    clearSearch();
+    setMessage('New sorted array generated. Enter a target and click "Prepare".');
+    setHistory([]);
+  };
