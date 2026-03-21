@@ -63,3 +63,61 @@ function BinarySearchVisualizer() {
     setMessage('New sorted array generated. Enter a target and click "Prepare".');
     setHistory([]);
   };
+
+  const handlePrepare = () => {
+    if (target.trim() === '') { setMessage('Please enter a target value first.'); return; }
+    const t = Number(target);
+    const l = 0;
+    const h = values.length - 1;
+    setLow(l); setHigh(h); setMid(null);
+    setFoundIndex(null); setNotFound(false);
+    setIsPrepared(true); setIsRunning(false);
+    setActivePseudoLine(0); setComparisonCount(0);
+    stateRef.current = { low: l, high: h, target: t };
+    setMessage('Ready. low = 0, high = ' + h + '. Click "Step" or "Auto run".');
+    pushHistory('Prepared search for ' + t + ' in array of length ' + values.length + '.');
+  };
+
+  const doStep = (l, h, t) => {
+    if (l > h) {
+      setLow(null); setHigh(null); setMid(null);
+      setNotFound(true); setIsRunning(false);
+      setActivePseudoLine(6);
+      setMessage(t + ' is not in the array. Search exhausted all possibilities.');
+      pushHistory('Not found: ' + t + ' — low exceeded high.');
+      return { done: true };
+    }
+
+    const m = Math.floor((l + h) / 2);
+    setMid(m); setLow(l); setHigh(h);
+    setComparisonCount((c) => c + 1);
+    setActivePseudoLine(1);
+
+    if (values[m] === t) {
+      setFoundIndex(m); setIsRunning(false);
+      setActivePseudoLine(2);
+      setMessage('Found ' + t + ' at index ' + m + ' after checking mid = ' + m + '.');
+      pushHistory('Found ' + t + ' at index ' + m + '.');
+      return { done: true };
+    } else if (values[m] < t) {
+      setActivePseudoLine(4);
+      const nextL = m + 1;
+      setMessage('A[' + m + '] = ' + values[m] + ' < ' + t + '. Discard left half. New low = ' + nextL + '.');
+      pushHistory('mid ' + m + ': ' + values[m] + ' < ' + t + ', moved low to ' + nextL + '.');
+      stateRef.current = { low: nextL, high: h, target: t };
+      return { done: false, nextL, nextH: h };
+    } else {
+      setActivePseudoLine(5);
+      const nextH = m - 1;
+      setMessage('A[' + m + '] = ' + values[m] + ' > ' + t + '. Discard right half. New high = ' + nextH + '.');
+      pushHistory('mid ' + m + ': ' + values[m] + ' > ' + t + ', moved high to ' + nextH + '.');
+      stateRef.current = { low: l, high: nextH, target: t };
+      return { done: false, nextL: l, nextH };
+    }
+  };
+
+  const handleStep = () => {
+    if (!isPrepared || isRunning) return;
+    const { low: l, high: h, target: t } = stateRef.current;
+    doStep(l, h, t);
+  };
