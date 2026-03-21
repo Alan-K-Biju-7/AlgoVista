@@ -246,3 +246,55 @@ function SelectionSortVisualizer() {
             <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Steps</p>
+          {history.length === 0 ? (
+            <p style={{ fontSize: '0.8rem', color: '#475569' }}>Run a step to see each decision here.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              {history.map((item) => (
+                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
+                  {item.text}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #1e293b' }}>
+            <p style={{ ...cardLabel, marginBottom: '0.5rem' }}>Pseudocode</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '0.78rem', lineHeight: 1.8 }}>
+              {[
+                'for i from 0 to n - 2',
+                '  minIdx = i',
+                '  for j from i+1 to n-1',
+                '    if A[j] < A[minIdx]: minIdx = j',
+                '  swap A[i], A[minIdx]',
+                'end',
+              ].map((line, index) => {
+                const isActive = index === activePseudoLine;
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      background: isActive ? '#1e293b' : 'transparent',
+                      color: isActive ? '#818cf8' : '#475569',
+                      padding: '1px 6px',
+                      borderRadius: '3px',
+                      borderLeft: isActive ? '2px solid #818cf8' : '2px solid transparent',
+                    }}
+                  >
+                    {line}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default SelectionSortVisualizer;
