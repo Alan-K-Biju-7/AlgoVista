@@ -61,3 +61,56 @@ function SelectionSortVisualizer() {
     setMessage('New array generated. Find the minimum on each pass and place it at the front.');
     setHistory([]);
   };
+
+  const performStep = () => {
+    const { i: ci, j: cj, minIndex: cMin, values: arr } = stateRef.current;
+    const n = arr.length;
+
+    if (ci >= n - 1) {
+      setIsSorted(true); setIsRunning(false);
+      setSortedUpTo(n - 1); setActivePseudoLine(5);
+      setMessage('Selection sort complete. Every element is in its final position.');
+      pushHistory('Array fully sorted.');
+      return;
+    }
+
+    setActivePseudoLine(2);
+    setComparisonCount((c) => c + 1);
+
+    let nextMin = cMin;
+    if (arr[cj] < arr[cMin]) {
+      nextMin = cj;
+      setMessage('New minimum found: ' + arr[cj] + ' at index ' + cj + '.');
+      pushHistory('New min: ' + arr[cj] + ' at index ' + cj + ' (pass i = ' + ci + ').');
+    } else {
+      setMessage('A[' + cj + '] = ' + arr[cj] + ' is not smaller than current min ' + arr[cMin] + '. Move on.');
+    }
+
+    setMinIndex(nextMin);
+    setJ(cj + 1);
+
+    if (cj + 1 >= n - ci) {
+      setActivePseudoLine(3);
+      const newArr = [...arr];
+      if (nextMin !== ci) {
+        const tmp = newArr[ci];
+        newArr[ci] = newArr[nextMin];
+        newArr[nextMin] = tmp;
+        setSwapCount((s) => s + 1);
+        pushHistory('Swapped index ' + ci + ' (' + newArr[nextMin] + ') with index ' + nextMin + ' (' + newArr[ci] + ').');
+        setMessage('Pass ' + ci + ' done. Swapped min ' + newArr[ci] + ' into position ' + ci + '.');
+      } else {
+        pushHistory('Pass ' + ci + ': min already at index ' + ci + ', no swap needed.');
+        setMessage('Pass ' + ci + ' done. Min was already at index ' + ci + '.');
+      }
+      setValues(newArr);
+      setSortedUpTo(ci);
+      setActivePseudoLine(4);
+      const nextI = ci + 1;
+      const nextJ = nextI + 1;
+      setI(nextI); setJ(nextJ); setMinIndex(nextI);
+      stateRef.current = { i: nextI, j: nextJ, minIndex: nextI, values: newArr };
+    } else {
+      stateRef.current = { i: ci, j: cj + 1, minIndex: nextMin, values: arr };
+    }
+  };
