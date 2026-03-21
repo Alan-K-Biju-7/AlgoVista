@@ -146,3 +146,37 @@ function BinarySearchVisualizer() {
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, speed]);
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+        Binary search
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 3fr 1.8fr', gap: '1rem' }}>
+
+        <div style={card}>
+          <p style={cardLabel}>Controls</p>
+
+          <div style={{ marginBottom: '0.85rem' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>
+              Target value
+            </label>
+            <input
+              type="number"
+              value={target}
+              onChange={(e) => setTarget(e.target.value)}
+              placeholder="number to find"
+              disabled={isRunning}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            <button onClick={handlePrepare} disabled={isRunning}>Prepare</button>
+            <button onClick={handleStep} disabled={!isPrepared || isRunning || foundIndex !== null || notFound}>Step</button>
+            <button onClick={toggleAutoRun} disabled={!isPrepared || foundIndex !== null || notFound}>
+              {isRunning ? 'Pause' : 'Auto run'}
+            </button>
+            <button onClick={handleRandomize} disabled={isRunning}>Randomize</button>
+            <button onClick={handleReset} disabled={isRunning}>Reset</button>
+          </div>
