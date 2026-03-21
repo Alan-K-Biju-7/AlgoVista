@@ -214,3 +214,67 @@ function BinarySearchVisualizer() {
             <div>Comparisons: <span style={{ color: '#818cf8' }}>{comparisonCount}</span></div>
           </div>
         </div>
+
+        <div style={card}>
+          <p style={cardLabel}>Array — sorted</p>
+
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', minHeight: '9rem', flexWrap: 'wrap' }}>
+            {values.map((value, index) => {
+              const isLow = index === low;
+              const isHigh = index === high;
+              const isMid = index === mid;
+              const isFound = index === foundIndex;
+              const isEliminated = isPrepared && low !== null && high !== null && (index < low || index > high) && !isFound;
+
+              let bg = '#1e293b';
+              let borderColor = '#334155';
+              let textColor = '#94a3b8';
+              let labelColor = '#475569';
+
+              if (isEliminated) { bg = '#0a0f1e'; borderColor = '#1e293b'; textColor = '#334155'; }
+              if (isLow && !isFound)  { borderColor = '#3b82f6'; }
+              if (isHigh && !isFound) { borderColor = '#f97316'; }
+              if (isMid && !isFound)  { bg = '#312e81'; borderColor = '#a78bfa'; textColor = '#e0e7ff'; }
+              if (isFound)            { bg = '#14532d'; borderColor = '#16a34a'; textColor = '#86efac'; }
+
+              return (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                  <div style={{ fontSize: '0.6rem', height: '0.9rem', color: isMid ? '#a78bfa' : 'transparent', fontWeight: '700' }}>
+                    {isMid ? 'mid' : '·'}
+                  </div>
+                  <div
+                    style={{
+                      width: '2.75rem',
+                      height: (value * 3 + 20) + 'px',
+                      background: bg,
+                      borderRadius: '0.4rem 0.4rem 0 0',
+                      border: '1px solid ' + borderColor,
+                      transition: 'all 0.25s ease',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      paddingBottom: '4px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.75rem', color: textColor, fontWeight: '600' }}>{value}</span>
+                  </div>
+                  <span style={{ fontSize: '0.6rem', color: labelColor }}>{index}</span>
+                  <div style={{ fontSize: '0.6rem', height: '0.9rem', color: isLow && isHigh ? '#fbbf24' : isLow ? '#60a5fa' : isHigh ? '#f97316' : 'transparent', fontWeight: '700' }}>
+                    {isLow && isHigh ? 'L/H' : isLow ? 'L' : isHigh ? 'H' : '·'}
+                  </div>
+                  {isFound && (
+                    <div style={{ fontSize: '0.6rem', color: '#4ade80', fontWeight: '700' }}>✓</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: '1.1rem', display: 'flex', gap: '1.25rem', fontSize: '0.75rem', flexWrap: 'wrap' }}>
+            <span style={{ color: '#60a5fa' }}>L = low</span>
+            <span style={{ color: '#f97316' }}>H = high</span>
+            <span style={{ color: '#a78bfa' }}>mid = checked element</span>
+            <span style={{ color: '#334155' }}>faded = eliminated half</span>
+            <span style={{ color: '#4ade80' }}>✓ = found</span>
+          </div>
+        </div>
