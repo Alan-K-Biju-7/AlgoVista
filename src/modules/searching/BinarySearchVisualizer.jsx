@@ -180,3 +180,37 @@ function BinarySearchVisualizer() {
             <button onClick={handleRandomize} disabled={isRunning}>Randomize</button>
             <button onClick={handleReset} disabled={isRunning}>Reset</button>
           </div>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <p style={{ ...cardLabel, marginBottom: '0.4rem' }}>Speed</p>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {[{ label: 'Slow', value: 1000 }, { label: 'Normal', value: 700 }, { label: 'Fast', value: 250 }].map((s) => (
+                <button
+                  key={s.value}
+                  onClick={() => setSpeed(s.value)}
+                  style={{
+                    padding: '0.3rem 0.65rem',
+                    fontSize: '0.75rem',
+                    background: speed === s.value ? '#4f46e5' : 'transparent',
+                    color: speed === s.value ? '#fff' : '#64748b',
+                    border: '1px solid',
+                    borderColor: speed === s.value ? '#4f46e5' : '#334155',
+                    borderRadius: '0.4rem',
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
+
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.9 }}>
+            <div>low = <span style={{ color: '#60a5fa' }}>{low !== null ? low : '—'}</span>
+              &nbsp;|&nbsp; high = <span style={{ color: '#f97316' }}>{high !== null ? high : '—'}</span>
+              &nbsp;|&nbsp; mid = <span style={{ color: '#a78bfa' }}>{mid !== null ? mid : '—'}</span>
+            </div>
+            <div>Comparisons: <span style={{ color: '#818cf8' }}>{comparisonCount}</span></div>
+          </div>
+        </div>
