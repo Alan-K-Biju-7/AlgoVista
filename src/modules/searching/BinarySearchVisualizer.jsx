@@ -121,3 +121,28 @@ function BinarySearchVisualizer() {
     const { low: l, high: h, target: t } = stateRef.current;
     doStep(l, h, t);
   };
+
+  const toggleAutoRun = () => {
+    if (!isPrepared || foundIndex !== null || notFound) return;
+    setIsRunning((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        const { low: l, high: h, target: t } = stateRef.current;
+        const result = doStep(l, h, t);
+        if (result.done) {
+          setIsRunning(false);
+          clearInterval(intervalRef.current);
+        }
+      }, speed);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning, speed]);
