@@ -33,3 +33,28 @@ function ConceptsPage() {
         Every data structure and algorithm in AlgoVista — with a plain-English explanation,
         time complexity, and a direct link into the live simulator.
       </p>
+
+      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Data structures</h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Array</h3>
+            <span style={badge('#34d399')}>O(1) access</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            A contiguous block of memory where every element is stored at a fixed index.
+            Reading or writing any element by index is instant. Inserting or deleting in
+            the middle is slow because every following element must shift.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Read', 'O(1)', '#34d399')}
+            {complexity('Insert end', 'O(1)', '#34d399')}
+            {complexity('Insert middle', 'O(n)', '#f87171')}
+            {complexity('Search', 'O(n)', '#fbbf24')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
