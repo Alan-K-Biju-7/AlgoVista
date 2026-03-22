@@ -100,3 +100,26 @@ function ConceptsPage() {
             → Open in simulator
           </Link>
         </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Queue</h3>
+            <span style={badge('#fbbf24')}>FIFO</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            A First In, First Out structure. Like a queue at a counter — the first person
+            to join is the first to be served. Enqueue adds to the rear; dequeue removes
+            from the front. Used in task scheduling, BFS, and print queues.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Enqueue', 'O(1)', '#34d399')}
+            {complexity('Dequeue', 'O(1)', '#34d399')}
+            {complexity('Peek', 'O(1)', '#34d399')}
+            {complexity('Space', 'O(n)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
+
+      </div>
