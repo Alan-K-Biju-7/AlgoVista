@@ -123,3 +123,31 @@ function ConceptsPage() {
         </div>
 
       </div>
+
+      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Searching</h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Binary search</h3>
+            <span style={badge('#a78bfa')}>O(log n)</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            Works only on a sorted array. Pick the middle element — if it matches the target
+            you are done. If the target is smaller, discard the right half; if larger, discard
+            the left. Each step halves the search space. Searching 1,000,000 elements takes
+            at most 20 comparisons.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Best', 'O(1)', '#34d399')}
+            {complexity('Worst', 'O(log n)', '#fbbf24')}
+            {complexity('vs linear', 'O(n)', '#f87171')}
+            {complexity('Space', 'O(1)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
+
+      </div>
