@@ -177,3 +177,25 @@ function ConceptsPage() {
             → Open in simulator
           </Link>
         </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Insertion sort</h3>
+            <span style={badge('#fbbf24')}>O(n²) worst</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            Build a sorted portion from left to right. Pick the next element as the key,
+            then shift larger elements in the sorted portion one step right to make room,
+            and drop the key in. Excellent on nearly-sorted data and small arrays. Used
+            in practice inside hybrid sorts like Timsort.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Best', 'O(n)', '#34d399')}
+            {complexity('Worst', 'O(n²)', '#f87171')}
+            {complexity('Shifts', 'O(n²)', '#fbbf24')}
+            {complexity('Space', 'O(1)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
