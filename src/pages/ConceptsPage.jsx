@@ -151,3 +151,29 @@ function ConceptsPage() {
         </div>
 
       </div>
+
+      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Sorting</h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Bubble sort</h3>
+            <span style={badge('#f87171')}>O(n²)</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            On each pass, compare adjacent pairs and swap them if out of order. After every
+            full pass, the largest unsorted element "bubbles up" to its correct position at
+            the end. Simple to understand but inefficient on large arrays. Best case O(n)
+            if the array is already sorted.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Best', 'O(n)', '#34d399')}
+            {complexity('Worst', 'O(n²)', '#f87171')}
+            {complexity('Swaps', 'O(n²)', '#f87171')}
+            {complexity('Space', 'O(1)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
