@@ -58,3 +58,24 @@ function ConceptsPage() {
             → Open in simulator
           </Link>
         </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Linked list</h3>
+            <span style={badge('#818cf8')}>Dynamic size</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            A chain of nodes where each node holds a value and a pointer to the next node.
+            The list starts at the HEAD. Inserting at the head is instant; reaching any
+            other position requires traversing from HEAD one step at a time.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Insert head', 'O(1)', '#34d399')}
+            {complexity('Insert tail', 'O(n)', '#fbbf24')}
+            {complexity('Search', 'O(n)', '#f87171')}
+            {complexity('Space', 'O(n)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
