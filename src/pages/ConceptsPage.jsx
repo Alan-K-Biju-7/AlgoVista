@@ -222,6 +222,28 @@ function ConceptsPage() {
           </Link>
         </div>
 
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1rem' }}>🌲</span>
+            <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>Binary Search Tree</h3>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
+            A tree where every left child is smaller and every right child is larger than its parent.
+            Enables O(log n) insert, search, and delete on average. Degrades to O(n) on a skewed tree.
+            Inorder traversal always yields a sorted sequence.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {complexity('Insert avg', 'O(log n)', '#34d399')}
+            {complexity('Search avg', 'O(log n)', '#34d399')}
+            {complexity('Delete avg', 'O(log n)', '#34d399')}
+            {complexity('Worst case', 'O(n)', '#f87171')}
+            {complexity('Space', 'O(n)', '#60a5fa')}
+          </div>
+          <Link to="/simulator#bst" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
+
       </div>
     </div>
   );
