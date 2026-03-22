@@ -79,3 +79,24 @@ function ConceptsPage() {
             → Open in simulator
           </Link>
         </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Stack</h3>
+            <span style={badge('#f472b6')}>LIFO</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            A Last In, First Out structure. Think of a stack of plates — you can only
+            add or remove from the top. Push adds an element; pop removes the top element.
+            Used in undo systems, call stacks, and expression parsing.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Push', 'O(1)', '#34d399')}
+            {complexity('Pop', 'O(1)', '#34d399')}
+            {complexity('Peek', 'O(1)', '#34d399')}
+            {complexity('Space', 'O(n)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
