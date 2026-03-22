@@ -100,3 +100,68 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      <section style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem 4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <h2 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>What you can explore</h2>
+          <Link to="/simulator" style={{ fontSize: '0.82rem', color: 'var(--accent-light)', textDecoration: 'none', fontWeight: '500' }}>
+            Open all in simulator →
+          </Link>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '0.75rem' }}>
+          {topics.map((t) => (
+            <div
+              key={t.label}
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '1.1rem 1.15rem',
+                transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+                cursor: 'default',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(99,102,241,0.1), 0 4px 16px rgba(0,0,0,0.3)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = 'none'; }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '1rem', color: 'var(--accent-light)' }}>{t.icon}</span>
+                <span style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.88rem' }}>{t.label}</span>
+              </div>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>{t.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{
+          marginTop: '1.75rem', padding: '1.25rem 1.5rem',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid rgba(99,102,241,0.2)',
+          background: 'rgba(99,102,241,0.05)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: '1rem',
+        }}>
+          <div>
+            <p style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem' }}>
+              Ready to try it?
+            </p>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              Every algorithm has Step, Auto run, and speed controls.
+            </p>
+          </div>
+          <Link to="/simulator" style={{
+            padding: '0.6rem 1.25rem', borderRadius: '0.5rem',
+            background: 'var(--accent-dim)', color: '#fff',
+            fontWeight: '600', fontSize: '0.85rem', textDecoration: 'none',
+            whiteSpace: 'nowrap', flexShrink: 0,
+          }}>
+            Open simulator
+          </Link>
+        </div>
+      </section>
+
+    </div>
+  );
+}
+
+export default HomePage;
