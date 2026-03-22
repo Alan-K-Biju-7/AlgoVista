@@ -199,3 +199,32 @@ function ConceptsPage() {
             → Open in simulator
           </Link>
         </div>
+
+        <div style={card}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Selection sort</h3>
+            <span style={badge('#60a5fa')}>O(n) swaps</span>
+          </div>
+          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
+            On each pass, scan the unsorted portion to find the minimum element, then
+            swap it into its correct position at the front. Always makes exactly n−1 swaps
+            regardless of input order — making it useful when write operations are
+            significantly more expensive than reads.
+          </p>
+          <div style={{ marginBottom: '1rem' }}>
+            {complexity('Best', 'O(n²)', '#f87171')}
+            {complexity('Worst', 'O(n²)', '#f87171')}
+            {complexity('Swaps', 'O(n)', '#34d399')}
+            {complexity('Space', 'O(1)', '#60a5fa')}
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default ConceptsPage;
