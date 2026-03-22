@@ -1,58 +1,45 @@
 import ArrayVisualizer from '../modules/array/ArrayVisualizer';
 import StackVisualizer from '../modules/stack/StackVisualizer';
 import QueueVisualizer from '../modules/queue/QueueVisualizer';
+import LinkedListVisualizer from '../modules/linkedlist/LinkedListVisualizer';
+import BinarySearchVisualizer from '../modules/searching/BinarySearchVisualizer';
 import BubbleSortVisualizer from '../modules/sorting/BubbleSortVisualizer';
 import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer';
 import SelectionSortVisualizer from '../modules/sorting/SelectionSortVisualizer';
-import LinkedListVisualizer from '../modules/linkedlist/LinkedListVisualizer';
-import BinarySearchVisualizer from '../modules/searching/BinarySearchVisualizer';
+import BSTVisualizer from '../modules/bst/BSTVisualizer';
+
+const sections = [
+  { id: 'array',      label: 'Array',          Component: ArrayVisualizer },
+  { id: 'linkedlist', label: 'Linked List',     Component: LinkedListVisualizer },
+  { id: 'stack',      label: 'Stack',           Component: StackVisualizer },
+  { id: 'queue',      label: 'Queue',           Component: QueueVisualizer },
+  { id: 'bst',        label: 'BST',             Component: BSTVisualizer },
+  { id: 'bsearch',    label: 'Binary Search',   Component: BinarySearchVisualizer },
+  { id: 'bubble',     label: 'Bubble Sort',     Component: BubbleSortVisualizer },
+  { id: 'insertion',  label: 'Insertion Sort',  Component: InsertionSortVisualizer },
+  { id: 'selection',  label: 'Selection Sort',  Component: SelectionSortVisualizer },
+];
 
 function SimulatorPage() {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem' }}>
-      <h1 style={{ marginBottom: '0.4rem', fontSize: '2rem' }}>Live DSA simulator</h1>
-      <p style={{ color: '#94a3b8', marginBottom: '2.5rem', fontSize: '0.95rem' }}>
-        Step through data structures and algorithms one operation at a time.
+      <h1 style={{ fontSize: '1.6rem', marginBottom: '0.4rem' }}>Simulator</h1>
+      <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '2.5rem' }}>
+        Every module is live — interact directly with the structures below.
       </p>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Arrays</h2>
-        <ArrayVisualizer />
-      </section>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Stack</h2>
-        <StackVisualizer />
-      </section>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Queue</h2>
-        <QueueVisualizer />
-      </section>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Linked list</h2>
-        <LinkedListVisualizer />
-      </section>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Binary search</h2>
-        <BinarySearchVisualizer />
-      </section>
-
-      <section style={{ marginBottom: '3.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: '#818cf8' }}>Sorting</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-          <BubbleSortVisualizer />
-          <InsertionSortVisualizer />
-          <SelectionSortVisualizer />
-        </div>
-        <div style={{ marginTop: '1.75rem', padding: '1rem 1.25rem', borderRadius: '0.75rem', border: '1px solid #1e293b', background: '#0f172a', fontSize: '0.85rem', color: '#94a3b8' }}>
-          <strong style={{ color: '#e2e8f0' }}>Comparison hint — </strong>
-          Selection sort always does exactly n-1 swaps regardless of input order — making it good when writes are expensive.
-          Insertion sort is faster on nearly-sorted data. Bubble sort is the simplest but slowest in practice.
-        </div>
-      </section>
+      {sections.map(({ id, label, Component }) => (
+        <section key={id} id={id} style={{ marginBottom: '3.5rem' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
+            marginBottom: '1rem', paddingBottom: '0.6rem',
+            borderBottom: '1px solid var(--border-subtle)',
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
+            <h2 style={{ fontSize: '1rem', color: 'var(--text-primary)' }}>{label}</h2>
+          </div>
+          <Component />
+        </section>
+      ))}
     </div>
   );
 }
