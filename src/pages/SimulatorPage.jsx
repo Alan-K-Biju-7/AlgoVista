@@ -7,6 +7,7 @@ import BubbleSortVisualizer from '../modules/sorting/BubbleSortVisualizer';
 import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer';
 import SelectionSortVisualizer from '../modules/sorting/SelectionSortVisualizer';
 import BSTVisualizer from '../modules/bst/BSTVisualizer';
+import AVLVisualizer from '../modules/avl/AVLVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          Component: ArrayVisualizer },
@@ -14,6 +15,7 @@ const sections = [
   { id: 'stack',      label: 'Stack',           Component: StackVisualizer },
   { id: 'queue',      label: 'Queue',           Component: QueueVisualizer },
   { id: 'bst',        label: 'BST',             Component: BSTVisualizer },
+  { id: 'avl',        label: 'AVL Tree',         Component: AVLVisualizer },
   { id: 'bsearch',    label: 'Binary Search',   Component: BinarySearchVisualizer },
   { id: 'bubble',     label: 'Bubble Sort',     Component: BubbleSortVisualizer },
   { id: 'insertion',  label: 'Insertion Sort',  Component: InsertionSortVisualizer },

@@ -244,6 +244,28 @@ function ConceptsPage() {
           </Link>
         </div>
 
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1rem' }}>⚖️</span>
+            <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>AVL Tree</h3>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
+            A self-balancing BST that maintains a balance factor (bf = left height − right height) at every node.
+            After every insert or delete, LL / RR / LR / RL rotations restore balance.
+            Guarantees O(log n) worst-case unlike a plain BST.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {complexity('Insert', 'O(log n)', '#34d399')}
+            {complexity('Delete', 'O(log n)', '#34d399')}
+            {complexity('Search', 'O(log n)', '#34d399')}
+            {complexity('Rotations', 'O(1)', '#a78bfa')}
+            {complexity('Space', 'O(n)', '#60a5fa')}
+          </div>
+          <Link to="/simulator#avl" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
+            → Open in simulator
+          </Link>
+        </div>
+
       </div>
     </div>
   );
