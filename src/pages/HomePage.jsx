@@ -106,3 +106,96 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── PHASES ── */}
+      <section style={{ maxWidth: '1160px', margin: '0 auto', padding: '0 2.5rem 5rem' }}>
+        <p className="section-label">Learning path</p>
+        <h2 style={{ fontSize: '1.4rem', marginBottom: '1.75rem' }}>Four phases, one goal</h2>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.75rem', marginBottom: '4rem' }}>
+          {phases.map((p) => (
+            <div key={p.num} style={{
+              background: 'var(--bg-card)', border: `1px solid ${p.color}22`,
+              borderRadius: 'var(--radius-xl)', padding: '1.25rem',
+              transition: 'border-color 0.2s, box-shadow 0.2s',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${p.color}55`; e.currentTarget.style.boxShadow = `0 0 20px ${p.color}15`; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${p.color}22`; e.currentTarget.style.boxShadow = 'none'; }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: p.color, letterSpacing: '-0.04em', fontVariantNumeric: 'tabular-nums' }}>{p.num}</span>
+                <span style={{ padding: '0.18rem 0.55rem', borderRadius: '999px', background: `${p.color}18`, border: `1px solid ${p.color}33`, fontSize: '0.65rem', fontWeight: '700', color: p.color, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Phase</span>
+              </div>
+              <p style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>{p.label}</p>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>{p.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Topic grid */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div>
+            <p className="section-label">All modules</p>
+            <h2 style={{ fontSize: '1.4rem' }}>What you can explore</h2>
+          </div>
+          <Link to="/simulator" style={{ fontSize: '0.82rem', color: 'var(--accent)', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+            Open all in simulator →
+          </Link>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '0.65rem', marginBottom: '2.5rem' }}>
+          {topics.map((t) => {
+            const pc = phaseColor[t.phase];
+            return (
+              <div key={t.label} style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border-default)',
+                borderRadius: 'var(--radius-xl)', padding: '1.1rem',
+                transition: 'border-color 0.2s, box-shadow 0.2s', cursor: 'default',
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${pc}44`; e.currentTarget.style.boxShadow = `0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px ${pc}22`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                    <span style={{ fontSize: '0.95rem', color: pc }}>{t.icon}</span>
+                    <span style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '0.86rem' }}>{t.label}</span>
+                  </div>
+                  <span style={{ padding: '0.12rem 0.45rem', borderRadius: '999px', background: `${pc}15`, border: `1px solid ${pc}30`, fontSize: '0.6rem', fontWeight: '700', color: pc }}>{t.phase}</span>
+                </div>
+                <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>{t.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* CTA banner */}
+        <div style={{
+          padding: '1.75rem 2rem',
+          borderRadius: 'var(--radius-2xl)',
+          border: '1px solid rgba(0,212,170,0.2)',
+          background: 'linear-gradient(135deg, rgba(0,212,170,0.06) 0%, rgba(0,168,132,0.03) 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: '1.25rem',
+          boxShadow: '0 0 40px rgba(0,212,170,0.06)',
+        }}>
+          <div>
+            <p style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.3rem' }}>Ready to visualize?</p>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>Every module has Step, Auto-run, and speed controls.</p>
+          </div>
+          <Link to="/simulator" style={{
+            padding: '0.7rem 1.5rem', borderRadius: '0.55rem',
+            background: 'var(--accent)', color: '#031a14',
+            fontWeight: '700', fontSize: '0.88rem', textDecoration: 'none',
+            whiteSpace: 'nowrap', flexShrink: 0,
+            boxShadow: '0 0 16px rgba(0,212,170,0.25)',
+            transition: 'all 0.15s',
+          }}>
+            Open Simulator
+          </Link>
+        </div>
+
+      </section>
+
+    </div>
+  );
+}
