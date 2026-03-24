@@ -123,7 +123,7 @@ export default function BSTVisualizer() {
 
   return (
     <div>
-      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>Binary Search Tree</p>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent)', marginBottom: '1rem' }}>Binary Search Tree</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1rem', marginBottom: '1rem' }}>
         <BSTControls

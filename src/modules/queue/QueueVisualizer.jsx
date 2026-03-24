@@ -64,7 +64,7 @@ function QueueVisualizer() {
 
   return (
     <div>
-      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#c7d2fe', marginBottom: '1rem' }}>
+      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent)', marginBottom: '1rem' }}>
         Queue
       </p>
 
