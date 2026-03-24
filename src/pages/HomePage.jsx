@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const stats = [
-  { value: '10+', label: 'Modules' },
+  { value: '10',  label: 'Modules' },
   { value: '4',   label: 'Data Structures' },
   { value: '3',   label: 'Sort Algorithms' },
   { value: '2',   label: 'Tree Types' },
