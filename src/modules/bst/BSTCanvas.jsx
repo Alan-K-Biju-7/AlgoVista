@@ -26,7 +26,7 @@ export default function BSTCanvas({ root, highlightPath = [], foundVal = null, d
       <svg width={Math.max(maxX, 300)} height={Math.max(maxY, 200)} style={{ display: 'block' }}>
         {edges.map((e, i) => (
           <line key={i} x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2}
-            stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+            stroke="var(--border-strong)" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
         ))}
         {nodes.map((n) => {
           const s = getNodeStyle(n.val);
