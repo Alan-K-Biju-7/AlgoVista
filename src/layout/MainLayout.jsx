@@ -7,7 +7,7 @@ const navLinks = [
   { to: '/about',     label: 'About'     },
 ];
 
-function MainLayout({ children }) {
+export default function MainLayout({ children }) {
   const { pathname } = useLocation();
 
   return (
@@ -16,77 +16,71 @@ function MainLayout({ children }) {
       <header style={{
         position: 'sticky', top: 0, zIndex: 100,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 2rem', height: '56px',
-        background: 'rgba(2,8,23,0.8)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        padding: '0 2.5rem', height: '60px',
+        background: 'rgba(10,14,26,0.85)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         borderBottom: '1px solid var(--border-subtle)',
-        boxShadow: '0 1px 0 rgba(255,255,255,0.03)',
       }}>
 
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{
-            width: '26px', height: '26px', borderRadius: '6px',
-            background: 'linear-gradient(135deg, #4f46e5, #818cf8)',
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+          <div style={{
+            width: '28px', height: '28px', borderRadius: '7px',
+            background: 'linear-gradient(135deg, #00d4aa, #00a884)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.7rem', fontWeight: '800', color: '#fff', flexShrink: 0,
-          }}>A</span>
-          <span style={{
-            fontWeight: '700', fontSize: '0.95rem', letterSpacing: '-0.02em',
-            background: 'linear-gradient(135deg, #e0e7ff, #818cf8)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>AlgoVista</span>
+            boxShadow: '0 0 12px rgba(0,212,170,0.35)',
+          }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#031a14' }}>A</span>
+          </div>
+          <span style={{ fontWeight: '800', fontSize: '1rem', letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
+            Algo<span style={{ color: 'var(--accent)' }}>Vista</span>
+          </span>
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.15rem' }}>
           {navLinks.map(({ to, label }) => {
-            const isActive = pathname === to;
+            const active = pathname === to;
             return (
-              <Link
-                key={to}
-                to={to}
-                style={{
-                  padding: '0.35rem 0.85rem',
-                  borderRadius: '0.4rem',
-                  fontSize: '0.85rem',
-                  fontWeight: isActive ? '600' : '400',
-                  color: isActive ? '#e0e7ff' : 'var(--text-muted)',
-                  background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
-                  border: isActive ? '1px solid rgba(99,102,241,0.25)' : '1px solid transparent',
-                  textDecoration: 'none',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => { if (!isActive) { e.target.style.color = 'var(--text-primary)'; e.target.style.background = 'var(--bg-elevated)'; }}}
-                onMouseLeave={(e) => { if (!isActive) { e.target.style.color = 'var(--text-muted)'; e.target.style.background = 'transparent'; }}}
-              >
+              <Link key={to} to={to} style={{
+                padding: '0.38rem 0.9rem',
+                borderRadius: '0.45rem',
+                fontSize: '0.85rem',
+                fontWeight: active ? '600' : '400',
+                color: active ? 'var(--accent)' : 'var(--text-muted)',
+                background: active ? 'var(--accent-glow)' : 'transparent',
+                border: active ? '1px solid var(--border-accent)' : '1px solid transparent',
+                textDecoration: 'none',
+                transition: 'all 0.15s',
+              }}>
                 {label}
               </Link>
             );
           })}
         </nav>
+
       </header>
 
       <main style={{ flex: 1 }}>{children}</main>
 
       <footer style={{
         borderTop: '1px solid var(--border-subtle)',
-        padding: '1.25rem 2rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.5rem',
+        padding: '1.5rem 2.5rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem',
       }}>
-        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} AlgoVista — Visual DSA lab
-        </span>
-        <div style={{ display: 'flex', gap: '1.25rem' }}>
-          {[{ to: '/concepts', label: 'Concepts' }, { to: '/simulator', label: 'Simulator' }, { to: '/about', label: 'About' }].map(({ to, label }) => (
-            <Link key={to} to={to} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.15s' }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ width: '18px', height: '18px', borderRadius: '4px', background: 'linear-gradient(135deg, #00d4aa, #00a884)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '0.55rem', fontWeight: '900', color: '#031a14' }}>A</span>
+          </div>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            © {new Date().getFullYear()} AlgoVista
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '1.5rem' }}>
+          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
+            <Link key={to} to={to} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', transition: 'color 0.15s' }}
+              onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
               onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
-            >{label}</Link>
+            >{l}</Link>
           ))}
         </div>
       </footer>
@@ -94,5 +88,3 @@ function MainLayout({ children }) {
     </div>
   );
 }
-
-export default MainLayout;
