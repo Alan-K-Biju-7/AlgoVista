@@ -1,274 +1,135 @@
 import { Link } from 'react-router-dom';
 
-const card = {
-  background: '#0f172a',
-  border: '1px solid #1e293b',
-  borderRadius: '0.75rem',
-  padding: '1.5rem',
-};
-
-const badge = (color) => ({
-  display: 'inline-block',
-  padding: '0.2rem 0.55rem',
-  borderRadius: '0.35rem',
-  fontSize: '0.7rem',
-  fontWeight: '700',
-  background: color + '22',
-  color: color,
-  border: '1px solid ' + color + '44',
-  marginRight: '0.4rem',
-});
-
-const complexity = (label, value, color) => (
-  <span style={{ fontSize: '0.78rem', color: '#64748b', marginRight: '1rem' }}>
-    {label}: <span style={{ color }}>{value}</span>
-  </span>
-);
-
-function ConceptsPage() {
+function Badge({ label, color }) {
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem 1.5rem' }}>
-      <h1 style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>Concepts</h1>
-      <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginBottom: '2.5rem', maxWidth: '42rem', lineHeight: 1.7 }}>
-        Every data structure and algorithm in AlgoVista — with a plain-English explanation,
-        time complexity, and a direct link into the live simulator.
-      </p>
+    <span style={{
+      display: 'inline-block', padding: '0.18rem 0.52rem',
+      borderRadius: '0.3rem', fontSize: '0.68rem', fontWeight: '700',
+      background: `${color}18`, border: `1px solid ${color}40`, color,
+    }}>{label}</span>
+  );
+}
 
-      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Data structures</h2>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Array</h3>
-            <span style={badge('#34d399')}>O(1) access</span>
+function ConceptCard({ num, icon, title, desc, complexities, to, accent }) {
+  return (
+    <div style={{
+      background: 'var(--bg-card)', border: '1px solid var(--border-default)',
+      borderRadius: 'var(--radius-xl)', padding: '1.35rem',
+      display: 'flex', flexDirection: 'column', gap: '0.85rem',
+      transition: 'border-color 0.2s, box-shadow 0.2s',
+    }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${accent}44`; e.currentTarget.style.boxShadow = `0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px ${accent}22`; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.boxShadow = 'none'; }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div style={{
+            width: '36px', height: '36px', borderRadius: '9px', flexShrink: 0,
+            background: `${accent}18`, border: `1px solid ${accent}30`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1rem',
+          }}>{icon}</div>
+          <div>
+            <p style={{ fontSize: '0.62rem', fontWeight: '700', color: accent, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.1rem' }}>{num}</p>
+            <h3 style={{ fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: '700' }}>{title}</h3>
           </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            A contiguous block of memory where every element is stored at a fixed index.
-            Reading or writing any element by index is instant. Inserting or deleting in
-            the middle is slow because every following element must shift.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Read', 'O(1)', '#34d399')}
-            {complexity('Insert end', 'O(1)', '#34d399')}
-            {complexity('Insert middle', 'O(n)', '#f87171')}
-            {complexity('Search', 'O(n)', '#fbbf24')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
         </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Linked list</h3>
-            <span style={badge('#818cf8')}>Dynamic size</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            A chain of nodes where each node holds a value and a pointer to the next node.
-            The list starts at the HEAD. Inserting at the head is instant; reaching any
-            other position requires traversing from HEAD one step at a time.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Insert head', 'O(1)', '#34d399')}
-            {complexity('Insert tail', 'O(n)', '#fbbf24')}
-            {complexity('Search', 'O(n)', '#f87171')}
-            {complexity('Space', 'O(n)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Stack</h3>
-            <span style={badge('#f472b6')}>LIFO</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            A Last In, First Out structure. Think of a stack of plates — you can only
-            add or remove from the top. Push adds an element; pop removes the top element.
-            Used in undo systems, call stacks, and expression parsing.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Push', 'O(1)', '#34d399')}
-            {complexity('Pop', 'O(1)', '#34d399')}
-            {complexity('Peek', 'O(1)', '#34d399')}
-            {complexity('Space', 'O(n)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Queue</h3>
-            <span style={badge('#fbbf24')}>FIFO</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            A First In, First Out structure. Like a queue at a counter — the first person
-            to join is the first to be served. Enqueue adds to the rear; dequeue removes
-            from the front. Used in task scheduling, BFS, and print queues.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Enqueue', 'O(1)', '#34d399')}
-            {complexity('Dequeue', 'O(1)', '#34d399')}
-            {complexity('Peek', 'O(1)', '#34d399')}
-            {complexity('Space', 'O(n)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
       </div>
 
-      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Searching</h2>
+      <p style={{ fontSize: '0.79rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>{desc}</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Binary search</h3>
-            <span style={badge('#a78bfa')}>O(log n)</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            Works only on a sorted array. Pick the middle element — if it matches the target
-            you are done. If the target is smaller, discard the right half; if larger, discard
-            the left. Each step halves the search space. Searching 1,000,000 elements takes
-            at most 20 comparisons.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Best', 'O(1)', '#34d399')}
-            {complexity('Worst', 'O(log n)', '#fbbf24')}
-            {complexity('vs linear', 'O(n)', '#f87171')}
-            {complexity('Space', 'O(1)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+        {complexities.map(({ label, val, color }) => (
+          <span key={label} style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            {label}:{' '}
+            <span style={{ fontWeight: '700', color, fontFamily: 'monospace' }}>{val}</span>
+          </span>
+        ))}
       </div>
 
-      <h2 style={{ fontSize: '1.05rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Sorting</h2>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Bubble sort</h3>
-            <span style={badge('#f87171')}>O(n²)</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            On each pass, compare adjacent pairs and swap them if out of order. After every
-            full pass, the largest unsorted element "bubbles up" to its correct position at
-            the end. Simple to understand but inefficient on large arrays. Best case O(n)
-            if the array is already sorted.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Best', 'O(n)', '#34d399')}
-            {complexity('Worst', 'O(n²)', '#f87171')}
-            {complexity('Swaps', 'O(n²)', '#f87171')}
-            {complexity('Space', 'O(1)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Insertion sort</h3>
-            <span style={badge('#fbbf24')}>O(n²) worst</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            Build a sorted portion from left to right. Pick the next element as the key,
-            then shift larger elements in the sorted portion one step right to make room,
-            and drop the key in. Excellent on nearly-sorted data and small arrays. Used
-            in practice inside hybrid sorts like Timsort.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Best', 'O(n)', '#34d399')}
-            {complexity('Worst', 'O(n²)', '#f87171')}
-            {complexity('Shifts', 'O(n²)', '#fbbf24')}
-            {complexity('Space', 'O(1)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <h3 style={{ fontSize: '1.05rem', color: '#e2e8f0' }}>Selection sort</h3>
-            <span style={badge('#60a5fa')}>O(n) swaps</span>
-          </div>
-          <p style={{ fontSize: '0.84rem', color: '#94a3b8', lineHeight: 1.75, marginBottom: '1rem' }}>
-            On each pass, scan the unsorted portion to find the minimum element, then
-            swap it into its correct position at the front. Always makes exactly n−1 swaps
-            regardless of input order — making it useful when write operations are
-            significantly more expensive than reads.
-          </p>
-          <div style={{ marginBottom: '1rem' }}>
-            {complexity('Best', 'O(n²)', '#f87171')}
-            {complexity('Worst', 'O(n²)', '#f87171')}
-            {complexity('Swaps', 'O(n)', '#34d399')}
-            {complexity('Space', 'O(1)', '#60a5fa')}
-          </div>
-          <Link to="/simulator" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1rem' }}>🌲</span>
-            <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>Binary Search Tree</h3>
-          </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-            A tree where every left child is smaller and every right child is larger than its parent.
-            Enables O(log n) insert, search, and delete on average. Degrades to O(n) on a skewed tree.
-            Inorder traversal always yields a sorted sequence.
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {complexity('Insert avg', 'O(log n)', '#34d399')}
-            {complexity('Search avg', 'O(log n)', '#34d399')}
-            {complexity('Delete avg', 'O(log n)', '#34d399')}
-            {complexity('Worst case', 'O(n)', '#f87171')}
-            {complexity('Space', 'O(n)', '#60a5fa')}
-          </div>
-          <Link to="/simulator#bst" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1rem' }}>⚖️</span>
-            <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>AVL Tree</h3>
-          </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-            A self-balancing BST that maintains a balance factor (bf = left height − right height) at every node.
-            After every insert or delete, LL / RR / LR / RL rotations restore balance.
-            Guarantees O(log n) worst-case unlike a plain BST.
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-            {complexity('Insert', 'O(log n)', '#34d399')}
-            {complexity('Delete', 'O(log n)', '#34d399')}
-            {complexity('Search', 'O(log n)', '#34d399')}
-            {complexity('Rotations', 'O(1)', '#a78bfa')}
-            {complexity('Space', 'O(n)', '#60a5fa')}
-          </div>
-          <Link to="/simulator#avl" style={{ fontSize: '0.8rem', color: '#818cf8', textDecoration: 'none', fontWeight: '600' }}>
-            → Open in simulator
-          </Link>
-        </div>
-
-      </div>
+      <Link to={to} style={{
+        display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+        fontSize: '0.78rem', color: accent, fontWeight: '600',
+        padding: '0.38rem 0.8rem', borderRadius: '0.4rem',
+        border: `1px solid ${accent}30`, background: `${accent}10`,
+        alignSelf: 'flex-start', transition: 'all 0.15s',
+      }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}20`; e.currentTarget.style.borderColor = `${accent}55`; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}30`; }}
+      >
+        Open in simulator →
+      </Link>
     </div>
   );
 }
 
-export default ConceptsPage;
+const G = '#00d4aa';
+const B = '#4a9eff';
+const P = '#8b7cf8';
+
+const concepts = [
+  { num: '01', icon: '▦',  title: 'Array',          accent: G, to: '/simulator#array',
+    desc: 'Contiguous memory block. O(1) access by index, O(n) insert/delete in the middle.',
+    complexities: [{ label: 'Read', val: 'O(1)', color: G }, { label: 'Insert end', val: 'O(1)', color: G }, { label: 'Insert mid', val: 'O(n)', color: '#ff6b6b' }, { label: 'Search', val: 'O(n)', color: '#ffd166' }] },
+  { num: '02', icon: '⬡',  title: 'Linked List',    accent: G, to: '/simulator#linkedlist',
+    desc: 'Nodes linked by pointers. O(1) insert at head, O(n) traversal to reach any node.',
+    complexities: [{ label: 'Insert head', val: 'O(1)', color: G }, { label: 'Insert tail', val: 'O(n)', color: '#ffd166' }, { label: 'Search', val: 'O(n)', color: '#ff6b6b' }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '03', icon: '⬆',  title: 'Stack',          accent: G, to: '/simulator#stack',
+    desc: 'LIFO — Last In First Out. Push and pop both O(1). Used in call stacks and undo systems.',
+    complexities: [{ label: 'Push', val: 'O(1)', color: G }, { label: 'Pop', val: 'O(1)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '04', icon: '⇉',  title: 'Queue',          accent: G, to: '/simulator#queue',
+    desc: 'FIFO — First In First Out. Enqueue and dequeue both O(1). Used in BFS and task scheduling.',
+    complexities: [{ label: 'Enqueue', val: 'O(1)', color: G }, { label: 'Dequeue', val: 'O(1)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '05', icon: '🌲', title: 'BST',            accent: B, to: '/simulator#bst',
+    desc: 'Binary Search Tree: left < parent < right. O(log n) average for all ops, O(n) worst on skewed trees.',
+    complexities: [{ label: 'Insert avg', val: 'O(log n)', color: G }, { label: 'Search avg', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(n)', color: '#ff6b6b' }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '06', icon: '⚖️', title: 'AVL Tree',       accent: B, to: '/simulator#avl',
+    desc: 'Self-balancing BST. Maintains balance factor (bf = lh − rh). LL/RR/LR/RL rotations guarantee O(log n) worst-case.',
+    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Delete', val: 'O(log n)', color: G }, { label: 'Rotation', val: 'O(1)', color: '#a78bfa' }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '07', icon: '⌖',  title: 'Binary Search',  accent: P, to: '/simulator#bsearch',
+    desc: 'Halves the search space each step on a sorted array. O(log n) vs O(n) for linear search.',
+    complexities: [{ label: 'Best', val: 'O(1)', color: G }, { label: 'Average', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(log n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '08', icon: '↕',  title: 'Bubble Sort',    accent: P, to: '/simulator#bubble',
+    desc: 'Repeatedly swaps adjacent elements if out of order. Best case O(n) on nearly sorted data.',
+    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Swaps', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '09', icon: '⤓',  title: 'Insertion Sort', accent: P, to: '/simulator#insertion',
+    desc: 'Builds sorted portion one element at a time. Powers Timsort for small arrays and nearly sorted data.',
+    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Shifts', val: 'O(n²)', color: '#ffd166' }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '10', icon: '↓',  title: 'Selection Sort', accent: P, to: '/simulator#selection',
+    desc: 'Finds the minimum each pass and places it. Always O(n²) comparisons but only O(n) swaps.',
+    complexities: [{ label: 'Best', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Swaps', val: 'O(n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
+];
+
+const groups = [
+  { phase: 'P1', label: 'Phase 01 — Linear Data Structures', color: G, ids: ['01','02','03','04'] },
+  { phase: 'P2', label: 'Phase 02 — Trees',                  color: B, ids: ['05','06'] },
+  { phase: 'P3', label: 'Phase 03 — Algorithms',             color: P, ids: ['07','08','09','10'] },
+];
+
+export default function ConceptsPage() {
+  return (
+    <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+
+      <span className="badge-teal" style={{ marginBottom: '1.25rem' }}>All concepts</span>
+      <h1 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.5rem' }}>Concepts</h1>
+      <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '3.5rem', maxWidth: '44rem', lineHeight: 1.7 }}>
+        Every data structure and algorithm in AlgoVista — plain-English explanation, time complexity, and a direct link into the live simulator.
+      </p>
+
+      {groups.map((g) => (
+        <div key={g.phase} style={{ marginBottom: '3.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.75rem', borderBottom: `1px solid var(--border-subtle)` }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: g.color, display: 'inline-block', boxShadow: `0 0 6px ${g.color}` }} />
+            <h2 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: '700' }}>{g.label}</h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.9rem' }}>
+            {concepts.filter((c) => g.ids.includes(c.num)).map((c) => (
+              <ConceptCard key={c.num} {...c} />
+            ))}
+          </div>
+        </div>
+      ))}
+
+    </div>
+  );
+}
