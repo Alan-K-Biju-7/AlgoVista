@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { cloneAVL, buildAVLFromArray } from './avlUtils';
-import { avlInsert } from './avlInsert';
+import { cloneAVL } from './avlUtils';
+import { avlInsert, buildAVLFromArray } from './avlInsert';
 import { avlDelete } from './avlDelete';
 import { avlSearch, inorder, preorder, postorder } from './avlTraversals';
 import AVLCanvas from './AVLCanvas';
