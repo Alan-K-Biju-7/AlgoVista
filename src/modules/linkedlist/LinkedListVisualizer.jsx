@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 
 const card = {
-  background: '#0f172a',
+  background: 'var(--bg-card)',
   border: '1px solid #1e293b',
   borderRadius: '0.75rem',
   padding: '1.25rem',
@@ -12,7 +12,7 @@ const cardLabel = {
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#64748b',
+  color: 'var(--text-muted)',
   marginBottom: '0.75rem',
 };
 
@@ -158,11 +158,11 @@ function LinkedListVisualizer() {
         <div style={card}>
           <p style={cardLabel}>Controls</p>
           <div style={{ marginBottom: '0.75rem' }}>
-            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>Value</label>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.35rem', display: 'block' }}>Value</label>
             <input type="number" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="enter a number" />
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>Index</label>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.35rem', display: 'block' }}>Index</label>
             <input type="number" value={indexValue} onChange={(e) => setIndexValue(e.target.value)} placeholder="0, 1, 2 ..." />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -207,11 +207,11 @@ function LinkedListVisualizer() {
                   const isTraversal = index === traversalIndex && searchFoundIndex === null;
                   const isFound = index === searchFoundIndex;
 
-                  let nodeBg = '#1e293b';
-                  let nodeBorder = '#334155';
-                  let nodeTextColor = '#94a3b8';
-                  let pointerBg = '#0f172a';
-                  let pointerBorder = '#1e293b';
+                  let nodeBg = 'var(--bg-elevated)';
+                  let nodeBorder = 'var(--border-default)';
+                  let nodeTextColor = 'var(--text-secondary)';
+                  let pointerBg = 'var(--bg-card)';
+                  let pointerBorder = 'var(--bg-elevated)';
 
                   if (isHighlighted) { nodeBg = '#312e81'; nodeBorder = '#818cf8'; nodeTextColor = '#e0e7ff'; }
                   if (isTraversal)   { nodeBg = '#1e3a5f'; nodeBorder = '#3b82f6'; nodeTextColor = '#93c5fd'; pointerBg = '#1e3a5f'; pointerBorder = '#3b82f6'; }
@@ -237,14 +237,14 @@ function LinkedListVisualizer() {
                         {isFound && <div style={{ fontSize: '0.65rem', color: '#4ade80', marginTop: '0.3rem', fontWeight: '600' }}>✓ found</div>}
                       </div>
                       {index < nodes.length - 1 && (
-                        <div style={{ color: '#334155', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
+                        <div style={{ color: 'var(--border-default)', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
                       )}
                     </div>
                   );
                 })}
 
-                <div style={{ color: '#334155', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
-                <div style={{ padding: '0.6rem 0.85rem', borderRadius: '0.5rem', border: '1px solid #334155', background: '#0f172a', fontSize: '0.82rem', color: '#f87171', fontStyle: 'italic', fontWeight: '600' }}>NULL</div>
+                <div style={{ color: 'var(--border-default)', fontSize: '1.3rem', margin: '0 0.1rem', marginTop: '-1rem' }}>→</div>
+                <div style={{ padding: '0.6rem 0.85rem', borderRadius: '0.5rem', border: '1px solid #334155', background: 'var(--bg-card)', fontSize: '0.82rem', color: '#f87171', fontStyle: 'italic', fontWeight: '600' }}>NULL</div>
               </div>
             </div>
           )}
@@ -254,17 +254,17 @@ function LinkedListVisualizer() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         <div style={card}>
           <p style={cardLabel}>How a linked list works</p>
-          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.8 }}>
-            Each <strong style={{ color: '#e2e8f0' }}>node</strong> stores a value and a <strong style={{ color: '#e2e8f0' }}>next pointer</strong> to the following node.
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+            Each <strong style={{ color: 'var(--text-primary)' }}>node</strong> stores a value and a <strong style={{ color: 'var(--text-primary)' }}>next pointer</strong> to the following node.
             The list starts at the <strong style={{ color: '#818cf8' }}>HEAD</strong> pointer. The last node's next pointer is <strong style={{ color: '#f87171' }}>NULL</strong>, marking the end.
             Unlike arrays, nodes are not stored contiguously — you must traverse from HEAD to reach any node.
           </p>
           <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.78rem' }}>
-            <span style={{ color: '#64748b' }}>Insert head: <span style={{ color: '#34d399' }}>O(1)</span></span>
-            <span style={{ color: '#64748b' }}>Insert tail: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
-            <span style={{ color: '#64748b' }}>Delete: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
-            <span style={{ color: '#64748b' }}>Search: <span style={{ color: '#f87171' }}>O(n)</span></span>
-            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Insert head: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Insert tail: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Delete: <span style={{ color: '#fbbf24' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Search: <span style={{ color: '#f87171' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Space: <span style={{ color: '#60a5fa' }}>O(n)</span></span>
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <span>🟣 HEAD</span>
@@ -288,7 +288,7 @@ function LinkedListVisualizer() {
             ].map((line, index) => {
               const isActive = isSearching && traversalIndex !== null && index === 1;
               return (
-                <div key={index} style={{ background: isActive ? '#1e293b' : 'transparent', color: isActive ? '#818cf8' : '#475569', padding: '1px 6px', borderRadius: '3px', borderLeft: isActive ? '2px solid #818cf8' : '2px solid transparent' }}>
+                <div key={index} style={{ background: isActive ? 'var(--bg-elevated)' : 'transparent', color: isActive ? '#818cf8' : '#475569', padding: '1px 6px', borderRadius: '3px', borderLeft: isActive ? '2px solid #818cf8' : '2px solid transparent' }}>
                   {line}
                 </div>
               );
@@ -305,7 +305,7 @@ function LinkedListVisualizer() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               {history.map((item) => (
-                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
+                <p key={item.id} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
                   {item.text}
                 </p>
               ))}

@@ -3,7 +3,7 @@ import { computeLayout } from './bstLayout';
 export default function BSTCanvas({ root, highlightPath = [], foundVal = null, deletedVal = null }) {
   if (!root) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', color: '#334155', fontSize: '0.85rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px', color: 'var(--border-default)', fontSize: '0.85rem' }}>
         Tree is empty — insert a value to begin
       </div>
     );
@@ -18,7 +18,7 @@ export default function BSTCanvas({ root, highlightPath = [], foundVal = null, d
     if (val === deletedVal)  return { fill: '#450a0a', stroke: '#ef4444',  text: '#fca5a5' };
     if (highlightPath.includes(val) && val !== foundVal)
                              return { fill: '#1e3a5f', stroke: '#3b82f6',  text: '#93c5fd' };
-    return                          { fill: '#1e293b', stroke: '#334155',  text: '#94a3b8' };
+    return                          { fill: 'var(--bg-elevated)', stroke: 'var(--border-default)',  text: 'var(--text-secondary)' };
   };
 
   return (
@@ -34,7 +34,7 @@ export default function BSTCanvas({ root, highlightPath = [], foundVal = null, d
             <g key={n.val} style={{ transition: 'all 0.3s ease' }}>
               <circle cx={n.x} cy={n.y} r={nodeR}
                 fill={s.fill} stroke={s.stroke} strokeWidth="2"
-                style={{ filter: s.stroke !== '#334155' ? `drop-shadow(0 0 6px ${s.stroke}88)` : 'none', transition: 'all 0.3s ease' }}
+                style={{ filter: s.stroke !== 'var(--border-default)' ? `drop-shadow(0 0 6px ${s.stroke}88)` : 'none', transition: 'all 0.3s ease' }}
               />
               <text x={n.x} y={n.y + 1} textAnchor="middle" dominantBaseline="middle"
                 fill={s.text} fontSize="12" fontWeight="700" fontFamily="Inter, sans-serif"

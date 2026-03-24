@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 const card = {
-  background: '#0f172a',
+  background: 'var(--bg-card)',
   border: '1px solid #1e293b',
   borderRadius: '0.75rem',
   padding: '1.25rem',
@@ -12,7 +12,7 @@ const cardLabel = {
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#64748b',
+  color: 'var(--text-muted)',
   marginBottom: '0.75rem',
 };
 
@@ -150,9 +150,9 @@ function InsertionSortVisualizer() {
                     padding: '0.3rem 0.65rem',
                     fontSize: '0.75rem',
                     background: speed === s.value ? '#4f46e5' : 'transparent',
-                    color: speed === s.value ? '#fff' : '#64748b',
+                    color: speed === s.value ? '#fff' : 'var(--text-muted)',
                     border: '1px solid',
-                    borderColor: speed === s.value ? '#4f46e5' : '#334155',
+                    borderColor: speed === s.value ? '#4f46e5' : 'var(--border-default)',
                     borderRadius: '0.4rem',
                   }}
                 >
@@ -163,8 +163,8 @@ function InsertionSortVisualizer() {
           </div>
 
           <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: '#e2e8f0', lineHeight: 1.6 }}>{stepExplanation}</p>
-          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.8 }}>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>{stepExplanation}</p>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.8 }}>
             <div>i = {i} &nbsp;|&nbsp; j = {j} &nbsp;|&nbsp; phase = {phase}</div>
             <div>Comparisons: <span style={{ color: '#818cf8' }}>{comparisonCount}</span></div>
             <div>Shifts: <span style={{ color: '#f472b6' }}>{shiftCount}</span></div>
@@ -175,9 +175,9 @@ function InsertionSortVisualizer() {
           <p style={cardLabel}>Array</p>
           <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-end', minHeight: '8rem' }}>
             {values.map((value, index) => {
-              let bg = '#1e293b';
-              let borderColor = '#334155';
-              let textColor = '#94a3b8';
+              let bg = 'var(--bg-elevated)';
+              let borderColor = 'var(--border-default)';
+              let textColor = 'var(--text-secondary)';
 
               if (isInSortedPortion(index)) { bg = '#14532d'; borderColor = '#16a34a'; textColor = '#86efac'; }
               if (index === j) { bg = '#7c2d12'; borderColor = '#f97316'; textColor = '#fdba74'; }
@@ -215,16 +215,16 @@ function InsertionSortVisualizer() {
             <span>🔵 Insert position</span>
           </div>
 
-          <div style={{ marginTop: '1rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
-            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+          <div style={{ marginTop: '1rem', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            <strong style={{ color: 'var(--text-primary)' }}>How it works — </strong>
             Pick the key at position i. Move j left, shifting larger elements right,
             until the correct slot for the key is found.
           </div>
 
           <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
-            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
-            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#34d399' }}>O(n)</span></span>
-            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Best: <span style={{ color: '#34d399' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
         </div>
 
@@ -235,7 +235,7 @@ function InsertionSortVisualizer() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               {history.map((item) => (
-                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem' }}>
+                <p key={item.id} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderLeft: '2px solid #334155', paddingLeft: '0.5rem' }}>
                   {item.text}
                 </p>
               ))}
@@ -259,7 +259,7 @@ function InsertionSortVisualizer() {
                   <div
                     key={index}
                     style={{
-                      background: isActive ? '#1e293b' : 'transparent',
+                      background: isActive ? 'var(--bg-elevated)' : 'transparent',
                       color: isActive ? '#818cf8' : '#475569',
                       padding: '1px 6px',
                       borderRadius: '3px',

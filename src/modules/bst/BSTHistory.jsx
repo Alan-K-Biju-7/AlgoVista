@@ -4,7 +4,7 @@ export default function BSTHistory({ history }) {
     delete:    { icon: '−', color: '#f87171', bg: '#450a0a' },
     search:    { icon: '?', color: '#60a5fa', bg: '#1e3a5f' },
     traversal: { icon: '~', color: '#a78bfa', bg: '#2e1065' },
-    reset:     { icon: '↺', color: '#94a3b8', bg: '#1e293b' },
+    reset:     { icon: '↺', color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' },
   };
 
   return (
@@ -13,7 +13,7 @@ export default function BSTHistory({ history }) {
         Recent steps
       </p>
       {history.length === 0 ? (
-        <p style={{ fontSize: '0.78rem', color: '#334155' }}>Operations will appear here as you interact with the tree.</p>
+        <p style={{ fontSize: '0.78rem', color: 'var(--border-default)' }}>Operations will appear here as you interact with the tree.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', maxHeight: '180px', overflowY: 'auto' }}>
           {history.map((item) => {

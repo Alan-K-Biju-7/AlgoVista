@@ -30,7 +30,7 @@ export default function AVLRotationPanel({ lastRotation }) {
     return (
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.1rem' }}>
         <p style={{ fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Last rotation</p>
-        <p style={{ fontSize: '0.78rem', color: '#334155' }}>No rotation yet — insert values to trigger one.</p>
+        <p style={{ fontSize: '0.78rem', color: 'var(--border-default)' }}>No rotation yet — insert values to trigger one.</p>
       </div>
     );
   }
@@ -46,7 +46,7 @@ export default function AVLRotationPanel({ lastRotation }) {
         <span style={{ fontSize: '0.78rem', fontWeight: '700', color: d.color }}>{d.label}</span>
       </div>
 
-      <pre style={{ fontFamily: 'SF Mono, Fira Code, monospace', fontSize: '0.72rem', color: '#64748b', lineHeight: 1.9, background: 'var(--bg-elevated)', borderRadius: '0.4rem', padding: '0.6rem 0.75rem', marginBottom: '0.65rem', overflowX: 'auto', whiteSpace: 'pre' }}>
+      <pre style={{ fontFamily: 'SF Mono, Fira Code, monospace', fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.9, background: 'var(--bg-elevated)', borderRadius: '0.4rem', padding: '0.6rem 0.75rem', marginBottom: '0.65rem', overflowX: 'auto', whiteSpace: 'pre' }}>
         {d.before}
       </pre>
 

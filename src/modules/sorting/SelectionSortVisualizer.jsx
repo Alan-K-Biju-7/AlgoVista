@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 const card = {
-  background: '#0f172a',
+  background: 'var(--bg-card)',
   border: '1px solid #1e293b',
   borderRadius: '0.75rem',
   padding: '1.25rem',
@@ -12,7 +12,7 @@ const cardLabel = {
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#64748b',
+  color: 'var(--text-muted)',
   marginBottom: '0.75rem',
 };
 
@@ -156,9 +156,9 @@ function SelectionSortVisualizer() {
                     padding: '0.3rem 0.65rem',
                     fontSize: '0.75rem',
                     background: speed === s.value ? '#4f46e5' : 'transparent',
-                    color: speed === s.value ? '#fff' : '#64748b',
+                    color: speed === s.value ? '#fff' : 'var(--text-muted)',
                     border: '1px solid',
-                    borderColor: speed === s.value ? '#4f46e5' : '#334155',
+                    borderColor: speed === s.value ? '#4f46e5' : 'var(--border-default)',
                     borderRadius: '0.4rem',
                   }}
                 >
@@ -170,7 +170,7 @@ function SelectionSortVisualizer() {
 
           <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
 
-          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.9 }}>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.9 }}>
             <div>Pass i = <span style={{ color: '#818cf8' }}>{i}</span>
               &nbsp;|&nbsp; Scan j = <span style={{ color: '#60a5fa' }}>{j}</span>
               &nbsp;|&nbsp; Min @ <span style={{ color: '#fbbf24' }}>{minIndex}</span>
@@ -190,9 +190,9 @@ function SelectionSortVisualizer() {
               const isScanning   = index === j && !isSortedPos;
               const isPassStart  = index === i && !isSortedPos;
 
-              let bg = '#1e293b';
-              let borderColor = '#334155';
-              let textColor = '#94a3b8';
+              let bg = 'var(--bg-elevated)';
+              let borderColor = 'var(--border-default)';
+              let textColor = 'var(--text-secondary)';
 
               if (isSortedPos)  { bg = '#14532d'; borderColor = '#16a34a'; textColor = '#86efac'; }
               if (isPassStart && !isSortedPos)  { borderColor = '#818cf8'; }
@@ -233,17 +233,17 @@ function SelectionSortVisualizer() {
             <span style={{ color: '#818cf8' }}>▏ Pass start i</span>
           </div>
 
-          <div style={{ marginTop: '1rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
-            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+          <div style={{ marginTop: '1rem', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            <strong style={{ color: 'var(--text-primary)' }}>How it works — </strong>
             On each pass i, scan from i to the end to find the minimum element.
             Swap it into position i. After each pass, one more element is permanently placed.
           </div>
 
           <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
-            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
-            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#f87171' }}>O(n²)</span></span>
-            <span style={{ color: '#64748b' }}>Swaps: <span style={{ color: '#34d399' }}>O(n)</span></span>
-            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Worst: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Best: <span style={{ color: '#f87171' }}>O(n²)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Swaps: <span style={{ color: '#34d399' }}>O(n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
         </div>
 
@@ -254,7 +254,7 @@ function SelectionSortVisualizer() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               {history.map((item) => (
-                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
+                <p key={item.id} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
                   {item.text}
                 </p>
               ))}
@@ -277,7 +277,7 @@ function SelectionSortVisualizer() {
                   <div
                     key={index}
                     style={{
-                      background: isActive ? '#1e293b' : 'transparent',
+                      background: isActive ? 'var(--bg-elevated)' : 'transparent',
                       color: isActive ? '#818cf8' : '#475569',
                       padding: '1px 6px',
                       borderRadius: '3px',

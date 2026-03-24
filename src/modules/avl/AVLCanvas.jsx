@@ -9,7 +9,7 @@ function bfColor(bf) {
 export default function AVLCanvas({ root, highlightPath = [], foundVal = null, deletedVal = null, rotatedVals = [] }) {
   if (!root) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '220px', color: '#334155', fontSize: '0.85rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '220px', color: 'var(--border-default)', fontSize: '0.85rem' }}>
         Tree is empty — insert a value to begin
       </div>
     );
@@ -24,7 +24,7 @@ export default function AVLCanvas({ root, highlightPath = [], foundVal = null, d
     if (val === foundVal)             return { fill: '#14532d', stroke: '#22c55e',  text: '#86efac' };
     if (rotatedVals.includes(val))    return { fill: '#2e1065', stroke: '#a78bfa',  text: '#e9d5ff' };
     if (highlightPath.includes(val))  return { fill: '#1e3a5f', stroke: '#3b82f6',  text: '#93c5fd' };
-    return                                   { fill: '#1e293b', stroke: '#334155',  text: '#94a3b8' };
+    return                                   { fill: 'var(--bg-elevated)', stroke: 'var(--border-default)',  text: 'var(--text-secondary)' };
   };
 
   return (

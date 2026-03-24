@@ -4,7 +4,7 @@ const iconMap = {
   search:    { icon: '?', color: '#60a5fa', bg: '#1e3a5f' },
   rotation:  { icon: '↺', color: '#a78bfa', bg: '#2e1065' },
   traversal: { icon: '~', color: '#fbbf24', bg: '#422006' },
-  reset:     { icon: '⟳', color: '#94a3b8', bg: '#1e293b' },
+  reset:     { icon: '⟳', color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' },
 };
 
 export default function AVLHistory({ history }) {
@@ -12,7 +12,7 @@ export default function AVLHistory({ history }) {
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', padding: '1.1rem' }}>
       <p style={{ fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Recent steps</p>
       {history.length === 0 ? (
-        <p style={{ fontSize: '0.78rem', color: '#334155' }}>Operations will appear here.</p>
+        <p style={{ fontSize: '0.78rem', color: 'var(--border-default)' }}>Operations will appear here.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', maxHeight: '200px', overflowY: 'auto' }}>
           {history.map((item) => {

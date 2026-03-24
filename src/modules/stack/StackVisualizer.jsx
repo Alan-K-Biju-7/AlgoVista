@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const card = {
-  background: '#0f172a',
+  background: 'var(--bg-card)',
   border: '1px solid #1e293b',
   borderRadius: '0.75rem',
   padding: '1.25rem',
@@ -12,7 +12,7 @@ const cardLabel = {
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#64748b',
+  color: 'var(--text-muted)',
   marginBottom: '0.75rem',
 };
 
@@ -77,7 +77,7 @@ function StackVisualizer() {
           <p style={cardLabel}>Controls</p>
 
           <div style={{ marginBottom: '0.85rem' }}>
-            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.4rem', display: 'block' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.4rem', display: 'block' }}>
               Value
             </label>
             <input
@@ -118,7 +118,7 @@ function StackVisualizer() {
                       padding: '0.6rem 0.5rem',
                       textAlign: 'center',
                       borderRadius: '0.5rem',
-                      background: isTop ? '#312e81' : '#1e293b',
+                      background: isTop ? '#312e81' : 'var(--bg-elevated)',
                       border: isTop ? '1px solid #818cf8' : '1px solid #334155',
                       transition: 'background 0.2s ease',
                     }}
@@ -126,7 +126,7 @@ function StackVisualizer() {
                     <div style={{ fontSize: '0.65rem', color: isTop ? '#a5b4fc' : '#475569', marginBottom: '0.2rem' }}>
                       {isTop ? 'top' : index}
                     </div>
-                    <div style={{ fontSize: '0.95rem', fontWeight: '600', color: isTop ? '#e0e7ff' : '#94a3b8' }}>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '600', color: isTop ? '#e0e7ff' : 'var(--text-secondary)' }}>
                       {value}
                     </div>
                   </div>
@@ -135,20 +135,20 @@ function StackVisualizer() {
             )}
           </div>
 
-          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.7 }}>
-            <strong style={{ color: '#e2e8f0' }}>How it works — </strong>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            <strong style={{ color: 'var(--text-primary)' }}>How it works — </strong>
             A stack is a Last In, First Out (LIFO) structure. Push adds a new
             element on top; pop removes the current top element.
           </p>
 
           <div style={{ marginTop: '0.85rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem' }}>
-            <span style={{ color: '#64748b' }}>Push: <span style={{ color: '#34d399' }}>O(1)</span></span>
-            <span style={{ color: '#64748b' }}>Pop: <span style={{ color: '#34d399' }}>O(1)</span></span>
-            <span style={{ color: '#64748b' }}>Peek: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Push: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Pop: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Peek: <span style={{ color: '#34d399' }}>O(1)</span></span>
           </div>
 
           <div style={{ marginTop: '0.85rem', fontSize: '0.82rem' }}>
-            <strong style={{ color: '#e2e8f0' }}>Top element: </strong>
+            <strong style={{ color: 'var(--text-primary)' }}>Top element: </strong>
             <span style={{ color: topItem == null ? '#475569' : '#a5b4fc' }}>
               {topItem == null ? 'none (stack is empty)' : '"' + topItem + '"'}
             </span>
@@ -168,7 +168,7 @@ function StackVisualizer() {
                   key={item.id}
                   style={{
                     fontSize: '0.78rem',
-                    color: '#94a3b8',
+                    color: 'var(--text-secondary)',
                     borderLeft: '2px solid #334155',
                     paddingLeft: '0.5rem',
                     lineHeight: 1.6,

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 const card = {
-  background: '#0f172a',
+  background: 'var(--bg-card)',
   border: '1px solid #1e293b',
   borderRadius: '0.75rem',
   padding: '1.25rem',
@@ -12,7 +12,7 @@ const cardLabel = {
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: '#64748b',
+  color: 'var(--text-muted)',
   marginBottom: '0.75rem',
 };
 
@@ -159,7 +159,7 @@ function BinarySearchVisualizer() {
           <p style={cardLabel}>Controls</p>
 
           <div style={{ marginBottom: '0.85rem' }}>
-            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#64748b', marginBottom: '0.35rem', display: 'block' }}>
+            <label style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.35rem', display: 'block' }}>
               Target value
             </label>
             <input
@@ -192,9 +192,9 @@ function BinarySearchVisualizer() {
                     padding: '0.3rem 0.65rem',
                     fontSize: '0.75rem',
                     background: speed === s.value ? '#4f46e5' : 'transparent',
-                    color: speed === s.value ? '#fff' : '#64748b',
+                    color: speed === s.value ? '#fff' : 'var(--text-muted)',
                     border: '1px solid',
-                    borderColor: speed === s.value ? '#4f46e5' : '#334155',
+                    borderColor: speed === s.value ? '#4f46e5' : 'var(--border-default)',
                     borderRadius: '0.4rem',
                   }}
                 >
@@ -206,7 +206,7 @@ function BinarySearchVisualizer() {
 
           <p style={{ fontSize: '0.82rem', color: '#a5b4fc', lineHeight: 1.6 }}>{message}</p>
 
-          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: '#64748b', lineHeight: 1.9 }}>
+          <div style={{ marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.9 }}>
             <div>low = <span style={{ color: '#60a5fa' }}>{low !== null ? low : '—'}</span>
               &nbsp;|&nbsp; high = <span style={{ color: '#f97316' }}>{high !== null ? high : '—'}</span>
               &nbsp;|&nbsp; mid = <span style={{ color: '#a78bfa' }}>{mid !== null ? mid : '—'}</span>
@@ -226,12 +226,12 @@ function BinarySearchVisualizer() {
               const isFound = index === foundIndex;
               const isEliminated = isPrepared && low !== null && high !== null && (index < low || index > high) && !isFound;
 
-              let bg = '#1e293b';
-              let borderColor = '#334155';
-              let textColor = '#94a3b8';
+              let bg = 'var(--bg-elevated)';
+              let borderColor = 'var(--border-default)';
+              let textColor = 'var(--text-secondary)';
               let labelColor = '#475569';
 
-              if (isEliminated) { bg = '#0a0f1e'; borderColor = '#1e293b'; textColor = '#334155'; }
+              if (isEliminated) { bg = 'var(--bg-base)'; borderColor = 'var(--bg-elevated)'; textColor = 'var(--border-default)'; }
               if (isLow && !isFound)  { borderColor = '#3b82f6'; }
               if (isHigh && !isFound) { borderColor = '#f97316'; }
               if (isMid && !isFound)  { bg = '#312e81'; borderColor = '#a78bfa'; textColor = '#e0e7ff'; }
@@ -274,7 +274,7 @@ function BinarySearchVisualizer() {
             <span style={{ color: '#60a5fa' }}>L = low</span>
             <span style={{ color: '#f97316' }}>H = high</span>
             <span style={{ color: '#a78bfa' }}>mid = checked element</span>
-            <span style={{ color: '#334155' }}>faded = eliminated half</span>
+            <span style={{ color: 'var(--border-default)' }}>faded = eliminated half</span>
             <span style={{ color: '#4ade80' }}>✓ = found</span>
           </div>
         </div>
@@ -286,7 +286,7 @@ function BinarySearchVisualizer() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               {history.map((item) => (
-                <p key={item.id} style={{ fontSize: '0.78rem', color: '#94a3b8', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
+                <p key={item.id} style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', borderLeft: '2px solid #334155', paddingLeft: '0.5rem', lineHeight: 1.6 }}>
                   {item.text}
                 </p>
               ))}
@@ -300,20 +300,20 @@ function BinarySearchVisualizer() {
 
         <div style={card}>
           <p style={cardLabel}>How binary search works</p>
-          <p style={{ fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.8 }}>
-            Binary search only works on a <strong style={{ color: '#e2e8f0' }}>sorted array</strong>.
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+            Binary search only works on a <strong style={{ color: 'var(--text-primary)' }}>sorted array</strong>.
             It picks the <strong style={{ color: '#a78bfa' }}>middle element</strong> and compares it to the target.
             If the target is smaller, discard the right half. If larger, discard the left half.
             Each step halves the search space — making it dramatically faster than linear search for large arrays.
           </p>
           <div style={{ marginTop: '0.85rem', display: 'flex', gap: '1.5rem', fontSize: '0.78rem', flexWrap: 'wrap' }}>
-            <span style={{ color: '#64748b' }}>Best: <span style={{ color: '#34d399' }}>O(1)</span></span>
-            <span style={{ color: '#64748b' }}>Worst: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
-            <span style={{ color: '#64748b' }}>Average: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
-            <span style={{ color: '#64748b' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Best: <span style={{ color: '#34d399' }}>O(1)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Worst: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Average: <span style={{ color: '#fbbf24' }}>O(log n)</span></span>
+            <span style={{ color: 'var(--text-muted)' }}>Space: <span style={{ color: '#60a5fa' }}>O(1)</span></span>
           </div>
-          <div style={{ marginTop: '0.85rem', padding: '0.75rem', borderRadius: '0.5rem', background: '#0a0f1e', border: '1px solid #1e293b', fontSize: '0.78rem', color: '#94a3b8', lineHeight: 1.7 }}>
-            <strong style={{ color: '#e2e8f0' }}>Example — </strong>
+          <div style={{ marginTop: '0.85rem', padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--bg-base)', border: '1px solid #1e293b', fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+            <strong style={{ color: 'var(--text-primary)' }}>Example — </strong>
             Searching 100 items with linear search needs up to 100 checks.
             Binary search needs at most <span style={{ color: '#a78bfa' }}>7 checks</span> (log₂ 100 ≈ 7).
           </div>
@@ -336,7 +336,7 @@ function BinarySearchVisualizer() {
                 <div
                   key={index}
                   style={{
-                    background: isActive ? '#1e293b' : 'transparent',
+                    background: isActive ? 'var(--bg-elevated)' : 'transparent',
                     color: isActive ? '#818cf8' : '#475569',
                     padding: '1px 6px',
                     borderRadius: '3px',
