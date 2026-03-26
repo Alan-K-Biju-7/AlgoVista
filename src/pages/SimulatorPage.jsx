@@ -9,6 +9,7 @@ import InsertionSortVisualizer from '../modules/sorting/InsertionSortVisualizer'
 import SelectionSortVisualizer from '../modules/sorting/SelectionSortVisualizer';
 import BSTVisualizer from '../modules/bst/BSTVisualizer';
 import AVLVisualizer from '../modules/avl/AVLVisualizer';
+import GraphVisualizer from '../modules/graph/GraphVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
