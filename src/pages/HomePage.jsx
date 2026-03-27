@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const stats = [
-  { value: '11',  label: 'Modules' },
+  { value: '12',  label: 'Modules' },
   { value: '4',   label: 'Data Structures' },
   { value: '3',   label: 'Sort Algorithms' },
   { value: '2',   label: 'Tree Types' },
@@ -9,7 +9,7 @@ const stats = [
 
 const phases = [
   { num: '01', label: 'Linear DS',    desc: 'Arrays, Linked Lists, Stacks & Queues',  color: '#00d4aa' },
-  { num: '02', label: 'Trees & Graphs', desc: 'BST, AVL rotations, Graph BFS/DFS', color: '#4a9eff' },
+  { num: '02', label: 'Trees & Graphs', desc: 'BST, AVL, Graph BFS/DFS, Min-Heap', color: '#4a9eff' },
   { num: '03', label: 'Algorithms',   desc: 'Binary Search, Bubble, Insertion, Selection Sort', color: '#8b7cf8' },
   { num: '04', label: 'Coming soon',  desc: 'Graphs, Heaps, Hash Tables, Merge Sort', color: '#4a5a7a' },
 ];
@@ -20,6 +20,7 @@ const topics = [
   { icon: '⬆', label: 'Stack',          phase: 'P1', desc: 'Push / pop with LIFO step history.' },
   { icon: '⇉', label: 'Queue',          phase: 'P1', desc: 'Enqueue / dequeue with pointer labels.' },
   { icon: '🌲', label: 'BST',           phase: 'P2', desc: 'Insert, delete, search, traversals.' },
+  { icon: '⬡',  label: 'Heap',          phase: 'P2', desc: 'Min-heap: insert bubbles up, extract-min heapifies down. Array + tree view.' },
   { icon: '◉',  label: 'Graph',          phase: 'P2', desc: 'BFS (queue, shortest path) and DFS (stack, deep dive) — drag nodes to rearrange.' },
   { icon: '⚖️', label: 'AVL Tree',      phase: 'P2', desc: 'Self-balancing with LL/RR/LR/RL rotations.' },
   { icon: '⌖', label: 'Binary Search',  phase: 'P3', desc: 'Mid pointer, eliminated halves.' },
