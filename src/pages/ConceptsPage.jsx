@@ -89,6 +89,9 @@ const concepts = [
   { num: '11', icon: '◉',  title: 'Graph BFS/DFS', accent: B, to: '/simulator#graph',
     desc: 'Graph of nodes and edges. BFS (queue) explores level by level and finds shortest path. DFS (stack) dives deep first and is used for cycle detection and topological sort.',
     complexities: [{ label: 'Time', val: 'O(V+E)', color: G }, { label: 'BFS space', val: 'O(V)', color: B }, { label: 'DFS space', val: 'O(V)', color: B }, { label: 'Shortest path', val: 'BFS ✓', color: G }] },
+  { num: '12', icon: '⬡',  title: 'Heap / Priority Queue', accent: B, to: '/simulator#heap',
+    desc: 'Complete binary tree stored as an array. Min-heap keeps smallest at root (index 0). Insert bubbles up, extract-min heapifies down. Powers Dijkstra, A*, and task schedulers.',
+    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Extract min', val: 'O(log n)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Build', val: 'O(n)', color: B }] },
   { num: '07', icon: '⌖',  title: 'Binary Search',  accent: P, to: '/simulator#bsearch',
     desc: 'Halves the search space each step on a sorted array. O(log n) vs O(n) for linear search.',
     complexities: [{ label: 'Best', val: 'O(1)', color: G }, { label: 'Average', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(log n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
@@ -105,7 +108,7 @@ const concepts = [
 
 const groups = [
   { phase: 'P1', label: 'Phase 01 — Linear Data Structures', color: G, ids: ['01','02','03','04'] },
-  { phase: 'P2', label: 'Phase 02 — Trees & Graphs',         color: B, ids: ['05','06','11'] },
+  { phase: 'P2', label: 'Phase 02 — Trees, Graphs & Heap',   color: B, ids: ['05','06','11','12'] },
   { phase: 'P3', label: 'Phase 03 — Algorithms',             color: P, ids: ['07','08','09','10'] },
 ];
 
