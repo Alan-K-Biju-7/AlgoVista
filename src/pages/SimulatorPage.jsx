@@ -31,6 +31,7 @@ const phaseGroups = [
   { phase: 'P1', label: 'Linear DS',  color: '#00d4aa' },
   { phase: 'P2', label: 'Trees',      color: '#4a9eff' },
   { phase: 'P3', label: 'Algorithms', color: '#8b7cf8' },
+  { phase: 'P4', label: 'Coming soon',  color: '#2a3550' },
 ];
 
 export default function SimulatorPage() {
