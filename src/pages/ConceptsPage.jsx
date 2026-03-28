@@ -95,6 +95,9 @@ const concepts = [
   { num: '13', icon: '#',   title: 'Hash Table',   accent: B, to: '/simulator#hashtable',
     desc: 'Array of buckets with separate chaining for collision resolution. djb2 hash maps keys to bucket indices. Load factor λ = entries/buckets — keep λ < 0.75 for O(1) average ops.',
     complexities: [{ label: 'Insert', val: 'O(1) avg', color: G }, { label: 'Search', val: 'O(1) avg', color: G }, { label: 'Delete', val: 'O(1) avg', color: G }, { label: 'Space', val: 'O(n+m)', color: B }] },
+  { num: '14', icon: '✦',  title: 'Trie (Prefix Tree)', accent: B, to: '/simulator#trie',
+    desc: 'Tree where each edge = one character. Words with common prefix share nodes. Powers autocomplete, spell-check and IP routing. O(m) insert/search where m = word length.',
+    complexities: [{ label: 'Insert', val: 'O(m)', color: G }, { label: 'Search', val: 'O(m)', color: G }, { label: 'Autocomplete', val: 'O(m+k)', color: G }, { label: 'Space', val: 'O(α×n)', color: B }] },
   { num: '07', icon: '⌖',  title: 'Binary Search',  accent: P, to: '/simulator#bsearch',
     desc: 'Halves the search space each step on a sorted array. O(log n) vs O(n) for linear search.',
     complexities: [{ label: 'Best', val: 'O(1)', color: G }, { label: 'Average', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(log n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
@@ -111,7 +114,7 @@ const concepts = [
 
 const groups = [
   { phase: 'P1', label: 'Phase 01 — Linear Data Structures', color: G, ids: ['01','02','03','04'] },
-  { phase: 'P2', label: 'Phase 02 — Trees, Graphs, Heap & Hash', color: B, ids: ['05','06','11','12','13'] },
+  { phase: 'P2', label: 'Phase 02 — Trees, Graphs & Advanced DS', color: B, ids: ['05','06','11','12','13','14'] },
   { phase: 'P3', label: 'Phase 03 — Algorithms',             color: P, ids: ['07','08','09','10'] },
 ];
 
