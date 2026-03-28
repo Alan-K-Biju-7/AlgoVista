@@ -12,6 +12,7 @@ import AVLVisualizer from '../modules/avl/AVLVisualizer';
 import GraphVisualizer from '../modules/graph/GraphVisualizer';
 import HeapVisualizer from '../modules/heap/HeapVisualizer';
 import HashVisualizer from '../modules/hashtable/HashVisualizer';
+import TrieVisualizer from '../modules/trie/TrieVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
