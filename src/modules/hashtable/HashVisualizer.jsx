@@ -49,7 +49,14 @@ export default function HashVisualizer() {
   const handleSearch = () => {
     const k = keyInput.trim().toLowerCase();
     if (!k) { setMessage('Enter a key to search.'); return; }
-    runSteps(generateSearchSteps(table, k), 'search', `Search "${k}"`);
+    const gen = generateSearchSteps(table, k);
+    if (!gen.length) return;
+    clearTimeout(timerRef.current);
+    setIsRunning(false);
+    setSteps(gen);
+    setStepIndex(0);
+    setMessage(gen[0].message);
+    pushHistory('search', `Search "${k}"`);
   };
 
   const handleDelete = () => {
