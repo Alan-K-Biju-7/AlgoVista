@@ -104,7 +104,7 @@ export default function AboutPage() {
             See it in action
           </p>
           <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)' }}>
-            12 modules live — arrays, trees, AVL, graphs, heap, sorting, search.
+            15 modules — arrays, linked list, stack, queue, BST, AVL, graph, heap, hash table, trie, sorting, search.
           </p>
         </div>
         <Link to="/simulator" style={{
