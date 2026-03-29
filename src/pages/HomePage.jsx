@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const stats = [
-  { value: '15',  label: 'Modules' },
+  { value: '16',  label: 'Modules' },
   { value: '4',   label: 'Data Structures' },
   { value: '3',   label: 'Sort Algorithms' },
   { value: '2',   label: 'Tree Types' },
@@ -20,6 +20,7 @@ const topics = [
   { icon: '⬆', label: 'Stack',          phase: 'P1', desc: 'Push / pop with LIFO step history.' },
   { icon: '⇉', label: 'Queue',          phase: 'P1', desc: 'Enqueue / dequeue with pointer labels.' },
   { icon: '🌲', label: 'BST',           phase: 'P2', desc: 'Insert, delete, search, traversals.' },
+  { icon: '→',   label: 'Dijkstra',     phase: 'P2', desc: 'Weighted shortest path — live dist table, PQ snapshot, path reconstruction with cost.' },
   { icon: '✦',   label: 'Trie',          phase: 'P2', desc: 'Prefix tree: insert words, search, autocomplete suggestions — letter by letter animation.' },
   { icon: '#',   label: 'Hash Table',    phase: 'P2', desc: 'djb2 hash, separate chaining, live load factor λ, collision visualization.' },
   { icon: '⬡',  label: 'Heap',          phase: 'P2', desc: 'Min-heap: insert bubbles up, extract-min heapifies down. Array + tree view.' },
