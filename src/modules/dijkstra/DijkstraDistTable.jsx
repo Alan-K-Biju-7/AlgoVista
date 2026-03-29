@@ -11,8 +11,8 @@ export default function DijkstraDistTable({ nodes, dist, prev, visited, current,
         ))}
 
         {nodes.map((n) => {
-          const d = dist ? dist[n.id] : INF;
-          const p = prev ? prev[n.id] : null;
+          const d = (dist && dist[n.id] !== undefined) ? dist[n.id] : INF;
+          const p = (prev && prev[n.id] !== undefined) ? prev[n.id] : null;
           const isVisited  = visited && visited.includes(n.id);
           const isCurrent  = n.id === current;
           const inPath     = shortestPath && shortestPath.includes(n.id) && shortestPath.length > 1;
