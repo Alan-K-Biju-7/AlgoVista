@@ -13,6 +13,7 @@ import GraphVisualizer from '../modules/graph/GraphVisualizer';
 import HeapVisualizer from '../modules/heap/HeapVisualizer';
 import HashVisualizer from '../modules/hashtable/HashVisualizer';
 import TrieVisualizer from '../modules/trie/TrieVisualizer';
+import DijkstraVisualizer from '../modules/dijkstra/DijkstraVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
