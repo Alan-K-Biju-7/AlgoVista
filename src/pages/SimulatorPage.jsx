@@ -14,6 +14,7 @@ import HeapVisualizer from '../modules/heap/HeapVisualizer';
 import HashVisualizer from '../modules/hashtable/HashVisualizer';
 import TrieVisualizer from '../modules/trie/TrieVisualizer';
 import DijkstraVisualizer from '../modules/dijkstra/DijkstraVisualizer';
+import MergeSortVisualizer from '../modules/mergesort/MergeSortVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
