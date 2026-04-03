@@ -15,7 +15,8 @@ import HashVisualizer from '../modules/hashtable/HashVisualizer';
 import TrieVisualizer from '../modules/trie/TrieVisualizer';
 import DijkstraVisualizer from '../modules/dijkstra/DijkstraVisualizer';
 import MergeSortVisualizer from '../modules/mergesort/MergeSortVisualizer';
-import QuickSortVisualizer from '../modules/quicksort/QuickSortVisualizer';
+import QuickSortVisualizer  from '../modules/quicksort/QuickSortVisualizer';
+import BellmanFordVisualizer from '../modules/bellmanford/BellmanFordVisualizer';
 
 const sections = [
   { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
