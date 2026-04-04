@@ -19,23 +19,31 @@ import QuickSortVisualizer  from '../modules/quicksort/QuickSortVisualizer';
 import BellmanFordVisualizer from '../modules/bellmanford/BellmanFordVisualizer';
 
 const sections = [
-  { id: 'array',      label: 'Array',          phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
-  { id: 'linkedlist', label: 'Linked List',     phase: 'P1', color: '#00d4aa', Component: LinkedListVisualizer },
-  { id: 'stack',      label: 'Stack',           phase: 'P1', color: '#00d4aa', Component: StackVisualizer },
-  { id: 'queue',      label: 'Queue',           phase: 'P1', color: '#00d4aa', Component: QueueVisualizer },
-  { id: 'bst',        label: 'BST',             phase: 'P2', color: '#4a9eff', Component: BSTVisualizer },
-  { id: 'avl',        label: 'AVL Tree',        phase: 'P2', color: '#4a9eff', Component: AVLVisualizer },
-  { id: 'bsearch',    label: 'Binary Search',   phase: 'P3', color: '#8b7cf8', Component: BinarySearchVisualizer },
-  { id: 'bubble',     label: 'Bubble Sort',     phase: 'P3', color: '#8b7cf8', Component: BubbleSortVisualizer },
-  { id: 'insertion',  label: 'Insertion Sort',  phase: 'P3', color: '#8b7cf8', Component: InsertionSortVisualizer },
-  { id: 'selection',  label: 'Selection Sort',  phase: 'P3', color: '#8b7cf8', Component: SelectionSortVisualizer },
+  { id: 'array',        label: 'Array',              phase: 'P1', color: '#00d4aa', Component: ArrayVisualizer },
+  { id: 'linkedlist',   label: 'Linked List',         phase: 'P1', color: '#00d4aa', Component: LinkedListVisualizer },
+  { id: 'stack',        label: 'Stack',               phase: 'P1', color: '#00d4aa', Component: StackVisualizer },
+  { id: 'queue',        label: 'Queue',               phase: 'P1', color: '#00d4aa', Component: QueueVisualizer },
+  { id: 'bst',          label: 'BST',                 phase: 'P2', color: '#4a9eff', Component: BSTVisualizer },
+  { id: 'avl',          label: 'AVL Tree',            phase: 'P2', color: '#4a9eff', Component: AVLVisualizer },
+  { id: 'graph',        label: 'Graph',               phase: 'P2', color: '#4a9eff', Component: GraphVisualizer },
+  { id: 'heap',         label: 'Heap',                phase: 'P2', color: '#4a9eff', Component: HeapVisualizer },
+  { id: 'hashtable',    label: 'Hash Table',          phase: 'P2', color: '#4a9eff', Component: HashVisualizer },
+  { id: 'trie',         label: 'Trie',                phase: 'P2', color: '#4a9eff', Component: TrieVisualizer },
+  { id: 'bsearch',      label: 'Binary Search',       phase: 'P3', color: '#8b7cf8', Component: BinarySearchVisualizer },
+  { id: 'bubble',       label: 'Bubble Sort',         phase: 'P3', color: '#8b7cf8', Component: BubbleSortVisualizer },
+  { id: 'insertion',    label: 'Insertion Sort',      phase: 'P3', color: '#8b7cf8', Component: InsertionSortVisualizer },
+  { id: 'selection',    label: 'Selection Sort',      phase: 'P3', color: '#8b7cf8', Component: SelectionSortVisualizer },
+  { id: 'mergesort',    label: 'Merge Sort',          phase: 'P4', color: '#f5a623', Component: MergeSortVisualizer },
+  { id: 'quicksort',    label: 'Quick Sort',          phase: 'P4', color: '#f5a623', Component: QuickSortVisualizer },
+  { id: 'dijkstra',     label: "Dijkstra's",          phase: 'P4', color: '#f5a623', Component: DijkstraVisualizer },
+  { id: 'bellmanford',  label: 'Bellman-Ford',        phase: 'P4', color: '#f5a623', Component: BellmanFordVisualizer },
 ];
 
 const phaseGroups = [
   { phase: 'P1', label: 'Linear DS',  color: '#00d4aa' },
   { phase: 'P2', label: 'Trees & ADT', color: '#4a9eff' },
   { phase: 'P3', label: 'Sorting & Search', color: '#8b7cf8' },
-  { phase: 'P4', label: 'Coming soon',  color: '#2a3550' },
+  { phase: 'P4', label: 'Graphs & Sorting', color: '#f5a623' },
 ];
 
 export default function SimulatorPage() {
