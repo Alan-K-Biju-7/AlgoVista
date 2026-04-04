@@ -60,9 +60,9 @@ export function generateBellmanFordSteps(nodes, edges, startId) {
       dist: { ...dist }, prev: { ...prev },
       iteration: i, edgeIdx: null, activeEdge: null,
       relaxedEdge: null, negCycleEdges: [], phase: 'iter_end',
-      message: anyUpdate
-        ? `Iteration ${i} complete — ${anyUpdate ? 'some distances improved' : 'no changes'}. ${i < V - 1 ? `${V - 1 - i} iterations remaining.` : 'Final iteration done.'}${!anyUpdate ? ' Early exit possible — graph settled.' : ''}`,
-        : `Iteration ${i} complete — no updates. Graph has settled early. Remaining iterations will also produce no changes.`,
+        message: anyUpdate
+          ? `Iteration ${i} complete — some distances improved. ${i < V - 1 ? (V - 1 - i) + ' iterations remaining.' : 'Final iteration done.'}`
+          : `Iteration ${i} complete — no updates. Graph has settled early. Remaining iterations will also produce no changes.`,
     });
   }
 
