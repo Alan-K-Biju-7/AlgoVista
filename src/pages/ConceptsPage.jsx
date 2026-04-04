@@ -64,6 +64,8 @@ function ConceptCard({ num, icon, title, desc, complexities, to, accent }) {
 }
 
 const G = '#00d4aa';
+const Y = '#f5a623';
+const R = '#ff6b6b';
 const B = '#4a9eff';
 const P = '#8b7cf8';
 
