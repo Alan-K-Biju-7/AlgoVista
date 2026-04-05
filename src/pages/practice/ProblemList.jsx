@@ -1,16 +1,24 @@
+import React, { useState } from 'react';
 import EmptyState from './EmptyState';
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
 export default function ProblemList({ topic, problems, onSelect, getStatus }) {
+  const [filter, setFilter] = React.useState('All');
+  const filtered = filter === 'All' ? problems : problems.filter(p => p.difficulty === filter);
   return (
     <div>
       <div style={{ marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-primary)' }}>{topic.icon} {topic.label}</h2>
         <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{problems.length} problems</p>
+      <div style={{ display:'flex', gap:'0.4rem', marginTop:'0.75rem' }}>
+        {['All','Easy','Medium','Hard'].map(d => (
+          <button key={d} onClick={() => setFilter(d)} style={{ padding:'0.2rem 0.65rem', borderRadius:'999px', border:'none', cursor:'pointer', fontSize:'0.75rem', fontWeight: filter===d?'700':'400', background: filter===d?topic.color+'25':'transparent', color: filter===d?topic.color:'var(--text-muted)' }}>{d}</button>
+        ))}
       </div>
-      {problems.length === 0 && <EmptyState topicLabel={topic.label} />}
+      </div>
+      {filtered.length === 0 && <EmptyState topicLabel={topic.label} />}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-        {problems.map(p => {
+        {filtered.map(p => {
           const status = getStatus(p.id);
           return (
             <button key={p.id} onClick={() => onSelect(p)} style={{
