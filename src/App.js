@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import ConceptsPage from './pages/ConceptsPage';
 import SimulatorPage from './pages/SimulatorPage';
 import AboutPage from './pages/AboutPage';
+import PracticePage from './pages/PracticePage';
 import './styles/global.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/concepts"  element={<ConceptsPage />} />
           <Route path="/simulator" element={<SimulatorPage />} />
           <Route path="/about"     element={<AboutPage />} />
+            <Route path="/practice" element={<PracticePage />} />
         </Routes>
       </MainLayout>
     </Router>
