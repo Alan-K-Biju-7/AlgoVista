@@ -42,7 +42,7 @@ function Navbar() {
 
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         {navLinks.map((link) => {
-          const isActive = location.pathname === link.to;
+          const isActive = link.to === '/' ? location.pathname === '/' : location.pathname.startsWith(link.to);
           return (
             <Link
               key={link.to}
