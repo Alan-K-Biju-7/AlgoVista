@@ -1,3 +1,4 @@
+import EmptyState from './EmptyState';
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
 export default function ProblemList({ topic, problems, onSelect, getStatus }) {
@@ -7,6 +8,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
         <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-primary)' }}>{topic.icon} {topic.label}</h2>
         <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{problems.length} problems</p>
       </div>
+      {problems.length === 0 && <EmptyState topicLabel={topic.label} />}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
         {problems.map(p => {
           const status = getStatus(p.id);
