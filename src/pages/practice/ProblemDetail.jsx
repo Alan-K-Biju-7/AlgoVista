@@ -8,6 +8,7 @@ import TracerPanel from './tracer/TracerPanel';
 import { useTracerSteps } from './tracer/useTracerSteps';
 import { TRACER_CONFIGS } from './tracer/configs/index';
 import { validateCodeForTracer } from './tracer/validateCode';
+import TracerErrorBoundary from './tracer/TracerErrorBoundary';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
@@ -133,7 +134,9 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
                     ⚠️ {traceWarnings.join(' • ')}
                   </div>
                 )}
-                <TracerPanel tracer={tracer} code={code} topicColor={topicColor} />
+                <TracerErrorBoundary>
+                  <TracerPanel tracer={tracer} code={code} topicColor={topicColor} />
+                </TracerErrorBoundary>
               </div>
             </div>
           )}
