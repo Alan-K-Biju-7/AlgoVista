@@ -7,6 +7,7 @@ import { runTests } from './testRunner';
 import TracerPanel from './tracer/TracerPanel';
 import { useTracerSteps } from './tracer/useTracerSteps';
 import { TRACER_CONFIGS } from './tracer/configs/index';
+import { validateCodeForTracer } from './tracer/validateCode';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
@@ -18,11 +19,15 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
   const tracer        = useTracerSteps();
   const tracerConfig  = TRACER_CONFIGS[problem.id] || null;
 
+  const [traceWarnings, setTraceWarnings] = useState([]);
+
   const handleTrace = () => {
     if (!tracerConfig) return;
+    const { valid, errors, warnings } = validateCodeForTracer(code, tracerConfig);
+    setTraceWarnings(warnings);
+    if (!valid) { alert(errors.join('\n')); return; }
     onAttempted(problem.id);
-    const inputArgs = tracerConfig.defaultInput;
-    tracer.run(code, inputArgs, tracerConfig);
+    tracer.run(code, tracerConfig.defaultInput, tracerConfig);
     setTab('trace');
   };
 
@@ -122,7 +127,14 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
                   </div>
                 </div>
               </div>
-              <TracerPanel tracer={tracer} code={code} topicColor={topicColor} />
+              <div>
+                {traceWarnings.length > 0 && (
+                  <div style={{ marginBottom: '0.75rem', padding: '0.65rem 0.85rem', borderRadius: '0.45rem', background: '#f5a62312', border: '1px solid #f5a62340', fontSize: '0.78rem', color: '#f5a623', lineHeight: 1.6 }}>
+                    ⚠️ {traceWarnings.join(' • ')}
+                  </div>
+                )}
+                <TracerPanel tracer={tracer} code={code} topicColor={topicColor} />
+              </div>
             </div>
           )}
         </div>
