@@ -39,9 +39,8 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
                 color: DIFF_COLOR[p.difficulty], background: DIFF_COLOR[p.difficulty] + '18',
                 border: `1px solid ${DIFF_COLOR[p.difficulty]}40`,
               }}>{p.difficulty}</span>
-              <span style={{ padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: '600',
-                color: 'var(--text-muted)', background: 'var(--border-default)', border: '1px solid var(--border-default)',
-              }}>{p.pattern}</span>
+              <span style={{ padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: '600', color: 'var(--text-muted)', background: 'var(--border-default)', border: '1px solid var(--border-default)' }}>{p.pattern}</span>
+              {p.timeO && <span style={{ padding: '0.15rem 0.5rem', borderRadius: '999px', fontSize: '0.68rem', fontWeight: '600', color: '#4a9eff', background: '#4a9eff12', border: '1px solid #4a9eff30' }}>{p.timeO}</span>}
             </button>
           );
         })}

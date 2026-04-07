@@ -1,6 +1,6 @@
 export const arrayProblems = [
   {
-    id: 1, title: 'Two Sum', difficulty: 'Easy', pattern: 'Hash Map', viz: 'array',
+    id: 1, title: 'Two Sum', timeO: 'O(n)', spaceO: 'O(n)', difficulty: 'Easy', pattern: 'Hash Map', viz: 'array',
     description: 'Given an array of integers and a target sum, return the indices of the two numbers that add up to the target. Each input has exactly one solution and you may not use the same element twice.',
     examples: [
       { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'nums[0] + nums[1] = 2 + 7 = 9' },
@@ -20,7 +20,7 @@ export const arrayProblems = [
     ],
   },
   {
-    id: 2, title: 'Contains Duplicate', difficulty: 'Easy', pattern: 'Hash Set', viz: 'array',
+    id: 2, title: 'Contains Duplicate', timeO: 'O(n)', spaceO: 'O(n)', difficulty: 'Easy', pattern: 'Hash Set', viz: 'array',
     description: 'Given an integer array, return true if any value appears at least twice, and false if every element is distinct.',
     examples: [
       { input: 'nums = [1,2,3,1]', output: 'true',  explanation: '1 appears at index 0 and 3' },
@@ -40,7 +40,7 @@ export const arrayProblems = [
     ],
   },
   {
-    id: 3, title: 'Best Time to Buy and Sell Stock', difficulty: 'Easy', pattern: 'Sliding Window', viz: 'array',
+    id: 3, title: 'Best Time to Buy and Sell Stock', timeO: 'O(n)', spaceO: 'O(1)' to Buy and Sell Stock', difficulty: 'Easy', pattern: 'Sliding Window', viz: 'array',
     description: 'Given an array where prices[i] is the price of a stock on day i, return the maximum profit you can achieve by buying on one day and selling on a later day. Return 0 if no profit is possible.',
     examples: [
       { input: 'prices = [7,1,5,3,6,4]', output: '5', explanation: 'Buy on day 2 (price=1), sell on day 5 (price=6). Profit = 5.' },
