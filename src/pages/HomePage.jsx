@@ -98,6 +98,19 @@ export default function HomePage() {
             >
               Browse Concepts
             </Link>
+            <Link to="/practice" style={{
+              padding: '0.75rem 1.6rem', borderRadius: '0.55rem',
+              fontSize: '0.9rem', fontWeight: '500',
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              border: '1px solid rgba(139,124,248,0.4)',
+              background: 'rgba(139,124,248,0.06)', color: '#8b7cf8',
+              textDecoration: 'none', transition: 'all 0.15s',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(139,124,248,0.7)'; e.currentTarget.style.background = 'rgba(139,124,248,0.12)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(139,124,248,0.4)'; e.currentTarget.style.background = 'rgba(139,124,248,0.06)'; }}
+            >
+              ✦ Start Practicing
+            </Link>
           </div>
 
           {/* Stats row */}
@@ -173,30 +186,54 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* CTA banner */}
-        <div style={{
-          padding: '1.75rem 2rem',
-          borderRadius: 'var(--radius-2xl)',
-          border: '1px solid rgba(0,212,170,0.2)',
-          background: 'linear-gradient(135deg, rgba(0,212,170,0.06) 0%, rgba(0,168,132,0.03) 100%)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          flexWrap: 'wrap', gap: '1.25rem',
-          boxShadow: '0 0 40px rgba(0,212,170,0.06)',
-        }}>
-          <div>
-            <p style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.3rem' }}>Ready to visualize?</p>
-            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>Every module has Step, Auto-run, and speed controls.</p>
-          </div>
-          <Link to="/simulator" style={{
-            padding: '0.7rem 1.5rem', borderRadius: '0.55rem',
-            background: 'var(--accent)', color: '#031a14',
-            fontWeight: '700', fontSize: '0.88rem', textDecoration: 'none',
-            whiteSpace: 'nowrap', flexShrink: 0,
-            boxShadow: '0 0 16px rgba(0,212,170,0.25)',
-            transition: 'all 0.15s',
+        {/* CTA banners */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
+          <div style={{
+            padding: '1.75rem 2rem', borderRadius: 'var(--radius-2xl)',
+            border: '1px solid rgba(0,212,170,0.2)',
+            background: 'linear-gradient(135deg, rgba(0,212,170,0.06) 0%, rgba(0,168,132,0.03) 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexWrap: 'wrap', gap: '1.25rem',
+            boxShadow: '0 0 40px rgba(0,212,170,0.06)',
           }}>
-            Open Simulator
-          </Link>
+            <div>
+              <p style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.3rem' }}>Ready to visualize?</p>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>Step through every algorithm live.</p>
+            </div>
+            <Link to="/simulator" style={{
+              padding: '0.7rem 1.5rem', borderRadius: '0.55rem',
+              background: 'var(--accent)', color: '#031a14',
+              fontWeight: '700', fontSize: '0.88rem', textDecoration: 'none',
+              whiteSpace: 'nowrap', flexShrink: 0,
+              boxShadow: '0 0 16px rgba(0,212,170,0.25)',
+              transition: 'all 0.15s',
+            }}>
+              Open Simulator
+            </Link>
+          </div>
+          <div style={{
+            padding: '1.75rem 2rem', borderRadius: 'var(--radius-2xl)',
+            border: '1px solid rgba(139,124,248,0.2)',
+            background: 'linear-gradient(135deg, rgba(139,124,248,0.06) 0%, rgba(100,90,200,0.03) 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            flexWrap: 'wrap', gap: '1.25rem',
+            boxShadow: '0 0 40px rgba(139,124,248,0.06)',
+          }}>
+            <div>
+              <p style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.3rem' }}>Ready to practice?</p>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>Solve problems with hints, editor and test cases.</p>
+            </div>
+            <Link to="/practice" style={{
+              padding: '0.7rem 1.5rem', borderRadius: '0.55rem',
+              background: '#8b7cf8', color: '#fff',
+              fontWeight: '700', fontSize: '0.88rem', textDecoration: 'none',
+              whiteSpace: 'nowrap', flexShrink: 0,
+              boxShadow: '0 0 16px rgba(139,124,248,0.25)',
+              transition: 'all 0.15s',
+            }}>
+              Start Practicing
+            </Link>
+          </div>
         </div>
 
       </section>
