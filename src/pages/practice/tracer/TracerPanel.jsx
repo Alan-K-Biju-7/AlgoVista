@@ -20,6 +20,7 @@ export default function TracerPanel({ tracer, code, topicColor }) {
   if (!currentStep) return null;
 
   const isError = currentStep.type === 'error';
+  const allErrors = isError; // only one error step is ever pushed
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -31,7 +32,12 @@ export default function TracerPanel({ tracer, code, topicColor }) {
         fontSize: '0.83rem', color: isError ? '#ff6b6b' : 'var(--text-primary)',
         lineHeight: 1.5, fontWeight: isError ? '600' : '400',
       }}>
-        {isError ? `Error: ${currentStep.message}` : currentStep.message || `Step ${currentIdx + 1}`}
+        {isError ? currentStep.message : currentStep.message || `Step ${currentIdx + 1}`}
+        {isError && (
+          <div style={{ marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid #ff6b6b25', fontSize: '0.76rem', color: '#ff6b6b99', lineHeight: 1.6 }}>
+            💡 <strong>Common fixes:</strong> Check your function name matches the starter, avoid infinite loops, don't use async/await or browser APIs inside tracer mode.
+          </div>
+        )}
       </div>
 
       {/* Structure visuals */}
