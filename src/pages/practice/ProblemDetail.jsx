@@ -4,6 +4,9 @@ import HintSystem from './HintSystem';
 import CodeEditor from './CodeEditor';
 import TestResults from './TestResults';
 import { runTests } from './testRunner';
+import TracerPanel from './tracer/TracerPanel';
+import { useTracerSteps } from './tracer/useTracerSteps';
+import { TRACER_CONFIGS } from './tracer/configs/index';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
@@ -12,6 +15,16 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
   const [results, setResults]   = useState(null);
   const [showSolution, setShowSolution] = useState(false);
   const [tab, setTab]           = useState('problem');
+  const tracer        = useTracerSteps();
+  const tracerConfig  = TRACER_CONFIGS[problem.id] || null;
+
+  const handleTrace = () => {
+    if (!tracerConfig) return;
+    onAttempted(problem.id);
+    const inputArgs = tracerConfig.defaultInput;
+    tracer.run(code, inputArgs, tracerConfig);
+    setTab('trace');
+  };
 
   const handleRun = () => {
     onAttempted(problem.id);
@@ -39,14 +52,14 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-default)', paddingBottom: '0' }}>
-        {['problem','solution'].map(t => (
+        {['problem', ...(tracerConfig ? ['trace'] : []), 'solution'].map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
             padding: '0.45rem 1rem', borderRadius: '0.4rem 0.4rem 0 0', border: 'none', cursor: 'pointer',
             fontSize: '0.82rem', fontWeight: tab === t ? '700' : '400',
             background: tab === t ? 'var(--bg-card)' : 'transparent',
             color: tab === t ? 'var(--text-primary)' : 'var(--text-muted)',
             borderBottom: tab === t ? `2px solid ${topicColor}` : '2px solid transparent',
-          }}>{t === 'problem' ? '📋 Problem' : '💡 Solution'}</button>
+          }}>{t === 'problem' ? '📋 Problem' : t === 'trace' ? '🔍 Trace' : '💡 Solution'}</button>
         ))}
       </div>
 
@@ -86,6 +99,32 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
             </div>
             <TestResults results={results} />
           </div>
+        </div>
+      )}
+
+      {tab === 'trace' && (
+        <div>
+          {!tracerConfig ? (
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              Visual tracer not yet available for this problem.
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              <div>
+                <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Your Code</p>
+                <CodeEditor value={code} onChange={setCode} height="260px" />
+                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.6rem' }}>
+                  <button onClick={handleTrace} style={{ padding: '0.5rem 1.1rem', borderRadius: '0.45rem', border: 'none', cursor: 'pointer', background: topicColor, color: '#000', fontWeight: '700', fontSize: '0.83rem' }}>
+                    🔍 Trace Execution
+                  </button>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
+                    Input: {JSON.stringify(tracerConfig.defaultInput)}
+                  </div>
+                </div>
+              </div>
+              <TracerPanel tracer={tracer} code={code} topicColor={topicColor} />
+            </div>
+          )}
         </div>
       )}
 
