@@ -3,44 +3,48 @@ const TIMEOUT_MS = 3000;
 
 export function runWithTracer(code, inputArgs, tracerConfig) {
   const steps = [];
+  const deadline = Date.now() + TIMEOUT_MS;
 
   const log = (step) => {
-    if (steps.length >= MAX_STEPS) throw new Error('__step_limit__');
-    steps.push({ ...step, timestamp: steps.length });
-  };
-
-  // Timeout via Date — safe inside new Function (no Worker needed)
-  const deadline = Date.now() + TIMEOUT_MS;
-  const guardedLog = (step) => {
     if (Date.now() > deadline) throw new Error('__timeout__');
-    log(step);
+    if (steps.length >= MAX_STEPS) throw new Error('__step_limit__');
+    // Deep clone structure + vars to prevent reference mutation
+    steps.push({
+      ...step,
+      vars: step.vars ? JSON.parse(JSON.stringify(step.vars)) : {},
+      structure: step.structure ? JSON.parse(JSON.stringify(step.structure)) : null,
+      timestamp: steps.length,
+    });
   };
 
   try {
-    const sandboxCode = `
-      "use strict";
-      ${code}
-      return function __run__(__args__, __log__) {
-        ${tracerConfig.runnerBody}
-      }
-    `;
-    // eslint-disable-next-line no-new-func
-    const factory = new Function(sandboxCode);
-    const runner = factory();
-    runner(inputArgs, guardedLog);
-  } catch (e) {
-    const msg =
-      e.message === '__step_limit__'
-        ? `Trace stopped after ${MAX_STEPS} steps to protect performance. Simplify your input or algorithm.`
-        : e.message === '__timeout__'
-        ? `Execution timed out after ${TIMEOUT_MS / 1000}s. Check for infinite loops.`
-        : e.message?.includes('is not defined')
-        ? `${e.message}. Make sure your function name matches the starter code.`
-        : e.message?.includes('is not a function')
-        ? `Your function signature may be wrong. Check that it matches the starter code.`
-        : `Runtime error: ${e.message}`;
+    // Deep clone inputs so user mutations don't corrupt snapshots
+    const safeArgs = JSON.parse(JSON.stringify(inputArgs));
 
-    steps.push({ type: 'error', message: msg, line: null, vars: {}, structure: null, timestamp: steps.length });
+    const sandboxCode = `"use strict";\n${code}\nreturn function __run__(__args__, __log__) {\n${tracerConfig.runnerBody}\n}`;
+
+    // eslint-disable-next-line no-new-func
+    const runner = new Function(sandboxCode)();
+    runner(safeArgs, log);
+
+  } catch (e) {
+    let msg;
+    if (e.message === '__timeout__')
+      msg = `Execution timed out after ${TIMEOUT_MS / 1000}s. Check for infinite loops.`;
+    else if (e.message === '__step_limit__')
+      msg = `Trace stopped after ${MAX_STEPS} steps. Try a smaller input.`;
+    else if (e.message === 'Script error.' || !e.message)
+      msg = `A cross-origin script error occurred. This usually means a syntax error in your code or an unsupported browser API. Check your code carefully.`;
+    else if (/is not defined/.test(e.message))
+      msg = `${e.message} — Check your function name matches the starter code exactly.`;
+    else if (/is not a function/.test(e.message))
+      msg = `${e.message} — Your function signature may be wrong.`;
+    else if (/Maximum call stack/.test(e.message))
+      msg = `Stack overflow! Your recursive function has no base case or recurses too deeply.`;
+    else
+      msg = `Runtime error: ${e.message}`;
+
+    steps.push({ type: 'error', message: msg, line: null, vars: {}, structure: null, timestamp: 0 });
   }
 
   return steps;
