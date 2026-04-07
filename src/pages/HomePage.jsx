@@ -101,15 +101,15 @@ export default function HomePage() {
             <Link to="/practice" style={{
               padding: '0.75rem 1.6rem', borderRadius: '0.55rem',
               fontSize: '0.9rem', fontWeight: '500',
-              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-              border: '1px solid rgba(139,124,248,0.4)',
-              background: 'rgba(139,124,248,0.06)', color: '#8b7cf8',
+              display: 'inline-flex', alignItems: 'center',
+              border: '1px solid var(--border-strong)',
+              background: 'transparent', color: 'var(--text-secondary)',
               textDecoration: 'none', transition: 'all 0.15s',
             }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(139,124,248,0.7)'; e.currentTarget.style.background = 'rgba(139,124,248,0.12)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(139,124,248,0.4)'; e.currentTarget.style.background = 'rgba(139,124,248,0.06)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--border-accent)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--accent-glow2)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
             >
-              ✦ Start Practicing
+              Start Practicing
             </Link>
           </div>
 
