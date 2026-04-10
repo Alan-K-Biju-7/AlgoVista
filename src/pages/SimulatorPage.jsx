@@ -27,6 +27,8 @@ const sections = [
     phase: 'P1',
     color: '#00d4aa',
     summary: 'Index-based storage, traversal, updates, and shifting operations.',
+    difficulty: 'Beginner',
+    outcome: 'Understand contiguous memory, indexing, and common mutations.',
     Component: ArrayVisualizer,
   },
   {
@@ -35,6 +37,8 @@ const sections = [
     phase: 'P1',
     color: '#00d4aa',
     summary: 'Node connections, pointer movement, insertion, and deletion flow.',
+    difficulty: 'Beginner',
+    outcome: 'Track references clearly and reason about node-by-node changes.',
     Component: LinkedListVisualizer,
   },
   {
@@ -43,6 +47,8 @@ const sections = [
     phase: 'P1',
     color: '#00d4aa',
     summary: 'LIFO behavior with push, pop, peek, and execution-style thinking.',
+    difficulty: 'Beginner',
+    outcome: 'Build intuition for undo flows, recursion, and nested evaluation.',
     Component: StackVisualizer,
   },
   {
@@ -51,6 +57,8 @@ const sections = [
     phase: 'P1',
     color: '#00d4aa',
     summary: 'FIFO processing with enqueue, dequeue, and ordering intuition.',
+    difficulty: 'Beginner',
+    outcome: 'Understand service order, buffering, and breadth-first processing.',
     Component: QueueVisualizer,
   },
   {
@@ -59,6 +67,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Binary search tree operations, ordering rules, and recursive paths.',
+    difficulty: 'Intermediate',
+    outcome: 'Reason about ordered insertion, lookup, and tree traversal paths.',
     Component: BSTVisualizer,
   },
   {
@@ -67,6 +77,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Self-balancing tree behavior with rotations and height updates.',
+    difficulty: 'Intermediate',
+    outcome: 'See how rotations preserve balance after insertions and deletions.',
     Component: AVLVisualizer,
   },
   {
@@ -75,6 +87,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Vertices, edges, traversals, adjacency logic, and connectivity.',
+    difficulty: 'Intermediate',
+    outcome: 'Map problems to graph models and inspect traversal state clearly.',
     Component: GraphVisualizer,
   },
   {
@@ -83,6 +97,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Priority-based structure with heapify, insert, and delete behavior.',
+    difficulty: 'Intermediate',
+    outcome: 'Understand parent-child ordering and priority queue mechanics.',
     Component: HeapVisualizer,
   },
   {
@@ -91,6 +107,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Hashing, collisions, bucket behavior, and lookup efficiency.',
+    difficulty: 'Intermediate',
+    outcome: 'Visualize hashing tradeoffs, collisions, and bucket placement.',
     Component: HashVisualizer,
   },
   {
@@ -99,6 +117,8 @@ const sections = [
     phase: 'P2',
     color: '#4a9eff',
     summary: 'Prefix-based lookup, branching paths, and string search structure.',
+    difficulty: 'Intermediate',
+    outcome: 'Think in prefixes and branching character paths for fast lookup.',
     Component: TrieVisualizer,
   },
   {
@@ -107,6 +127,8 @@ const sections = [
     phase: 'P3',
     color: '#8b7cf8',
     summary: 'Midpoint reasoning, shrinking search space, and sorted-array logic.',
+    difficulty: 'Beginner',
+    outcome: 'Practice boundary updates and off-by-one safe reasoning.',
     Component: BinarySearchVisualizer,
   },
   {
@@ -115,6 +137,8 @@ const sections = [
     phase: 'P3',
     color: '#8b7cf8',
     summary: 'Adjacent swaps, repeated passes, and comparison-heavy sorting.',
+    difficulty: 'Beginner',
+    outcome: 'Observe how repeated local swaps gradually create global order.',
     Component: BubbleSortVisualizer,
   },
   {
@@ -123,6 +147,8 @@ const sections = [
     phase: 'P3',
     color: '#8b7cf8',
     summary: 'Build a sorted region step by step through insertion and shifting.',
+    difficulty: 'Beginner',
+    outcome: 'See how partial order grows as each value finds its position.',
     Component: InsertionSortVisualizer,
   },
   {
@@ -131,6 +157,8 @@ const sections = [
     phase: 'P3',
     color: '#8b7cf8',
     summary: 'Repeated minimum selection and controlled swap placement.',
+    difficulty: 'Beginner',
+    outcome: 'Develop a clean mental model for selection and fixed progress.',
     Component: SelectionSortVisualizer,
   },
   {
@@ -139,6 +167,8 @@ const sections = [
     phase: 'P4',
     color: '#f5a623',
     summary: 'Divide-and-conquer splitting, merging, and recursive composition.',
+    difficulty: 'Advanced',
+    outcome: 'Understand recursive splitting and stable merging mechanics.',
     Component: MergeSortVisualizer,
   },
   {
@@ -147,6 +177,8 @@ const sections = [
     phase: 'P4',
     color: '#f5a623',
     summary: 'Pivot partitioning, recursive sorting, and in-place strategy.',
+    difficulty: 'Advanced',
+    outcome: 'Track pivots, partitions, and recursive boundaries with confidence.',
     Component: QuickSortVisualizer,
   },
   {
@@ -155,6 +187,8 @@ const sections = [
     phase: 'P4',
     color: '#f5a623',
     summary: 'Shortest paths with greedy relaxation and frontier updates.',
+    difficulty: 'Advanced',
+    outcome: 'Learn why the closest unsettled node drives the algorithm forward.',
     Component: DijkstraVisualizer,
   },
   {
@@ -163,6 +197,8 @@ const sections = [
     phase: 'P4',
     color: '#f5a623',
     summary: 'Edge relaxation across rounds with negative-cycle awareness.',
+    difficulty: 'Advanced',
+    outcome: 'Inspect repeated relaxation passes and detect impossible states.',
     Component: BellmanFordVisualizer,
   },
 ];
@@ -174,8 +210,11 @@ const phaseGroups = [
   { phase: 'P4', label: 'Graphs & Sorting', color: '#f5a623' },
 ];
 
+const workspaceTabs = ['overview', 'problem', 'editor', 'visualize'];
+
 export default function SimulatorPage() {
   const [activeId, setActiveId] = useState('array');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeId) || sections[0],
@@ -183,6 +222,68 @@ export default function SimulatorPage() {
   );
 
   const ActiveComponent = activeSection.Component;
+
+  const renderTabContent = () => {
+    if (activeTab === 'overview') {
+      return (
+        <div className="simulator-panel-grid">
+          <article className="simulator-info-card">
+            <p className="simulator-info-card__label">What you will learn</p>
+            <h3 className="simulator-info-card__title">{activeSection.label}</h3>
+            <p className="simulator-info-card__body">{activeSection.outcome}</p>
+          </article>
+
+          <article className="simulator-info-card">
+            <p className="simulator-info-card__label">Difficulty</p>
+            <h3 className="simulator-info-card__title">{activeSection.difficulty}</h3>
+            <p className="simulator-info-card__body">
+              Start here to build intuition before moving into timed problem solving.
+            </p>
+          </article>
+
+          <article className="simulator-info-card simulator-info-card--wide">
+            <p className="simulator-info-card__label">How to use this module</p>
+            <p className="simulator-info-card__body">
+              First inspect the state changes, then step through operations slowly, and only after that
+              move into code-writing mode. This keeps the visual model and the implementation model aligned.
+            </p>
+          </article>
+        </div>
+      );
+    }
+
+    if (activeTab === 'problem') {
+      return (
+        <div className="simulator-empty-state">
+          <p className="simulator-empty-state__eyebrow">Problem workspace</p>
+          <h3 className="simulator-empty-state__title">Problem panel coming next</h3>
+          <p className="simulator-empty-state__body">
+            This tab will hold NeetCode-style prompts, constraints, examples, hints, and test cases for the
+            currently selected topic.
+          </p>
+        </div>
+      );
+    }
+
+    if (activeTab === 'editor') {
+      return (
+        <div className="simulator-empty-state">
+          <p className="simulator-empty-state__eyebrow">Editor workspace</p>
+          <h3 className="simulator-empty-state__title">Code editor shell coming next</h3>
+          <p className="simulator-empty-state__body">
+            We will use this area for writing code, running tests, stepping through execution, and syncing
+            line-by-line behavior with the visualizer.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="simulator-visualize-pane">
+        <ActiveComponent />
+      </div>
+    );
+  };
 
   return (
     <div className="simulator-shell">
@@ -218,7 +319,10 @@ export default function SimulatorPage() {
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setActiveId(item.id)}
+                      onClick={() => {
+                        setActiveId(item.id);
+                        setActiveTab('overview');
+                      }}
                       className={`simulator-nav-item ${isActive ? 'is-active' : ''}`}
                       style={{
                         borderColor: isActive ? `${item.color}55` : 'transparent',
@@ -285,11 +389,13 @@ export default function SimulatorPage() {
             <div className="simulator-hero__stats">
               <div className="simulator-stat-card">
                 <p className="simulator-stat-card__label">Mode</p>
-                <p className="simulator-stat-card__value">Visualize</p>
+                <p className="simulator-stat-card__value">
+                  {activeTab === 'visualize' ? 'Visualize' : 'Learn'}
+                </p>
               </div>
               <div className="simulator-stat-card">
-                <p className="simulator-stat-card__label">Focus</p>
-                <p className="simulator-stat-card__value">One module</p>
+                <p className="simulator-stat-card__label">Difficulty</p>
+                <p className="simulator-stat-card__value">{activeSection.difficulty}</p>
               </div>
             </div>
           </div>
@@ -298,31 +404,37 @@ export default function SimulatorPage() {
         <section className="simulator-stage">
           <div className="simulator-stage__toolbar">
             <div>
-              <p className="simulator-stage__eyebrow">Active module</p>
-              <h2 className="simulator-stage__title">{activeSection.label} Visualizer</h2>
+              <p className="simulator-stage__eyebrow">Active workspace</p>
+              <h2 className="simulator-stage__title">{activeSection.label}</h2>
             </div>
 
-            <div className="simulator-stage__actions">
-              <button type="button" className="simulator-stage__button simulator-stage__button--ghost">
-                Problem tab soon
-              </button>
-              <button
-                type="button"
-                className="simulator-stage__button simulator-stage__button--accent"
-                style={{
-                  borderColor: `${activeSection.color}33`,
-                  background: `${activeSection.color}14`,
-                  color: activeSection.color,
-                }}
-              >
-                Editor integration next
-              </button>
+            <div className="simulator-stage__tabs" role="tablist" aria-label="Simulator workspace tabs">
+              {workspaceTabs.map((tab) => {
+                const isActive = tab === activeTab;
+                const label = tab.charAt(0).toUpperCase() + tab.slice(1);
+
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    className={`simulator-tab ${isActive ? 'is-active' : ''}`}
+                    onClick={() => setActiveTab(tab)}
+                    style={{
+                      borderColor: isActive ? `${activeSection.color}33` : 'var(--border-subtle)',
+                      background: isActive ? `${activeSection.color}14` : 'var(--bg-panel)',
+                      color: isActive ? activeSection.color : 'var(--text-muted)',
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="simulator-stage__body">
-            <ActiveComponent />
-          </div>
+          <div className="simulator-stage__body">{renderTabContent()}</div>
         </section>
       </main>
     </div>

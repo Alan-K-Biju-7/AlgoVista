@@ -29,7 +29,9 @@
 }
 
 .simulator-sidebar__eyebrow,
-.simulator-stage__eyebrow {
+.simulator-stage__eyebrow,
+.simulator-empty-state__eyebrow,
+.simulator-info-card__label {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -201,7 +203,8 @@
   max-width: 320px;
 }
 
-.simulator-stat-card {
+.simulator-stat-card,
+.simulator-info-card {
   border: 1px solid var(--border-subtle);
   background: var(--bg-panel);
   border-radius: 1rem;
@@ -241,33 +244,57 @@
   color: var(--text-primary);
 }
 
-.simulator-stage__actions {
+.simulator-stage__tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
 }
 
-.simulator-stage__button {
+.simulator-tab {
   padding: 0.65rem 0.9rem;
   border-radius: 0.8rem;
-  font-size: 0.82rem;
-  cursor: pointer;
-}
-
-.simulator-stage__button--ghost {
   border: 1px solid var(--border-subtle);
-  background: var(--bg-panel);
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.simulator-stage__button--accent {
-  border: 1px solid transparent;
+  font-size: 0.82rem;
   font-weight: 700;
+  cursor: pointer;
+  transition: all 160ms ease;
 }
 
-.simulator-stage__body {
+.simulator-stage__body,
+.simulator-visualize-pane {
   min-width: 0;
+}
+
+.simulator-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.simulator-info-card__title,
+.simulator-empty-state__title {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  font-weight: 800;
+  margin: 0.35rem 0 0.45rem;
+}
+
+.simulator-info-card__body,
+.simulator-empty-state__body {
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-size: 0.92rem;
+}
+
+.simulator-info-card--wide {
+  grid-column: 1 / -1;
+}
+
+.simulator-empty-state {
+  border: 1px dashed var(--border-subtle);
+  border-radius: 1rem;
+  background: var(--bg-panel);
+  padding: 1.2rem;
 }
 
 @media (max-width: 1100px) {
@@ -277,6 +304,13 @@
 
   .simulator-sidebar {
     position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .simulator-panel-grid,
+  .simulator-hero__stats {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -296,16 +330,11 @@
     font-size: 1.55rem;
   }
 
-  .simulator-hero__stats {
-    grid-template-columns: 1fr;
-    max-width: none;
-  }
-
-  .simulator-stage__actions {
+  .simulator-stage__tabs {
     width: 100%;
   }
 
-  .simulator-stage__button {
-    width: 100%;
+  .simulator-tab {
+    flex: 1 1 calc(50% - 0.6rem);
   }
 }
