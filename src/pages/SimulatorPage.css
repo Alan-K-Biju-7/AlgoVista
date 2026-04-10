@@ -285,7 +285,9 @@
 .simulator-info-card,
 .simulator-practice-panel,
 .simulator-visual-card,
-.simulator-problem-hero {
+.simulator-problem-hero,
+.simulator-editor-shell,
+.simulator-editor-sidepanel {
   border: 1px solid var(--border-subtle);
   background: var(--bg-panel);
   border-radius: 1rem;
@@ -331,7 +333,9 @@
   gap: 0.6rem;
 }
 
-.simulator-tab {
+.simulator-tab,
+.simulator-language-pill,
+.simulator-action-btn {
   padding: 0.68rem 0.95rem;
   border-radius: 0.85rem;
   border: 1px solid var(--border-subtle);
@@ -346,18 +350,32 @@
     color 160ms ease;
 }
 
-.simulator-tab:hover {
+.simulator-tab:hover,
+.simulator-language-pill:hover,
+.simulator-action-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
 }
 
-.simulator-tab:focus-visible {
+.simulator-tab:focus-visible,
+.simulator-language-pill:focus-visible,
+.simulator-action-btn:focus-visible {
   outline: 2px solid var(--text-primary);
   outline-offset: 3px;
 }
 
-.simulator-tab.is-active {
+.simulator-tab.is-active,
+.simulator-language-pill.is-active {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.simulator-action-btn--ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.simulator-action-btn--primary {
+  color: #08110e;
 }
 
 .simulator-stage__body,
@@ -451,6 +469,7 @@
   line-height: 1.6;
 }
 
+.simulator-editor-layout,
 .simulator-workspace {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
@@ -458,7 +477,12 @@
   align-items: start;
 }
 
-.simulator-practice-panel {
+.simulator-editor-layout {
+  grid-template-columns: minmax(0, 1.4fr) 340px;
+}
+
+.simulator-practice-panel,
+.simulator-editor-sidepanel {
   display: grid;
   gap: 1rem;
   position: sticky;
@@ -497,7 +521,8 @@
   min-width: 0;
 }
 
-.simulator-visual-card__head {
+.simulator-visual-card__head,
+.simulator-editor-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -508,12 +533,85 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.simulator-editor-toolbar__left,
+.simulator-editor-actions,
+.simulator-language-switcher {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.simulator-editor-window {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  min-height: 460px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #0d1117;
+}
+
+.simulator-editor-window__gutter {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  padding: 1rem 0.75rem;
+  background: #0a0e13;
+  color: #6f7b8a;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+
+.simulator-editor-window__code {
+  margin: 0;
+  padding: 1rem 1rem 1.25rem;
+  color: #d7e2f0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  overflow: auto;
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+
+.simulator-console {
+  display: grid;
+  gap: 0.65rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.9rem;
+  background: #0d1117;
+  padding: 0.95rem;
+}
+
+.simulator-console__line {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  color: #d7e2f0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+
+.simulator-console__line--muted {
+  color: #94a3b8;
+}
+
+.simulator-console__prompt {
+  color: #59d4a8;
+  font-weight: 800;
+}
+
 @media (max-width: 1180px) {
-  .simulator-workspace {
+  .simulator-workspace,
+  .simulator-editor-layout {
     grid-template-columns: 1fr;
   }
 
-  .simulator-practice-panel {
+  .simulator-practice-panel,
+  .simulator-editor-sidepanel {
     position: static;
   }
 }
@@ -544,6 +642,10 @@
   .simulator-hero__stats {
     grid-template-columns: 1fr;
   }
+
+  .simulator-editor-window {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -568,5 +670,9 @@
 
   .simulator-tab {
     flex: 1 1 calc(50% - 0.6rem);
+  }
+
+  .simulator-editor-window {
+    min-height: 380px;
   }
 }

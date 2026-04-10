@@ -34,6 +34,58 @@ const sections = [
     examplePrompt: 'Find the maximum sum subarray of size k.',
     coachTip: 'Track exactly what each index means before you optimize anything.',
     starterPlan: ['Read the prompt slowly', 'Write brute force first', 'Identify repeated work', 'Map it to a known pattern'],
+    editorTemplates: {
+      javascript: `function maxSumSubarray(nums, k) {
+  let windowSum = 0;
+  let best = -Infinity;
+
+  for (let i = 0; i < nums.length; i++) {
+    windowSum += nums[i];
+
+    if (i >= k) {
+      windowSum -= nums[i - k];
+    }
+
+    if (i >= k - 1) {
+      best = Math.max(best, windowSum);
+    }
+  }
+
+  return best;
+}`,
+      python: `def max_sum_subarray(nums, k):
+    window_sum = 0
+    best = float("-inf")
+
+    for i, value in enumerate(nums):
+        window_sum += value
+
+        if i >= k:
+            window_sum -= nums[i - k]
+
+        if i >= k - 1:
+            best = max(best, window_sum)
+
+    return best`,
+      cpp: `int maxSumSubarray(vector<int>& nums, int k) {
+    int windowSum = 0;
+    int best = INT_MIN;
+
+    for (int i = 0; i < nums.size(); i++) {
+        windowSum += nums[i];
+
+        if (i >= k) {
+            windowSum -= nums[i - k];
+        }
+
+        if (i >= k - 1) {
+            best = max(best, windowSum);
+        }
+    }
+
+    return best;
+}`,
+    },
     problem: {
       title: 'Maximum Sum Subarray of Size K',
       statement:
@@ -60,6 +112,45 @@ const sections = [
     examplePrompt: 'Reverse a linked list in-place.',
     coachTip: 'Draw next pointers before changing them so you never lose the chain.',
     starterPlan: ['Name current and next pointers', 'Sketch one small list', 'Simulate one mutation', 'Only then code the loop'],
+    editorTemplates: {
+      javascript: `function reverseList(head) {
+  let prev = null;
+  let curr = head;
+
+  while (curr) {
+    const nextNode = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = nextNode;
+  }
+
+  return prev;
+}`,
+      python: `def reverse_list(head):
+    prev = None
+    curr = head
+
+    while curr:
+        next_node = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_node
+
+    return prev`,
+      cpp: `ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    ListNode* curr = head;
+
+    while (curr) {
+        ListNode* nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
+    }
+
+    return prev;
+}`,
+    },
     problem: {
       title: 'Reverse a Linked List',
       statement:
@@ -86,6 +177,59 @@ const sections = [
     examplePrompt: 'Validate whether a parentheses string is balanced.',
     coachTip: 'Ask what the stack should contain after every character or step.',
     starterPlan: ['Define what goes on the stack', 'List push and pop cases', 'Simulate with a tiny input', 'Check the final stack state'],
+    editorTemplates: {
+      javascript: `function isValid(s) {
+  const stack = [];
+  const pairs = { ')': '(', ']': '[', '}': '{' };
+
+  for (const ch of s) {
+    if (!pairs[ch]) {
+      stack.push(ch);
+      continue;
+    }
+
+    if (stack.pop() !== pairs[ch]) {
+      return false;
+    }
+  }
+
+  return stack.length === 0;
+}`,
+      python: `def is_valid(s):
+    stack = []
+    pairs = {')': '(', ']': '[', '}': '{'}
+
+    for ch in s:
+        if ch not in pairs:
+            stack.append(ch)
+            continue
+
+        if not stack or stack.pop() != pairs[ch]:
+            return False
+
+    return len(stack) == 0`,
+      cpp: `bool isValid(string s) {
+    stack<char> st;
+    unordered_map<char, char> pairs = {
+        {')', '('}, {']', '['}, {'}', '{'}
+    };
+
+    for (char ch : s) {
+        if (!pairs.count(ch)) {
+            st.push(ch);
+            continue;
+        }
+
+        if (st.empty() || st.top() != pairs[ch]) {
+            return false;
+        }
+
+        st.pop();
+    }
+
+    return st.empty();
+}`,
+    },
     problem: {
       title: 'Valid Parentheses',
       statement:
@@ -112,6 +256,50 @@ const sections = [
     examplePrompt: 'Simulate a queue of requests arriving over time.',
     coachTip: 'Be explicit about what enters first and what leaves first.',
     starterPlan: ['Mark front and back clearly', 'Trace two enqueue operations', 'Trace one dequeue', 'Confirm order is preserved'],
+    editorTemplates: {
+      javascript: `class RecentCounter {
+  constructor() {
+    this.queue = [];
+  }
+
+  ping(t) {
+    this.queue.push(t);
+
+    while (this.queue[0] < t - 3000) {
+      this.queue.shift();
+    }
+
+    return this.queue.length;
+  }
+}`,
+      python: `from collections import deque
+
+class RecentCounter:
+    def __init__(self):
+        self.queue = deque()
+
+    def ping(self, t):
+        self.queue.append(t)
+
+        while self.queue and self.queue[0] < t - 3000:
+            self.queue.popleft()
+
+        return len(self.queue)`,
+      cpp: `class RecentCounter {
+public:
+    queue<int> q;
+
+    int ping(int t) {
+        q.push(t);
+
+        while (!q.empty() && q.front() < t - 3000) {
+            q.pop();
+        }
+
+        return q.size();
+    }
+};`,
+    },
     problem: {
       title: 'Number of Recent Calls',
       statement:
@@ -138,6 +326,36 @@ const sections = [
     examplePrompt: 'Validate whether a binary tree is a BST.',
     coachTip: 'Think in value ranges, not just parent-child comparisons.',
     starterPlan: ['State the BST rule', 'Decide recursive information', 'Test a broken edge case', 'Then implement bounds cleanly'],
+    editorTemplates: {
+      javascript: `function isValidBST(root, low = -Infinity, high = Infinity) {
+  if (!root) return true;
+  if (root.val <= low || root.val >= high) return false;
+
+  return (
+    isValidBST(root.left, low, root.val) &&
+    isValidBST(root.right, root.val, high)
+  );
+}`,
+      python: `def is_valid_bst(root, low=float("-inf"), high=float("inf")):
+    if not root:
+        return True
+
+    if root.val <= low or root.val >= high:
+        return False
+
+    return (
+        is_valid_bst(root.left, low, root.val)
+        and
+        is_valid_bst(root.right, root.val, high)
+    )`,
+      cpp: `bool isValidBST(TreeNode* root, long low = LONG_MIN, long high = LONG_MAX) {
+    if (!root) return true;
+    if (root->val <= low || root->val >= high) return false;
+
+    return isValidBST(root->left, low, root->val) &&
+           isValidBST(root->right, root->val, high);
+}`,
+    },
     problem: {
       title: 'Validate Binary Search Tree',
       statement:
@@ -164,6 +382,76 @@ const sections = [
     examplePrompt: 'Insert a sequence of keys and rebalance after each step.',
     coachTip: 'Memorize rotation triggers visually before coding the cases.',
     starterPlan: ['Compute balance factor', 'Identify imbalance type', 'Apply correct rotation', 'Update heights afterward'],
+    editorTemplates: {
+      javascript: `function getBalance(node) {
+  return node ? height(node.left) - height(node.right) : 0;
+}
+
+function rebalance(node) {
+  const balance = getBalance(node);
+
+  if (balance > 1 && getBalance(node.left) >= 0) {
+    return rotateRight(node);
+  }
+
+  if (balance > 1 && getBalance(node.left) < 0) {
+    node.left = rotateLeft(node.left);
+    return rotateRight(node);
+  }
+
+  if (balance < -1 && getBalance(node.right) <= 0) {
+    return rotateLeft(node);
+  }
+
+  if (balance < -1 && getBalance(node.right) > 0) {
+    node.right = rotateRight(node.right);
+    return rotateLeft(node);
+  }
+
+  return node;
+}`,
+      python: `def rebalance(node):
+    balance = get_balance(node)
+
+    if balance > 1 and get_balance(node.left) >= 0:
+        return rotate_right(node)
+
+    if balance > 1 and get_balance(node.left) < 0:
+        node.left = rotate_left(node.left)
+        return rotate_right(node)
+
+    if balance < -1 and get_balance(node.right) <= 0:
+        return rotate_left(node)
+
+    if balance < -1 and get_balance(node.right) > 0:
+        node.right = rotate_right(node.right)
+        return rotate_left(node)
+
+    return node`,
+      cpp: `Node* rebalance(Node* node) {
+    int balance = getBalance(node);
+
+    if (balance > 1 && getBalance(node->left) >= 0) {
+        return rotateRight(node);
+    }
+
+    if (balance > 1 && getBalance(node->left) < 0) {
+        node->left = rotateLeft(node->left);
+        return rotateRight(node);
+    }
+
+    if (balance < -1 && getBalance(node->right) <= 0) {
+        return rotateLeft(node);
+    }
+
+    if (balance < -1 && getBalance(node->right) > 0) {
+        node->right = rotateRight(node->right);
+        return rotateLeft(node);
+    }
+
+    return node;
+}`,
+    },
     problem: {
       title: 'AVL Insert and Rebalance',
       statement:
@@ -190,6 +478,81 @@ const sections = [
     examplePrompt: 'Count connected components in an undirected graph.',
     coachTip: 'Decide early whether the graph is directed, weighted, or cyclic.',
     starterPlan: ['Choose graph representation', 'Write visited logic', 'Simulate one traversal', 'Count what changes per node'],
+    editorTemplates: {
+      javascript: `function countComponents(n, edges) {
+  const graph = Array.from({ length: n }, () => []);
+  const seen = new Array(n).fill(false);
+  let count = 0;
+
+  for (const [u, v] of edges) {
+    graph[u].push(v);
+    graph[v].push(u);
+  }
+
+  function dfs(node) {
+    seen[node] = true;
+    for (const next of graph[node]) {
+      if (!seen[next]) dfs(next);
+    }
+  }
+
+  for (let node = 0; node < n; node++) {
+    if (!seen[node]) {
+      count++;
+      dfs(node);
+    }
+  }
+
+  return count;
+}`,
+      python: `def count_components(n, edges):
+    graph = [[] for _ in range(n)]
+    seen = [False] * n
+    count = 0
+
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    def dfs(node):
+        seen[node] = True
+        for nxt in graph[node]:
+            if not seen[nxt]:
+                dfs(nxt)
+
+    for node in range(n):
+        if not seen[node]:
+            count += 1
+            dfs(node)
+
+    return count`,
+      cpp: `int countComponents(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(n);
+    vector<bool> seen(n, false);
+    int count = 0;
+
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+    }
+
+    function<void(int)> dfs = [&](int node) {
+        seen[node] = true;
+        for (int next : graph[node]) {
+            if (!seen[next]) dfs(next);
+        }
+    };
+
+    for (int node = 0; node < n; node++) {
+        if (!seen[node]) {
+            count++;
+            dfs(node);
+        }
+    }
+
+    return count;
+}`,
+    },
     problem: {
       title: 'Count Connected Components',
       statement:
@@ -216,6 +579,50 @@ const sections = [
     examplePrompt: 'Return the k largest elements from a stream.',
     coachTip: 'Focus on heap property, not full sorting of the array.',
     starterPlan: ['Define min-heap or max-heap', 'Trace parent-child indices', 'Simulate one sift operation', 'Check the root after updates'],
+    editorTemplates: {
+      javascript: `function topK(nums, k) {
+  const minHeap = [];
+
+  for (const num of nums) {
+    pushHeap(minHeap, num);
+
+    if (minHeap.length > k) {
+      popHeap(minHeap);
+    }
+  }
+
+  return minHeap;
+}`,
+      python: `import heapq
+
+def top_k(nums, k):
+    heap = []
+
+    for num in nums:
+        heapq.heappush(heap, num)
+        if len(heap) > k:
+            heapq.heappop(heap)
+
+    return heap`,
+      cpp: `vector<int> topK(vector<int>& nums, int k) {
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    for (int num : nums) {
+        pq.push(num);
+        if (pq.size() > k) {
+            pq.pop();
+        }
+    }
+
+    vector<int> result;
+    while (!pq.empty()) {
+        result.push_back(pq.top());
+        pq.pop();
+    }
+
+    return result;
+}`,
+    },
     problem: {
       title: 'K Largest Elements in a Stream',
       statement:
@@ -242,6 +649,37 @@ const sections = [
     examplePrompt: 'Find the first repeated value in an array.',
     coachTip: 'Use the map to remove repeated scanning, not just to store everything.',
     starterPlan: ['Decide key and value meaning', 'Process one element at a time', 'Update frequency or lookup', 'Stop when condition is met'],
+    editorTemplates: {
+      javascript: `function firstRepeated(nums) {
+  const seen = new Set();
+
+  for (const num of nums) {
+    if (seen.has(num)) return num;
+    seen.add(num);
+  }
+
+  return null;
+}`,
+      python: `def first_repeated(nums):
+    seen = set()
+
+    for num in nums:
+        if num in seen:
+            return num
+        seen.add(num)
+
+    return None`,
+      cpp: `int firstRepeated(vector<int>& nums) {
+    unordered_set<int> seen;
+
+    for (int num : nums) {
+        if (seen.count(num)) return num;
+        seen.insert(num);
+    }
+
+    return -1;
+}`,
+    },
     problem: {
       title: 'First Repeated Value',
       statement:
@@ -268,6 +706,54 @@ const sections = [
     examplePrompt: 'Build autocomplete suggestions for a search box.',
     coachTip: 'Treat each character like a branching decision, not a full string compare.',
     starterPlan: ['Walk one character at a time', 'Create missing nodes', 'Mark word endings', 'Verify one prefix query'],
+    editorTemplates: {
+      javascript: `class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isWord = false;
+  }
+}
+
+function insert(root, word) {
+  let node = root;
+  for (const ch of word) {
+    if (!node.children[ch]) {
+      node.children[ch] = new TrieNode();
+    }
+    node = node.children[ch];
+  }
+  node.isWord = true;
+}`,
+      python: `class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_word = False
+
+def insert(root, word):
+    node = root
+    for ch in word:
+        if ch not in node.children:
+            node.children[ch] = TrieNode()
+        node = node.children[ch]
+    node.is_word = True`,
+      cpp: `struct TrieNode {
+    unordered_map<char, TrieNode*> children;
+    bool isWord = false;
+};
+
+void insert(TrieNode* root, string word) {
+    TrieNode* node = root;
+
+    for (char ch : word) {
+        if (!node->children.count(ch)) {
+            node->children[ch] = new TrieNode();
+        }
+        node = node->children[ch];
+    }
+
+    node->isWord = true;
+}`,
+    },
     problem: {
       title: 'Autocomplete Prefix Search',
       statement:
@@ -294,6 +780,49 @@ const sections = [
     examplePrompt: 'Find the first index where value is at least target.',
     coachTip: 'Write down the meaning of left and right before entering the loop.',
     starterPlan: ['Define search interval', 'Choose loop condition', 'Update one boundary only', 'Return the invariant result'],
+    editorTemplates: {
+      javascript: `function lowerBound(nums, target) {
+  let left = 0;
+  let right = nums.length;
+
+  while (left < right) {
+    const mid = Math.floor((left + right) / 2);
+
+    if (nums[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid;
+    }
+  }
+
+  return left;
+}`,
+      python: `def lower_bound(nums, target):
+    left, right = 0, len(nums)
+
+    while left < right:
+        mid = (left + right) // 2
+        if nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid
+
+    return left`,
+      cpp: `int lowerBound(vector<int>& nums, int target) {
+    int left = 0, right = nums.size();
+
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return left;
+}`,
+    },
     problem: {
       title: 'First Position Greater Than or Equal to Target',
       statement:
@@ -320,6 +849,61 @@ const sections = [
     examplePrompt: 'Sort a small list while counting swaps.',
     coachTip: 'Notice what becomes guaranteed after each full pass.',
     starterPlan: ['Compare adjacent values', 'Swap when needed', 'Finish one full pass', 'Shrink the unsorted region'],
+    editorTemplates: {
+      javascript: `function bubbleSort(nums) {
+  let swaps = 0;
+
+  for (let end = nums.length - 1; end > 0; end--) {
+    let changed = false;
+
+    for (let i = 0; i < end; i++) {
+      if (nums[i] > nums[i + 1]) {
+        [nums[i], nums[i + 1]] = [nums[i + 1], nums[i]];
+        swaps++;
+        changed = true;
+      }
+    }
+
+    if (!changed) break;
+  }
+
+  return { nums, swaps };
+}`,
+      python: `def bubble_sort(nums):
+    swaps = 0
+
+    for end in range(len(nums) - 1, 0, -1):
+        changed = False
+        for i in range(end):
+            if nums[i] > nums[i + 1]:
+                nums[i], nums[i + 1] = nums[i + 1], nums[i]
+                swaps += 1
+                changed = True
+
+        if not changed:
+            break
+
+    return nums, swaps`,
+      cpp: `pair<vector<int>, int> bubbleSort(vector<int> nums) {
+    int swaps = 0;
+
+    for (int end = nums.size() - 1; end > 0; end--) {
+        bool changed = false;
+
+        for (int i = 0; i < end; i++) {
+            if (nums[i] > nums[i + 1]) {
+                swap(nums[i], nums[i + 1]);
+                swaps++;
+                changed = true;
+            }
+        }
+
+        if (!changed) break;
+    }
+
+    return {nums, swaps};
+}`,
+    },
     problem: {
       title: 'Bubble Sort With Swap Count',
       statement:
@@ -346,6 +930,50 @@ const sections = [
     examplePrompt: 'Insert each number into the right place of a sorted prefix.',
     coachTip: 'Keep the sorted prefix mentally separate from the rest of the array.',
     starterPlan: ['Pick current value', 'Shift larger items right', 'Insert into gap', 'Expand sorted prefix'],
+    editorTemplates: {
+      javascript: `function insertionSort(nums) {
+  for (let i = 1; i < nums.length; i++) {
+    const value = nums[i];
+    let j = i - 1;
+
+    while (j >= 0 && nums[j] > value) {
+      nums[j + 1] = nums[j];
+      j--;
+    }
+
+    nums[j + 1] = value;
+  }
+
+  return nums;
+}`,
+      python: `def insertion_sort(nums):
+    for i in range(1, len(nums)):
+        value = nums[i]
+        j = i - 1
+
+        while j >= 0 and nums[j] > value:
+            nums[j + 1] = nums[j]
+            j -= 1
+
+        nums[j + 1] = value
+
+    return nums`,
+      cpp: `vector<int> insertionSort(vector<int> nums) {
+    for (int i = 1; i < nums.size(); i++) {
+        int value = nums[i];
+        int j = i - 1;
+
+        while (j >= 0 && nums[j] > value) {
+            nums[j + 1] = nums[j];
+            j--;
+        }
+
+        nums[j + 1] = value;
+    }
+
+    return nums;
+}`,
+    },
     problem: {
       title: 'Insertion Sort Walkthrough',
       statement:
@@ -372,6 +1000,49 @@ const sections = [
     examplePrompt: 'Select the minimum value for each array position.',
     coachTip: 'Separate the search phase from the swap phase in your head.',
     starterPlan: ['Mark current index', 'Scan for minimum', 'Swap once per pass', 'Move boundary forward'],
+    editorTemplates: {
+      javascript: `function selectionSort(nums) {
+  for (let i = 0; i < nums.length; i++) {
+    let minIdx = i;
+
+    for (let j = i + 1; j < nums.length; j++) {
+      if (nums[j] < nums[minIdx]) {
+        minIdx = j;
+      }
+    }
+
+    [nums[i], nums[minIdx]] = [nums[minIdx], nums[i]];
+  }
+
+  return nums;
+}`,
+      python: `def selection_sort(nums):
+    for i in range(len(nums)):
+        min_idx = i
+
+        for j in range(i + 1, len(nums)):
+            if nums[j] < nums[min_idx]:
+                min_idx = j
+
+        nums[i], nums[min_idx] = nums[min_idx], nums[i]
+
+    return nums`,
+      cpp: `vector<int> selectionSort(vector<int> nums) {
+    for (int i = 0; i < nums.size(); i++) {
+        int minIdx = i;
+
+        for (int j = i + 1; j < nums.size(); j++) {
+            if (nums[j] < nums[minIdx]) {
+                minIdx = j;
+            }
+        }
+
+        swap(nums[i], nums[minIdx]);
+    }
+
+    return nums;
+}`,
+    },
     problem: {
       title: 'Selection Sort Passes',
       statement:
@@ -398,6 +1069,38 @@ const sections = [
     examplePrompt: 'Sort an unsorted array using merge steps.',
     coachTip: 'Track split boundaries and merge order separately.',
     starterPlan: ['Find midpoint', 'Sort both halves', 'Merge in order', 'Copy leftovers carefully'],
+    editorTemplates: {
+      javascript: `function mergeSort(nums) {
+  if (nums.length <= 1) return nums;
+
+  const mid = Math.floor(nums.length / 2);
+  const left = mergeSort(nums.slice(0, mid));
+  const right = mergeSort(nums.slice(mid));
+
+  return merge(left, right);
+}`,
+      python: `def merge_sort(nums):
+    if len(nums) <= 1:
+        return nums
+
+    mid = len(nums) // 2
+    left = merge_sort(nums[:mid])
+    right = merge_sort(nums[mid:])
+
+    return merge(left, right)`,
+      cpp: `vector<int> mergeSort(vector<int> nums) {
+    if (nums.size() <= 1) return nums;
+
+    int mid = nums.size() / 2;
+    vector<int> left(nums.begin(), nums.begin() + mid);
+    vector<int> right(nums.begin() + mid, nums.end());
+
+    left = mergeSort(left);
+    right = mergeSort(right);
+
+    return merge(left, right);
+}`,
+    },
     problem: {
       title: 'Merge Sort an Array',
       statement:
@@ -424,6 +1127,37 @@ const sections = [
     examplePrompt: 'Place each pivot so smaller values go left and larger go right.',
     coachTip: 'Make the partition invariant explicit before coding swaps.',
     starterPlan: ['Choose pivot', 'Move pointers inward', 'Partition correctly', 'Recurse on both sides'],
+    editorTemplates: {
+      javascript: `function quickSort(nums, left = 0, right = nums.length - 1) {
+  if (left >= right) return nums;
+
+  const pivot = partition(nums, left, right);
+  quickSort(nums, left, pivot - 1);
+  quickSort(nums, pivot + 1, right);
+
+  return nums;
+}`,
+      python: `def quick_sort(nums, left=0, right=None):
+    if right is None:
+        right = len(nums) - 1
+
+    if left >= right:
+        return nums
+
+    pivot = partition(nums, left, right)
+    quick_sort(nums, left, pivot - 1)
+    quick_sort(nums, pivot + 1, right)
+    return nums`,
+      cpp: `vector<int>& quickSort(vector<int>& nums, int left, int right) {
+    if (left >= right) return nums;
+
+    int pivot = partition(nums, left, right);
+    quickSort(nums, left, pivot - 1);
+    quickSort(nums, pivot + 1, right);
+
+    return nums;
+}`,
+    },
     problem: {
       title: 'Quick Sort Partition and Recurse',
       statement:
@@ -450,6 +1184,72 @@ const sections = [
     examplePrompt: 'Find the shortest path from source to all nodes.',
     coachTip: 'Every pop from the priority queue should answer one clear question.',
     starterPlan: ['Initialize distances', 'Pop smallest frontier node', 'Relax outgoing edges', 'Skip stale queue entries'],
+    editorTemplates: {
+      javascript: `function dijkstra(graph, source) {
+  const dist = new Map();
+  const pq = [[0, source]];
+
+  dist.set(source, 0);
+
+  while (pq.length) {
+    const [cost, node] = pq.shift();
+
+    for (const [next, weight] of graph[node]) {
+      const newCost = cost + weight;
+
+      if (!dist.has(next) || newCost < dist.get(next)) {
+        dist.set(next, newCost);
+        pq.push([newCost, next]);
+        pq.sort((a, b) => a[0] - b[0]);
+      }
+    }
+  }
+
+  return dist;
+}`,
+      python: `import heapq
+
+def dijkstra(graph, source):
+    dist = {source: 0}
+    pq = [(0, source)]
+
+    while pq:
+        cost, node = heapq.heappop(pq)
+
+        if cost > dist[node]:
+            continue
+
+        for nxt, weight in graph[node]:
+            new_cost = cost + weight
+            if nxt not in dist or new_cost < dist[nxt]:
+                dist[nxt] = new_cost
+                heapq.heappush(pq, (new_cost, nxt))
+
+    return dist`,
+      cpp: `vector<int> dijkstra(vector<vector<pair<int,int>>>& graph, int source) {
+    vector<int> dist(graph.size(), INT_MAX);
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+
+    dist[source] = 0;
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+        auto [cost, node] = pq.top();
+        pq.pop();
+
+        if (cost > dist[node]) continue;
+
+        for (auto [next, weight] : graph[node]) {
+            if (cost + weight < dist[next]) {
+                dist[next] = cost + weight;
+                pq.push({dist[next], next});
+            }
+        }
+    }
+
+    return dist;
+}`,
+    },
     problem: {
       title: "Shortest Paths with Dijkstra's Algorithm",
       statement:
@@ -476,6 +1276,46 @@ const sections = [
     examplePrompt: 'Compute shortest paths even when negative edges exist.',
     coachTip: 'Think in rounds over edges, not in expanding frontiers like Dijkstra.',
     starterPlan: ['Initialize all distances', 'Relax every edge for V-1 rounds', 'Run one extra detection pass', 'Trace parent updates carefully'],
+    editorTemplates: {
+      javascript: `function bellmanFord(n, edges, source) {
+  const dist = Array(n).fill(Infinity);
+  dist[source] = 0;
+
+  for (let i = 0; i < n - 1; i++) {
+    for (const [u, v, w] of edges) {
+      if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+        dist[v] = dist[u] + w;
+      }
+    }
+  }
+
+  return dist;
+}`,
+      python: `def bellman_ford(n, edges, source):
+    dist = [float("inf")] * n
+    dist[source] = 0
+
+    for _ in range(n - 1):
+        for u, v, w in edges:
+            if dist[u] != float("inf") and dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+
+    return dist`,
+      cpp: `vector<int> bellmanFord(int n, vector<tuple<int,int,int>>& edges, int source) {
+    vector<int> dist(n, INT_MAX);
+    dist[source] = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (auto [u, v, w] : edges) {
+            if (dist[u] != INT_MAX && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+
+    return dist;
+}`,
+    },
     problem: {
       title: 'Shortest Paths with Bellman-Ford',
       statement:
@@ -499,11 +1339,13 @@ const phaseGroups = [
 ];
 
 const workspaceTabs = ['overview', 'problem', 'editor', 'visualize'];
+const languages = ['javascript', 'python', 'cpp'];
 
 export default function SimulatorPage() {
   const [activeId, setActiveId] = useState('array');
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [editorLanguage, setEditorLanguage] = useState('javascript');
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeId) || sections[0],
@@ -511,6 +1353,9 @@ export default function SimulatorPage() {
   );
 
   const ActiveComponent = activeSection.Component;
+  const editorCode =
+    activeSection.editorTemplates?.[editorLanguage] ||
+    '// Code template unavailable for this topic yet.';
 
   const renderTabContent = () => {
     if (activeTab === 'overview') {
@@ -611,13 +1456,103 @@ export default function SimulatorPage() {
 
     if (activeTab === 'editor') {
       return (
-        <div className="simulator-empty-state">
-          <p className="simulator-empty-state__eyebrow">Editor workspace</p>
-          <h3 className="simulator-empty-state__title">Code editor shell coming next</h3>
-          <p className="simulator-empty-state__body">
-            We will use this area for writing code, running tests, stepping through execution, and syncing
-            line-by-line behavior with the visualizer.
-          </p>
+        <div className="simulator-editor-layout">
+          <div className="simulator-editor-shell">
+            <div className="simulator-editor-toolbar">
+              <div className="simulator-editor-toolbar__left">
+                <p className="simulator-info-card__label">Editor</p>
+                <div className="simulator-language-switcher">
+                  {languages.map((lang) => {
+                    const isActive = lang === editorLanguage;
+                    const label =
+                      lang === 'javascript' ? 'JavaScript' : lang === 'python' ? 'Python' : 'C++';
+
+                    return (
+                      <button
+                        key={lang}
+                        type="button"
+                        className={`simulator-language-pill ${isActive ? 'is-active' : ''}`}
+                        onClick={() => setEditorLanguage(lang)}
+                        style={{
+                          borderColor: isActive ? `${activeSection.color}33` : 'var(--border-subtle)',
+                          background: isActive ? `${activeSection.color}14` : 'transparent',
+                          color: isActive ? activeSection.color : 'var(--text-muted)',
+                        }}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="simulator-editor-actions">
+                <button type="button" className="simulator-action-btn simulator-action-btn--ghost">
+                  Reset
+                </button>
+                <button type="button" className="simulator-action-btn simulator-action-btn--ghost">
+                  Explain
+                </button>
+                <button
+                  type="button"
+                  className="simulator-action-btn simulator-action-btn--primary"
+                  style={{
+                    background: activeSection.color,
+                    borderColor: activeSection.color,
+                  }}
+                >
+                  Run
+                </button>
+              </div>
+            </div>
+
+            <div className="simulator-editor-window">
+              <div className="simulator-editor-window__gutter">
+                {editorCode.split('\n').map((_, idx) => (
+                  <span key={idx + 1}>{idx + 1}</span>
+                ))}
+              </div>
+              <pre className="simulator-editor-window__code">{editorCode}</pre>
+            </div>
+          </div>
+
+          <aside className="simulator-editor-sidepanel">
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Current goal</p>
+              <h3 className="simulator-info-card__title">{activeSection.problem.title}</h3>
+              <p className="simulator-info-card__body">{activeSection.coachTip}</p>
+            </article>
+
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Expected approach</p>
+              <ul className="simulator-bullet-list">
+                {activeSection.starterPlan.map((item) => (
+                  <li key={item} className="simulator-bullet-list__item">
+                    <span className="simulator-bullet-list__dot" style={{ background: activeSection.color }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Mock output</p>
+              <div className="simulator-console">
+                <div className="simulator-console__line">
+                  <span className="simulator-console__prompt">&gt;</span>
+                  <span>Running {activeSection.label} starter in {editorLanguage}</span>
+                </div>
+                <div className="simulator-console__line">
+                  <span className="simulator-console__prompt">&gt;</span>
+                  <span>No runtime connected yet</span>
+                </div>
+                <div className="simulator-console__line simulator-console__line--muted">
+                  <span className="simulator-console__prompt">&gt;</span>
+                  <span>Next commit can wire real execution or test playback</span>
+                </div>
+              </div>
+            </article>
+          </aside>
         </div>
       );
     }
@@ -809,6 +1744,8 @@ export default function SimulatorPage() {
                     ? 'Practice + Visualize'
                     : activeTab === 'problem'
                     ? 'Problem Solving'
+                    : activeTab === 'editor'
+                    ? 'Code Workspace'
                     : 'Learn'}
                 </p>
               </div>
