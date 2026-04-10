@@ -1346,6 +1346,12 @@ export default function SimulatorPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editorLanguage, setEditorLanguage] = useState('javascript');
+  const [sessionState, setSessionState] = useState({
+    visitedProblem: false,
+    openedEditor: false,
+    viewedVisualizer: false,
+    sourceAction: 'Started from overview',
+  });
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeId) || sections[0],
@@ -1356,6 +1362,29 @@ export default function SimulatorPage() {
   const editorCode =
     activeSection.editorTemplates?.[editorLanguage] ||
     '// Code template unavailable for this topic yet.';
+
+  const openTab = (tab, reason) => {
+    setActiveTab(tab);
+    setSessionState((prev) => ({
+      ...prev,
+      visitedProblem: prev.visitedProblem || tab === 'problem',
+      openedEditor: prev.openedEditor || tab === 'editor',
+      viewedVisualizer: prev.viewedVisualizer || tab === 'visualize',
+      sourceAction: reason || prev.sourceAction,
+    }));
+  };
+
+  const resetFlowForTopic = (id) => {
+    setActiveId(id);
+    setActiveTab('overview');
+    setSidebarOpen(false);
+    setSessionState({
+      visitedProblem: false,
+      openedEditor: false,
+      viewedVisualizer: false,
+      sourceAction: 'Started from overview',
+    });
+  };
 
   const renderTabContent = () => {
     if (activeTab === 'overview') {
@@ -1400,6 +1429,24 @@ export default function SimulatorPage() {
               First inspect the state changes, then step through operations slowly, and only after that
               move into code-writing mode. This keeps the visual model and the implementation model aligned.
             </p>
+
+            <div className="simulator-inline-actions">
+              <button
+                type="button"
+                className="simulator-journey-btn simulator-journey-btn--ghost"
+                onClick={() => openTab('problem', 'Jumped from overview to problem')}
+              >
+                Read problem
+              </button>
+              <button
+                type="button"
+                className="simulator-journey-btn simulator-journey-btn--primary"
+                style={{ background: activeSection.color, borderColor: activeSection.color }}
+                onClick={() => openTab('editor', 'Started coding from overview')}
+              >
+                Start coding
+              </button>
+            </div>
           </article>
         </div>
       );
@@ -1412,6 +1459,24 @@ export default function SimulatorPage() {
             <p className="simulator-info-card__label">Practice problem</p>
             <h3 className="simulator-problem-hero__title">{activeSection.problem.title}</h3>
             <p className="simulator-problem-hero__body">{activeSection.problem.statement}</p>
+
+            <div className="simulator-inline-actions">
+              <button
+                type="button"
+                className="simulator-journey-btn simulator-journey-btn--ghost"
+                onClick={() => openTab('overview', 'Returned from problem to overview')}
+              >
+                Back to concept
+              </button>
+              <button
+                type="button"
+                className="simulator-journey-btn simulator-journey-btn--primary"
+                style={{ background: activeSection.color, borderColor: activeSection.color }}
+                onClick={() => openTab('editor', 'Moved from problem to editor')}
+              >
+                Solve in editor
+              </button>
+            </div>
           </article>
 
           <div className="simulator-panel-grid simulator-panel-grid--problem">
@@ -1500,8 +1565,9 @@ export default function SimulatorPage() {
                     background: activeSection.color,
                     borderColor: activeSection.color,
                   }}
+                  onClick={() => openTab('visualize', 'Opened visualizer from editor')}
                 >
-                  Run
+                  Open in visualize
                 </button>
               </div>
             </div>
@@ -1513,6 +1579,26 @@ export default function SimulatorPage() {
                 ))}
               </div>
               <pre className="simulator-editor-window__code">{editorCode}</pre>
+            </div>
+
+            <div className="simulator-editor-footer">
+              <div className="simulator-editor-footer__meta">
+                <span className="simulator-editor-footer__pill">{editorLanguage}</span>
+                <span className="simulator-editor-footer__text">
+                  Topic: {activeSection.label}
+                </span>
+                <span className="simulator-editor-footer__text">
+                  Goal: {activeSection.problem.title}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                className="simulator-journey-btn simulator-journey-btn--ghost"
+                onClick={() => openTab('problem', 'Returned from editor to problem')}
+              >
+                Re-read problem
+              </button>
             </div>
           </div>
 
@@ -1540,15 +1626,15 @@ export default function SimulatorPage() {
               <div className="simulator-console">
                 <div className="simulator-console__line">
                   <span className="simulator-console__prompt">&gt;</span>
-                  <span>Running {activeSection.label} starter in {editorLanguage}</span>
+                  <span>Prepared {activeSection.label} starter in {editorLanguage}</span>
                 </div>
                 <div className="simulator-console__line">
                   <span className="simulator-console__prompt">&gt;</span>
-                  <span>No runtime connected yet</span>
+                  <span>Use Open in visualize to inspect the same topic interactively</span>
                 </div>
                 <div className="simulator-console__line simulator-console__line--muted">
                   <span className="simulator-console__prompt">&gt;</span>
-                  <span>Next commit can wire real execution or test playback</span>
+                  <span>Shared session keeps your current topic and language in view</span>
                 </div>
               </div>
             </article>
@@ -1585,6 +1671,21 @@ export default function SimulatorPage() {
               ))}
             </ul>
           </div>
+
+          <div className="simulator-practice-panel__block">
+            <p className="simulator-info-card__label">Session context</p>
+            <div className="simulator-session-mini">
+              <span className="simulator-session-mini__pill">{editorLanguage}</span>
+              <span className="simulator-session-mini__text">{activeSection.problem.title}</span>
+            </div>
+            <button
+              type="button"
+              className="simulator-journey-btn simulator-journey-btn--ghost"
+              onClick={() => openTab('editor', 'Returned from visualizer to editor')}
+            >
+              Back to editor
+            </button>
+          </div>
         </aside>
 
         <div className="simulator-visual-card">
@@ -1603,6 +1704,21 @@ export default function SimulatorPage() {
             >
               Live module
             </span>
+          </div>
+
+          <div className="simulator-visual-context">
+            <div className="simulator-visual-context__block">
+              <span className="simulator-visual-context__label">Tracking</span>
+              <span className="simulator-visual-context__value">{activeSection.problem.title}</span>
+            </div>
+            <div className="simulator-visual-context__block">
+              <span className="simulator-visual-context__label">Language</span>
+              <span className="simulator-visual-context__value">{editorLanguage}</span>
+            </div>
+            <div className="simulator-visual-context__block">
+              <span className="simulator-visual-context__label">Flow</span>
+              <span className="simulator-visual-context__value">{sessionState.sourceAction}</span>
+            </div>
           </div>
 
           <div className="simulator-visualize-pane">
@@ -1662,11 +1778,7 @@ export default function SimulatorPage() {
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => {
-                        setActiveId(item.id);
-                        setActiveTab('overview');
-                        setSidebarOpen(false);
-                      }}
+                      onClick={() => resetFlowForTopic(item.id)}
                       className={`simulator-nav-item ${isActive ? 'is-active' : ''}`}
                       style={{
                         borderColor: isActive ? `${item.color}55` : 'transparent',
@@ -1757,6 +1869,25 @@ export default function SimulatorPage() {
           </div>
         </section>
 
+        <section className="simulator-session-bar">
+          <div className="simulator-session-bar__left">
+            <p className="simulator-session-bar__eyebrow">Current practice session</p>
+            <div className="simulator-session-bar__row">
+              <span className="simulator-session-bar__pill" style={{ color: activeSection.color, borderColor: `${activeSection.color}44` }}>
+                {activeSection.label}
+              </span>
+              <span className="simulator-session-bar__meta">{activeSection.problem.title}</span>
+              <span className="simulator-session-bar__meta">Language: {editorLanguage}</span>
+            </div>
+          </div>
+
+          <div className="simulator-session-bar__progress">
+            <span className={`simulator-flow-dot ${sessionState.visitedProblem ? 'is-done' : ''}`}>Problem</span>
+            <span className={`simulator-flow-dot ${sessionState.openedEditor ? 'is-done' : ''}`}>Editor</span>
+            <span className={`simulator-flow-dot ${sessionState.viewedVisualizer ? 'is-done' : ''}`}>Visualize</span>
+          </div>
+        </section>
+
         <section className="simulator-stage">
           <div className="simulator-stage__toolbar">
             <div>
@@ -1776,7 +1907,7 @@ export default function SimulatorPage() {
                     role="tab"
                     aria-selected={isActive}
                     className={`simulator-tab ${isActive ? 'is-active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => openTab(tab, `Switched tab to ${label}`)}
                     style={{
                       borderColor: isActive ? `${activeSection.color}33` : 'var(--border-subtle)',
                       background: isActive ? `${activeSection.color}14` : 'var(--bg-panel)',
