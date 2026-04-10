@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import './SimulatorPage.css';
 
 import ArrayVisualizer from '../modules/array/ArrayVisualizer';
@@ -1346,12 +1346,16 @@ export default function SimulatorPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editorLanguage, setEditorLanguage] = useState('javascript');
+  const [splitRatio, setSplitRatio] = useState(34);
+  const [isDraggingSplit, setIsDraggingSplit] = useState(false);
   const [sessionState, setSessionState] = useState({
     visitedProblem: false,
     openedEditor: false,
     viewedVisualizer: false,
     sourceAction: 'Started from overview',
   });
+
+  const splitContainerRef = useRef(null);
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeId) || sections[0],
@@ -1362,6 +1366,43 @@ export default function SimulatorPage() {
   const editorCode =
     activeSection.editorTemplates?.[editorLanguage] ||
     '// Code template unavailable for this topic yet.';
+
+  const clampSplit = (value) => Math.max(24, Math.min(52, value));
+
+  const updateSplitFromClientX = (clientX) => {
+    const el = splitContainerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const percent = ((clientX - rect.left) / rect.width) * 100;
+    setSplitRatio(clampSplit(percent));
+  };
+
+  const startSplitDrag = () => {
+    setIsDraggingSplit(true);
+  };
+
+  const stopSplitDrag = () => {
+    setIsDraggingSplit(false);
+  };
+
+  const handleSplitKeyDown = (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      setSplitRatio((prev) => clampSplit(prev - 2));
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      setSplitRatio((prev) => clampSplit(prev + 2));
+    }
+    if (event.key === 'Home') {
+      event.preventDefault();
+      setSplitRatio(24);
+    }
+    if (event.key === 'End') {
+      event.preventDefault();
+      setSplitRatio(52);
+    }
+  };
 
   const openTab = (tab, reason) => {
     setActiveTab(tab);
@@ -1378,6 +1419,7 @@ export default function SimulatorPage() {
     setActiveId(id);
     setActiveTab('overview');
     setSidebarOpen(false);
+    setSplitRatio(34);
     setSessionState({
       visitedProblem: false,
       openedEditor: false,
@@ -1644,8 +1686,18 @@ export default function SimulatorPage() {
     }
 
     return (
-      <div className="simulator-workspace">
-        <aside className="simulator-practice-panel">
+      <div
+        ref={splitContainerRef}
+        className={`simulator-split-workspace ${isDraggingSplit ? 'is-dragging' : ''}`}
+        onMouseMove={(event) => {
+          if (isDraggingSplit) {
+            updateSplitFromClientX(event.clientX);
+          }
+        }}
+        onMouseUp={stopSplitDrag}
+        onMouseLeave={stopSplitDrag}
+      >
+        <aside className="simulator-practice-panel" style={{ width: `${splitRatio}%` }}>
           <div className="simulator-practice-panel__block">
             <p className="simulator-info-card__label">Practice focus</p>
             <h3 className="simulator-practice-panel__title">{activeSection.examplePrompt}</h3>
@@ -1688,7 +1740,22 @@ export default function SimulatorPage() {
           </div>
         </aside>
 
-        <div className="simulator-visual-card">
+        <div
+          className="simulator-splitter"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize practice and visualizer panels"
+          aria-valuemin={24}
+          aria-valuemax={52}
+          aria-valuenow={Math.round(splitRatio)}
+          tabIndex={0}
+          onMouseDown={startSplitDrag}
+          onKeyDown={handleSplitKeyDown}
+        >
+          <span className="simulator-splitter__grip" />
+        </div>
+
+        <div className="simulator-visual-card simulator-visual-card--split">
           <div className="simulator-visual-card__head">
             <div>
               <p className="simulator-info-card__label">Visualizer</p>

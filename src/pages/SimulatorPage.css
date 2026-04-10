@@ -416,7 +416,8 @@
 .simulator-tab:focus-visible,
 .simulator-language-pill:focus-visible,
 .simulator-action-btn:focus-visible,
-.simulator-journey-btn:focus-visible {
+.simulator-journey-btn:focus-visible,
+.simulator-splitter:focus-visible {
   outline: 2px solid var(--text-primary);
   outline-offset: 3px;
 }
@@ -549,16 +550,23 @@
   line-height: 1.6;
 }
 
-.simulator-editor-layout,
-.simulator-workspace {
+.simulator-editor-layout {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) 340px;
   gap: 1rem;
   align-items: start;
 }
 
-.simulator-editor-layout {
-  grid-template-columns: minmax(0, 1.4fr) 340px;
+.simulator-split-workspace {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.simulator-split-workspace.is-dragging {
+  cursor: ew-resize;
+  user-select: none;
 }
 
 .simulator-practice-panel,
@@ -597,8 +605,47 @@
   margin-top: 0.4rem;
 }
 
+.simulator-splitter {
+  width: 14px;
+  min-width: 14px;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: ew-resize;
+  background: transparent;
+  position: relative;
+}
+
+.simulator-splitter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+}
+
+.simulator-splitter__grip {
+  width: 4px;
+  height: 72px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 45%, transparent);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.simulator-splitter:hover .simulator-splitter__grip,
+.simulator-splitter:focus-visible .simulator-splitter__grip,
+.simulator-split-workspace.is-dragging .simulator-splitter__grip {
+  background: color-mix(in srgb, var(--text-primary) 68%, transparent);
+}
+
 .simulator-visual-card {
   min-width: 0;
+}
+
+.simulator-visual-card--split {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-left: 0.85rem;
 }
 
 .simulator-visual-card__head,
@@ -715,14 +762,24 @@
 }
 
 @media (max-width: 1180px) {
-  .simulator-workspace,
-  .simulator-editor-layout {
+  .simulator-editor-layout,
+  .simulator-split-workspace {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
   .simulator-practice-panel,
   .simulator-editor-sidepanel {
     position: static;
+    width: 100% !important;
+  }
+
+  .simulator-splitter {
+    display: none;
+  }
+
+  .simulator-visual-card--split {
+    margin-left: 0;
   }
 
   .simulator-visual-context {
