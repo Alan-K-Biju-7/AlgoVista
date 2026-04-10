@@ -32,6 +32,8 @@ const sections = [
     prerequisite: 'Comfort with loops, variables, and zero-based indexing.',
     pattern: 'Two pointers, sliding window, prefix processing.',
     examplePrompt: 'Find the maximum sum subarray of size k.',
+    coachTip: 'Track exactly what each index means before you optimize anything.',
+    starterPlan: ['Read the prompt slowly', 'Write brute force first', 'Identify repeated work', 'Map it to a known pattern'],
     Component: ArrayVisualizer,
   },
   {
@@ -45,6 +47,8 @@ const sections = [
     prerequisite: 'Pointers or references, null checks, iterative traversal.',
     pattern: 'Fast and slow pointers, dummy node, pointer rewiring.',
     examplePrompt: 'Reverse a linked list in-place.',
+    coachTip: 'Draw next pointers before changing them so you never lose the chain.',
+    starterPlan: ['Name current and next pointers', 'Sketch one small list', 'Simulate one mutation', 'Only then code the loop'],
     Component: LinkedListVisualizer,
   },
   {
@@ -58,6 +62,8 @@ const sections = [
     prerequisite: 'Arrays, loops, and conditional branching.',
     pattern: 'Monotonic stack, bracket matching, call stack simulation.',
     examplePrompt: 'Validate whether a parentheses string is balanced.',
+    coachTip: 'Ask what the stack should contain after every character or step.',
+    starterPlan: ['Define what goes on the stack', 'List push and pop cases', 'Simulate with a tiny input', 'Check the final stack state'],
     Component: StackVisualizer,
   },
   {
@@ -71,6 +77,8 @@ const sections = [
     prerequisite: 'Basic arrays and front/back update logic.',
     pattern: 'Level-order traversal, task scheduling, stream buffering.',
     examplePrompt: 'Simulate a queue of requests arriving over time.',
+    coachTip: 'Be explicit about what enters first and what leaves first.',
+    starterPlan: ['Mark front and back clearly', 'Trace two enqueue operations', 'Trace one dequeue', 'Confirm order is preserved'],
     Component: QueueVisualizer,
   },
   {
@@ -84,6 +92,8 @@ const sections = [
     prerequisite: 'Recursion, tree terminology, binary decisions.',
     pattern: 'Ordered recursion, subtree bounds, successor/predecessor logic.',
     examplePrompt: 'Validate whether a binary tree is a BST.',
+    coachTip: 'Think in value ranges, not just parent-child comparisons.',
+    starterPlan: ['State the BST rule', 'Decide recursive information', 'Test a broken edge case', 'Then implement bounds cleanly'],
     Component: BSTVisualizer,
   },
   {
@@ -97,6 +107,8 @@ const sections = [
     prerequisite: 'BST basics, tree height, recursion.',
     pattern: 'Rebalancing, LL/LR/RR/RL rotations, height propagation.',
     examplePrompt: 'Insert a sequence of keys and rebalance after each step.',
+    coachTip: 'Memorize rotation triggers visually before coding the cases.',
+    starterPlan: ['Compute balance factor', 'Identify imbalance type', 'Apply correct rotation', 'Update heights afterward'],
     Component: AVLVisualizer,
   },
   {
@@ -110,6 +122,8 @@ const sections = [
     prerequisite: 'Sets, adjacency lists, and traversal fundamentals.',
     pattern: 'DFS, BFS, visited tracking, connected components.',
     examplePrompt: 'Count connected components in an undirected graph.',
+    coachTip: 'Decide early whether the graph is directed, weighted, or cyclic.',
+    starterPlan: ['Choose graph representation', 'Write visited logic', 'Simulate one traversal', 'Count what changes per node'],
     Component: GraphVisualizer,
   },
   {
@@ -123,6 +137,8 @@ const sections = [
     prerequisite: 'Tree indexing inside arrays and swap operations.',
     pattern: 'Top-k, greedy selection, priority-driven processing.',
     examplePrompt: 'Return the k largest elements from a stream.',
+    coachTip: 'Focus on heap property, not full sorting of the array.',
+    starterPlan: ['Define min-heap or max-heap', 'Trace parent-child indices', 'Simulate one sift operation', 'Check the root after updates'],
     Component: HeapVisualizer,
   },
   {
@@ -136,6 +152,8 @@ const sections = [
     prerequisite: 'Arrays, modulo intuition, key-value storage.',
     pattern: 'Frequency maps, caching, counting, quick membership checks.',
     examplePrompt: 'Find the first repeated value in an array.',
+    coachTip: 'Use the map to remove repeated scanning, not just to store everything.',
+    starterPlan: ['Decide key and value meaning', 'Process one element at a time', 'Update frequency or lookup', 'Stop when condition is met'],
     Component: HashVisualizer,
   },
   {
@@ -149,6 +167,8 @@ const sections = [
     prerequisite: 'Strings, character iteration, tree basics.',
     pattern: 'Prefix search, autocomplete, dictionary matching.',
     examplePrompt: 'Build autocomplete suggestions for a search box.',
+    coachTip: 'Treat each character like a branching decision, not a full string compare.',
+    starterPlan: ['Walk one character at a time', 'Create missing nodes', 'Mark word endings', 'Verify one prefix query'],
     Component: TrieVisualizer,
   },
   {
@@ -162,6 +182,8 @@ const sections = [
     prerequisite: 'Sorted arrays and loop invariants.',
     pattern: 'Lower bound, upper bound, answer-space search.',
     examplePrompt: 'Find the first index where value is at least target.',
+    coachTip: 'Write down the meaning of left and right before entering the loop.',
+    starterPlan: ['Define search interval', 'Choose loop condition', 'Update one boundary only', 'Return the invariant result'],
     Component: BinarySearchVisualizer,
   },
   {
@@ -175,6 +197,8 @@ const sections = [
     prerequisite: 'Loops, swaps, and comparison operators.',
     pattern: 'Pass shrinking, adjacent inversion fixing.',
     examplePrompt: 'Sort a small list while counting swaps.',
+    coachTip: 'Notice what becomes guaranteed after each full pass.',
+    starterPlan: ['Compare adjacent values', 'Swap when needed', 'Finish one full pass', 'Shrink the unsorted region'],
     Component: BubbleSortVisualizer,
   },
   {
@@ -188,6 +212,8 @@ const sections = [
     prerequisite: 'Array traversal and shifting values.',
     pattern: 'Growing sorted prefix, local insertion.',
     examplePrompt: 'Insert each number into the right place of a sorted prefix.',
+    coachTip: 'Keep the sorted prefix mentally separate from the rest of the array.',
+    starterPlan: ['Pick current value', 'Shift larger items right', 'Insert into gap', 'Expand sorted prefix'],
     Component: InsertionSortVisualizer,
   },
   {
@@ -201,6 +227,8 @@ const sections = [
     prerequisite: 'Nested loops and min tracking.',
     pattern: 'Find-min then place, deterministic progress.',
     examplePrompt: 'Select the minimum value for each array position.',
+    coachTip: 'Separate the search phase from the swap phase in your head.',
+    starterPlan: ['Mark current index', 'Scan for minimum', 'Swap once per pass', 'Move boundary forward'],
     Component: SelectionSortVisualizer,
   },
   {
@@ -214,6 +242,8 @@ const sections = [
     prerequisite: 'Recursion, temporary arrays, merge logic.',
     pattern: 'Divide and conquer, stable sorting, recursion tree.',
     examplePrompt: 'Sort an unsorted array using merge steps.',
+    coachTip: 'Track split boundaries and merge order separately.',
+    starterPlan: ['Find midpoint', 'Sort both halves', 'Merge in order', 'Copy leftovers carefully'],
     Component: MergeSortVisualizer,
   },
   {
@@ -227,6 +257,8 @@ const sections = [
     prerequisite: 'Pointers, swapping, and recursion basics.',
     pattern: 'Partition around pivot, in-place divide and conquer.',
     examplePrompt: 'Place each pivot so smaller values go left and larger go right.',
+    coachTip: 'Make the partition invariant explicit before coding swaps.',
+    starterPlan: ['Choose pivot', 'Move pointers inward', 'Partition correctly', 'Recurse on both sides'],
     Component: QuickSortVisualizer,
   },
   {
@@ -240,6 +272,8 @@ const sections = [
     prerequisite: 'Graphs, weights, priority queue intuition.',
     pattern: 'Greedy shortest path, relax edges, update frontier.',
     examplePrompt: 'Find the shortest path from source to all nodes.',
+    coachTip: 'Every pop from the priority queue should answer one clear question.',
+    starterPlan: ['Initialize distances', 'Pop smallest frontier node', 'Relax outgoing edges', 'Skip stale queue entries'],
     Component: DijkstraVisualizer,
   },
   {
@@ -253,6 +287,8 @@ const sections = [
     prerequisite: 'Weighted graphs and edge relaxation basics.',
     pattern: 'Repeated relaxation, negative cycle detection, distance updates.',
     examplePrompt: 'Compute shortest paths even when negative edges exist.',
+    coachTip: 'Think in rounds over edges, not in expanding frontiers like Dijkstra.',
+    starterPlan: ['Initialize all distances', 'Relax every edge for V-1 rounds', 'Run one extra detection pass', 'Trace parent updates carefully'],
     Component: BellmanFordVisualizer,
   },
 ];
@@ -352,8 +388,57 @@ export default function SimulatorPage() {
     }
 
     return (
-      <div className="simulator-visualize-pane">
-        <ActiveComponent />
+      <div className="simulator-workspace">
+        <aside className="simulator-practice-panel">
+          <div className="simulator-practice-panel__block">
+            <p className="simulator-info-card__label">Practice focus</p>
+            <h3 className="simulator-practice-panel__title">{activeSection.examplePrompt}</h3>
+            <p className="simulator-practice-panel__body">
+              Use the visualizer on the right while thinking through the prompt on the left. This is the bridge
+              between concept learning and actual interview-style problem solving.
+            </p>
+          </div>
+
+          <div className="simulator-practice-panel__block">
+            <p className="simulator-info-card__label">Coach tip</p>
+            <p className="simulator-practice-panel__body">{activeSection.coachTip}</p>
+          </div>
+
+          <div className="simulator-practice-panel__block">
+            <p className="simulator-info-card__label">Starter plan</p>
+            <ul className="simulator-checklist">
+              {activeSection.starterPlan.map((step) => (
+                <li key={step} className="simulator-checklist__item">
+                  <span className="simulator-checklist__dot" style={{ background: activeSection.color }} />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <div className="simulator-visual-card">
+          <div className="simulator-visual-card__head">
+            <div>
+              <p className="simulator-info-card__label">Visualizer</p>
+              <h3 className="simulator-visual-card__title">{activeSection.label} state view</h3>
+            </div>
+            <span
+              className="simulator-visual-card__badge"
+              style={{
+                background: `${activeSection.color}14`,
+                borderColor: `${activeSection.color}33`,
+                color: activeSection.color,
+              }}
+            >
+              Live module
+            </span>
+          </div>
+
+          <div className="simulator-visualize-pane">
+            <ActiveComponent />
+          </div>
+        </div>
       </div>
     );
   };
@@ -463,7 +548,7 @@ export default function SimulatorPage() {
               <div className="simulator-stat-card">
                 <p className="simulator-stat-card__label">Mode</p>
                 <p className="simulator-stat-card__value">
-                  {activeTab === 'visualize' ? 'Visualize' : 'Learn'}
+                  {activeTab === 'visualize' ? 'Practice + Visualize' : 'Learn'}
                 </p>
               </div>
               <div className="simulator-stat-card">
