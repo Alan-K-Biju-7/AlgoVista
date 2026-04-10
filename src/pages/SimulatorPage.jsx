@@ -505,23 +505,29 @@ export default function SimulatorPage() {
                       }}
                     >
                       <div className="simulator-nav-item__row">
-                        <span
-                          className="simulator-nav-item__label"
-                          style={{
-                            fontWeight: isActive ? 700 : 500,
-                            color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
-                          }}
-                        >
-                          {item.label}
-                        </span>
+  <div className="simulator-nav-item__left">
+    <span
+      className="simulator-nav-item__accent"
+      style={{ background: item.color }}
+    />
+    <span
+      className="simulator-nav-item__label"
+      style={{
+        fontWeight: isActive ? 800 : 600,
+        color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+      }}
+    >
+      {item.label}
+    </span>
+  </div>
 
-                        {isActive && (
-                          <span
-                            className="simulator-nav-item__active-dot"
-                            style={{ background: item.color }}
-                          />
-                        )}
-                      </div>
+  {isActive && (
+    <span
+      className="simulator-nav-item__active-dot"
+      style={{ background: item.color }}
+    />
+  )}
+</div>
                     </button>
                   );
                 })}
