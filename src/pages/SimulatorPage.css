@@ -113,7 +113,8 @@
 .simulator-nav-item__active-dot,
 .simulator-hero__pulse,
 .simulator-checklist__dot,
-.simulator-nav-item__accent {
+.simulator-nav-item__accent,
+.simulator-bullet-list__dot {
   border-radius: 999px;
   flex-shrink: 0;
 }
@@ -283,7 +284,8 @@
 .simulator-stat-card,
 .simulator-info-card,
 .simulator-practice-panel,
-.simulator-visual-card {
+.simulator-visual-card,
+.simulator-problem-hero {
   border: 1px solid var(--border-subtle);
   background: var(--bg-panel);
   border-radius: 1rem;
@@ -363,7 +365,8 @@
   min-width: 0;
 }
 
-.simulator-overview-stack {
+.simulator-overview-stack,
+.simulator-problem-layout {
   display: grid;
   gap: 1rem;
 }
@@ -374,14 +377,16 @@
   gap: 1rem;
 }
 
-.simulator-panel-grid--meta {
+.simulator-panel-grid--meta,
+.simulator-panel-grid--problem {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .simulator-info-card__title,
 .simulator-empty-state__title,
 .simulator-practice-panel__title,
-.simulator-visual-card__title {
+.simulator-visual-card__title,
+.simulator-problem-hero__title {
   font-size: 1.05rem;
   color: var(--text-primary);
   font-weight: 800;
@@ -390,7 +395,8 @@
 
 .simulator-info-card__body,
 .simulator-empty-state__body,
-.simulator-practice-panel__body {
+.simulator-practice-panel__body,
+.simulator-problem-hero__body {
   color: var(--text-muted);
   line-height: 1.65;
   font-size: 0.92rem;
@@ -405,6 +411,44 @@
   border-radius: 1rem;
   background: var(--bg-panel);
   padding: 1.2rem;
+}
+
+.simulator-bullet-list {
+  list-style: none;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+}
+
+.simulator-bullet-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.simulator-bullet-list__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.simulator-example-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.simulator-example-card {
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-card) 84%, white 16%);
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .simulator-workspace {
@@ -496,6 +540,7 @@
 @media (max-width: 720px) {
   .simulator-panel-grid,
   .simulator-panel-grid--meta,
+  .simulator-panel-grid--problem,
   .simulator-hero__stats {
     grid-template-columns: 1fr;
   }

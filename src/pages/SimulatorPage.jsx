@@ -34,6 +34,17 @@ const sections = [
     examplePrompt: 'Find the maximum sum subarray of size k.',
     coachTip: 'Track exactly what each index means before you optimize anything.',
     starterPlan: ['Read the prompt slowly', 'Write brute force first', 'Identify repeated work', 'Map it to a known pattern'],
+    problem: {
+      title: 'Maximum Sum Subarray of Size K',
+      statement:
+        'Given an integer array and a positive integer k, return the maximum sum of any contiguous subarray of size k.',
+      constraints: ['1 <= array length <= 10^5', 'Values may be negative', 'Need a contiguous window', 'Target time should be near O(n)'],
+      examples: [
+        'Input: nums = [2, 1, 5, 1, 3, 2], k = 3 → Output: 9',
+        'Input: nums = [-1, -2, -3, -4], k = 2 → Output: -3',
+      ],
+      hints: ['What part of the sum changes when the window moves by one?', 'Can you reuse the previous window sum instead of recomputing it?'],
+    },
     Component: ArrayVisualizer,
   },
   {
@@ -49,6 +60,17 @@ const sections = [
     examplePrompt: 'Reverse a linked list in-place.',
     coachTip: 'Draw next pointers before changing them so you never lose the chain.',
     starterPlan: ['Name current and next pointers', 'Sketch one small list', 'Simulate one mutation', 'Only then code the loop'],
+    problem: {
+      title: 'Reverse a Linked List',
+      statement:
+        'Given the head of a singly linked list, reverse the list and return the new head.',
+      constraints: ['Number of nodes is in the range [0, 5000]', 'Do not create a second full list', 'Rewire pointers safely', 'Aim for O(n) time'],
+      examples: [
+        'Input: 1 -> 2 -> 3 -> 4 -> 5 → Output: 5 -> 4 -> 3 -> 2 -> 1',
+        'Input: 1 -> 2 → Output: 2 -> 1',
+      ],
+      hints: ['What pointer do you lose if you overwrite next too early?', 'Can you keep prev, curr, and next in each step?'],
+    },
     Component: LinkedListVisualizer,
   },
   {
@@ -64,6 +86,17 @@ const sections = [
     examplePrompt: 'Validate whether a parentheses string is balanced.',
     coachTip: 'Ask what the stack should contain after every character or step.',
     starterPlan: ['Define what goes on the stack', 'List push and pop cases', 'Simulate with a tiny input', 'Check the final stack state'],
+    problem: {
+      title: 'Valid Parentheses',
+      statement:
+        'Given a string containing only brackets (), {}, and [], determine whether the input string is valid.',
+      constraints: ['1 <= string length <= 10^4', 'Every closing bracket must match type', 'Order matters', 'Use linear time if possible'],
+      examples: [
+        'Input: "()[]{}" → Output: true',
+        'Input: "([)]" → Output: false',
+      ],
+      hints: ['What should the top of the stack represent?', 'When do you immediately know the string is invalid?'],
+    },
     Component: StackVisualizer,
   },
   {
@@ -79,6 +112,17 @@ const sections = [
     examplePrompt: 'Simulate a queue of requests arriving over time.',
     coachTip: 'Be explicit about what enters first and what leaves first.',
     starterPlan: ['Mark front and back clearly', 'Trace two enqueue operations', 'Trace one dequeue', 'Confirm order is preserved'],
+    problem: {
+      title: 'Number of Recent Calls',
+      statement:
+        'Implement a class that counts requests made in the last 3000 milliseconds, where each new request arrives in increasing time order.',
+      constraints: ['Times are strictly increasing', 'Need efficient eviction of old requests', 'Many queries may occur', 'A queue-based approach is expected'],
+      examples: [
+        'ping(1) → 1, ping(100) → 2, ping(3001) → 3, ping(3002) → 3',
+        'Requests older than current time minus 3000 should be removed',
+      ],
+      hints: ['Which end should receive new timestamps?', 'Which end should remove expired timestamps?'],
+    },
     Component: QueueVisualizer,
   },
   {
@@ -94,6 +138,17 @@ const sections = [
     examplePrompt: 'Validate whether a binary tree is a BST.',
     coachTip: 'Think in value ranges, not just parent-child comparisons.',
     starterPlan: ['State the BST rule', 'Decide recursive information', 'Test a broken edge case', 'Then implement bounds cleanly'],
+    problem: {
+      title: 'Validate Binary Search Tree',
+      statement:
+        'Given the root of a binary tree, determine whether it is a valid binary search tree.',
+      constraints: ['Node values can be large positive or negative integers', 'Every node in left subtree must be smaller', 'Every node in right subtree must be larger', 'Need a full-tree check, not only parent-child checks'],
+      examples: [
+        'Input: [2,1,3] → Output: true',
+        'Input: [5,1,4,null,null,3,6] → Output: false',
+      ],
+      hints: ['What range of values is valid for each subtree?', 'Why is comparing only with the parent insufficient?'],
+    },
     Component: BSTVisualizer,
   },
   {
@@ -109,6 +164,17 @@ const sections = [
     examplePrompt: 'Insert a sequence of keys and rebalance after each step.',
     coachTip: 'Memorize rotation triggers visually before coding the cases.',
     starterPlan: ['Compute balance factor', 'Identify imbalance type', 'Apply correct rotation', 'Update heights afterward'],
+    problem: {
+      title: 'AVL Insert and Rebalance',
+      statement:
+        'Insert keys into an AVL tree one by one and rebalance after each insertion so that the balance factor of every node stays within the allowed range.',
+      constraints: ['Balance factor must remain between -1 and 1', 'Rotations must preserve BST order', 'Height updates are required after structural changes', 'Insertion should remain logarithmic on balanced trees'],
+      examples: [
+        'Insert [30, 20, 10] → right rotation needed',
+        'Insert [30, 10, 20] → left-right rotation needed',
+      ],
+      hints: ['Which four imbalance cases can happen after insertion?', 'When should height be updated relative to rotation?'],
+    },
     Component: AVLVisualizer,
   },
   {
@@ -124,6 +190,17 @@ const sections = [
     examplePrompt: 'Count connected components in an undirected graph.',
     coachTip: 'Decide early whether the graph is directed, weighted, or cyclic.',
     starterPlan: ['Choose graph representation', 'Write visited logic', 'Simulate one traversal', 'Count what changes per node'],
+    problem: {
+      title: 'Count Connected Components',
+      statement:
+        'Given n nodes labeled from 0 to n - 1 and a list of undirected edges, return the number of connected components in the graph.',
+      constraints: ['1 <= n <= 2000', 'Graph may be disconnected', 'Edges are undirected', 'Need to avoid recounting visited nodes'],
+      examples: [
+        'n = 5, edges = [[0,1],[1,2],[3,4]] → Output: 2',
+        'n = 4, edges = [] → Output: 4',
+      ],
+      hints: ['What starts a new component count?', 'How do DFS or BFS prevent double counting?'],
+    },
     Component: GraphVisualizer,
   },
   {
@@ -139,6 +216,17 @@ const sections = [
     examplePrompt: 'Return the k largest elements from a stream.',
     coachTip: 'Focus on heap property, not full sorting of the array.',
     starterPlan: ['Define min-heap or max-heap', 'Trace parent-child indices', 'Simulate one sift operation', 'Check the root after updates'],
+    problem: {
+      title: 'K Largest Elements in a Stream',
+      statement:
+        'Process a stream of integers and return the k largest elements seen so far after all insertions.',
+      constraints: ['Stream can be large', 'Need to keep only useful elements', 'Aim for O(n log k)', 'Heap size should stay bounded by k'],
+      examples: [
+        'stream = [5, 12, 3, 17, 10], k = 3 → Output: [10, 12, 17] in any order',
+        'If current value is smaller than heap minimum, it may be ignored',
+      ],
+      hints: ['What heap type should track the current top k?', 'What happens when heap size becomes larger than k?'],
+    },
     Component: HeapVisualizer,
   },
   {
@@ -154,6 +242,17 @@ const sections = [
     examplePrompt: 'Find the first repeated value in an array.',
     coachTip: 'Use the map to remove repeated scanning, not just to store everything.',
     starterPlan: ['Decide key and value meaning', 'Process one element at a time', 'Update frequency or lookup', 'Stop when condition is met'],
+    problem: {
+      title: 'First Repeated Value',
+      statement:
+        'Given an integer array, return the first value that appears more than once when scanning from left to right.',
+      constraints: ['Array length can be large', 'Need fast membership checking', 'Return the repeated value, not its count', 'Prefer O(n) time'],
+      examples: [
+        'Input: [2, 5, 1, 2, 3, 5, 1] → Output: 2',
+        'Input: [1, 2, 3, 4] → Output: no repeated value',
+      ],
+      hints: ['What information should be stored after seeing each value?', 'When can you return immediately?'],
+    },
     Component: HashVisualizer,
   },
   {
@@ -169,6 +268,17 @@ const sections = [
     examplePrompt: 'Build autocomplete suggestions for a search box.',
     coachTip: 'Treat each character like a branching decision, not a full string compare.',
     starterPlan: ['Walk one character at a time', 'Create missing nodes', 'Mark word endings', 'Verify one prefix query'],
+    problem: {
+      title: 'Autocomplete Prefix Search',
+      statement:
+        'Design a trie that stores words and returns all words that begin with a given prefix.',
+      constraints: ['Words contain lowercase English letters', 'Prefix queries may be frequent', 'Insertion and prefix walk should be efficient', 'Need a word-end marker'],
+      examples: [
+        'Insert: apple, app, apt → Query: "ap" → Output includes apple, app, apt',
+        'Query: "bat" with no branch → Output: empty list',
+      ],
+      hints: ['What should each node store besides child references?', 'What happens if a prefix path breaks early?'],
+    },
     Component: TrieVisualizer,
   },
   {
@@ -184,6 +294,17 @@ const sections = [
     examplePrompt: 'Find the first index where value is at least target.',
     coachTip: 'Write down the meaning of left and right before entering the loop.',
     starterPlan: ['Define search interval', 'Choose loop condition', 'Update one boundary only', 'Return the invariant result'],
+    problem: {
+      title: 'First Position Greater Than or Equal to Target',
+      statement:
+        'Given a sorted array and a target value, return the first index where the value is greater than or equal to the target.',
+      constraints: ['Array is sorted in non-decreasing order', 'Duplicates may exist', 'Need boundary-safe logic', 'Prefer O(log n) time'],
+      examples: [
+        'Input: nums = [1,2,4,4,5], target = 4 → Output: 2',
+        'Input: nums = [1,3,5], target = 2 → Output: 1',
+      ],
+      hints: ['Should you move right when nums[mid] equals target?', 'What invariant should remain true after each update?'],
+    },
     Component: BinarySearchVisualizer,
   },
   {
@@ -199,6 +320,17 @@ const sections = [
     examplePrompt: 'Sort a small list while counting swaps.',
     coachTip: 'Notice what becomes guaranteed after each full pass.',
     starterPlan: ['Compare adjacent values', 'Swap when needed', 'Finish one full pass', 'Shrink the unsorted region'],
+    problem: {
+      title: 'Bubble Sort With Swap Count',
+      statement:
+        'Sort an array in ascending order using bubble sort and report how many swaps were performed.',
+      constraints: ['Need adjacent swaps only', 'Repeated passes are required', 'Can stop early if no swaps happen', 'Time complexity is quadratic in worst case'],
+      examples: [
+        'Input: [5, 1, 4, 2] → Sorted: [1, 2, 4, 5]',
+        'A pass with zero swaps means the array is already sorted',
+      ],
+      hints: ['What element is guaranteed after each pass?', 'How can a boolean flag help stop early?'],
+    },
     Component: BubbleSortVisualizer,
   },
   {
@@ -214,6 +346,17 @@ const sections = [
     examplePrompt: 'Insert each number into the right place of a sorted prefix.',
     coachTip: 'Keep the sorted prefix mentally separate from the rest of the array.',
     starterPlan: ['Pick current value', 'Shift larger items right', 'Insert into gap', 'Expand sorted prefix'],
+    problem: {
+      title: 'Insertion Sort Walkthrough',
+      statement:
+        'Sort an array using insertion sort by growing a sorted prefix one element at a time.',
+      constraints: ['Shift larger values right before inserting', 'Sorted region grows from left to right', 'In-place updates are expected', 'Worst-case time is O(n^2)'],
+      examples: [
+        'Input: [4, 3, 2, 10] → Output: [2, 3, 4, 10]',
+        'After each step, the left prefix should stay sorted',
+      ],
+      hints: ['What part of the array is guaranteed sorted before each insertion?', 'When should shifting stop?'],
+    },
     Component: InsertionSortVisualizer,
   },
   {
@@ -229,6 +372,17 @@ const sections = [
     examplePrompt: 'Select the minimum value for each array position.',
     coachTip: 'Separate the search phase from the swap phase in your head.',
     starterPlan: ['Mark current index', 'Scan for minimum', 'Swap once per pass', 'Move boundary forward'],
+    problem: {
+      title: 'Selection Sort Passes',
+      statement:
+        'Sort an array by repeatedly selecting the minimum element from the unsorted part and placing it at the current index.',
+      constraints: ['One selected minimum per pass', 'The left side becomes fixed gradually', 'In-place swapping is expected', 'Worst-case time is O(n^2)'],
+      examples: [
+        'Input: [64, 25, 12, 22, 11] → Output: [11, 12, 22, 25, 64]',
+        'After each pass, one more position is finalized',
+      ],
+      hints: ['What index should track the current minimum?', 'Why is only one swap needed per pass?'],
+    },
     Component: SelectionSortVisualizer,
   },
   {
@@ -244,6 +398,17 @@ const sections = [
     examplePrompt: 'Sort an unsorted array using merge steps.',
     coachTip: 'Track split boundaries and merge order separately.',
     starterPlan: ['Find midpoint', 'Sort both halves', 'Merge in order', 'Copy leftovers carefully'],
+    problem: {
+      title: 'Merge Sort an Array',
+      statement:
+        'Sort an unsorted array using merge sort by recursively splitting the array and merging sorted halves.',
+      constraints: ['Use divide and conquer', 'Need a correct merge routine', 'Stable ordering should be preserved', 'Target time is O(n log n)'],
+      examples: [
+        'Input: [5, 2, 3, 1] → Output: [1, 2, 3, 5]',
+        'Split until single elements, then merge upward',
+      ],
+      hints: ['What is the base case of the recursion?', 'During merge, which pointer should move next?'],
+    },
     Component: MergeSortVisualizer,
   },
   {
@@ -259,6 +424,17 @@ const sections = [
     examplePrompt: 'Place each pivot so smaller values go left and larger go right.',
     coachTip: 'Make the partition invariant explicit before coding swaps.',
     starterPlan: ['Choose pivot', 'Move pointers inward', 'Partition correctly', 'Recurse on both sides'],
+    problem: {
+      title: 'Quick Sort Partition and Recurse',
+      statement:
+        'Sort an array using quick sort by choosing a pivot, partitioning the array, and recursively sorting both sides.',
+      constraints: ['Partitioning must maintain a correct invariant', 'Recursion uses subarray boundaries', 'In-place approach is preferred', 'Average time target is O(n log n)'],
+      examples: [
+        'Input: [8, 3, 1, 7, 0, 10, 2] → Output: sorted array',
+        'All values smaller than pivot should end up on one side after partition',
+      ],
+      hints: ['What condition must be true before and after partition?', 'Which indices define the next recursive calls?'],
+    },
     Component: QuickSortVisualizer,
   },
   {
@@ -274,6 +450,17 @@ const sections = [
     examplePrompt: 'Find the shortest path from source to all nodes.',
     coachTip: 'Every pop from the priority queue should answer one clear question.',
     starterPlan: ['Initialize distances', 'Pop smallest frontier node', 'Relax outgoing edges', 'Skip stale queue entries'],
+    problem: {
+      title: "Shortest Paths with Dijkstra's Algorithm",
+      statement:
+        'Given a weighted graph with non-negative edge weights and a source node, compute the shortest distance from the source to every other node.',
+      constraints: ['All edge weights are non-negative', 'Need efficient frontier selection', 'Relax edges correctly', 'Priority queue usage is recommended'],
+      examples: [
+        'Source distance starts at 0 and all others begin at infinity',
+        'When a shorter path is found, update distance and push to the queue',
+      ],
+      hints: ['Why does non-negative weight matter here?', 'When can a popped node be considered settled?'],
+    },
     Component: DijkstraVisualizer,
   },
   {
@@ -289,6 +476,17 @@ const sections = [
     examplePrompt: 'Compute shortest paths even when negative edges exist.',
     coachTip: 'Think in rounds over edges, not in expanding frontiers like Dijkstra.',
     starterPlan: ['Initialize all distances', 'Relax every edge for V-1 rounds', 'Run one extra detection pass', 'Trace parent updates carefully'],
+    problem: {
+      title: 'Shortest Paths with Bellman-Ford',
+      statement:
+        'Given a weighted directed graph that may contain negative edges, compute shortest paths from a source and detect whether a negative cycle is reachable.',
+      constraints: ['Negative edges are allowed', 'Need V - 1 full relaxation rounds', 'One extra pass detects a negative cycle', 'Time complexity is O(VE)'],
+      examples: [
+        'If any distance still decreases after V - 1 rounds, a negative cycle is reachable',
+        'Distances should be updated only when a shorter path is found',
+      ],
+      hints: ['Why are exactly V - 1 passes enough without negative cycles?', 'What does one more successful relaxation prove?'],
+    },
     Component: BellmanFordVisualizer,
   },
 ];
@@ -364,13 +562,49 @@ export default function SimulatorPage() {
 
     if (activeTab === 'problem') {
       return (
-        <div className="simulator-empty-state">
-          <p className="simulator-empty-state__eyebrow">Problem workspace</p>
-          <h3 className="simulator-empty-state__title">Problem panel coming next</h3>
-          <p className="simulator-empty-state__body">
-            This tab will hold NeetCode-style prompts, constraints, examples, hints, and test cases for the
-            currently selected topic.
-          </p>
+        <div className="simulator-problem-layout">
+          <article className="simulator-problem-hero">
+            <p className="simulator-info-card__label">Practice problem</p>
+            <h3 className="simulator-problem-hero__title">{activeSection.problem.title}</h3>
+            <p className="simulator-problem-hero__body">{activeSection.problem.statement}</p>
+          </article>
+
+          <div className="simulator-panel-grid simulator-panel-grid--problem">
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Constraints</p>
+              <ul className="simulator-bullet-list">
+                {activeSection.problem.constraints.map((item) => (
+                  <li key={item} className="simulator-bullet-list__item">
+                    <span className="simulator-bullet-list__dot" style={{ background: activeSection.color }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Hints</p>
+              <ul className="simulator-bullet-list">
+                {activeSection.problem.hints.map((item) => (
+                  <li key={item} className="simulator-bullet-list__item">
+                    <span className="simulator-bullet-list__dot" style={{ background: activeSection.color }} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="simulator-info-card simulator-info-card--wide">
+              <p className="simulator-info-card__label">Examples</p>
+              <div className="simulator-example-stack">
+                {activeSection.problem.examples.map((example) => (
+                  <div key={example} className="simulator-example-card">
+                    {example}
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
         </div>
       );
     }
@@ -505,29 +739,29 @@ export default function SimulatorPage() {
                       }}
                     >
                       <div className="simulator-nav-item__row">
-  <div className="simulator-nav-item__left">
-    <span
-      className="simulator-nav-item__accent"
-      style={{ background: item.color }}
-    />
-    <span
-      className="simulator-nav-item__label"
-      style={{
-        fontWeight: isActive ? 800 : 600,
-        color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
-      }}
-    >
-      {item.label}
-    </span>
-  </div>
+                        <div className="simulator-nav-item__left">
+                          <span
+                            className="simulator-nav-item__accent"
+                            style={{ background: item.color }}
+                          />
+                          <span
+                            className="simulator-nav-item__label"
+                            style={{
+                              fontWeight: isActive ? 800 : 600,
+                              color: isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                            }}
+                          >
+                            {item.label}
+                          </span>
+                        </div>
 
-  {isActive && (
-    <span
-      className="simulator-nav-item__active-dot"
-      style={{ background: item.color }}
-    />
-  )}
-</div>
+                        {isActive && (
+                          <span
+                            className="simulator-nav-item__active-dot"
+                            style={{ background: item.color }}
+                          />
+                        )}
+                      </div>
                     </button>
                   );
                 })}
@@ -571,7 +805,11 @@ export default function SimulatorPage() {
               <div className="simulator-stat-card">
                 <p className="simulator-stat-card__label">Mode</p>
                 <p className="simulator-stat-card__value">
-                  {activeTab === 'visualize' ? 'Practice + Visualize' : 'Learn'}
+                  {activeTab === 'visualize'
+                    ? 'Practice + Visualize'
+                    : activeTab === 'problem'
+                    ? 'Problem Solving'
+                    : 'Learn'}
                 </p>
               </div>
               <div className="simulator-stat-card">
