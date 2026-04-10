@@ -305,6 +305,7 @@ const workspaceTabs = ['overview', 'problem', 'editor', 'visualize'];
 export default function SimulatorPage() {
   const [activeId, setActiveId] = useState('array');
   const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeId) || sections[0],
@@ -445,7 +446,22 @@ export default function SimulatorPage() {
 
   return (
     <div className="simulator-shell">
-      <aside className="simulator-sidebar">
+      <button
+        type="button"
+        className="simulator-mobile-toggle"
+        onClick={() => setSidebarOpen((prev) => !prev)}
+        aria-expanded={sidebarOpen}
+        aria-label={sidebarOpen ? 'Close simulator navigation' : 'Open simulator navigation'}
+      >
+        <span className="simulator-mobile-toggle__line" />
+        <span className="simulator-mobile-toggle__line" />
+        <span className="simulator-mobile-toggle__line" />
+        <span className="simulator-mobile-toggle__text">
+          {sidebarOpen ? 'Close topics' : 'Browse topics'}
+        </span>
+      </button>
+
+      <aside className={`simulator-sidebar ${sidebarOpen ? 'is-open' : ''}`}>
         <div className="simulator-sidebar__intro">
           <p className="simulator-sidebar__eyebrow">AlgoVista</p>
           <h2 className="simulator-sidebar__title">Simulator Workspace</h2>
@@ -480,6 +496,7 @@ export default function SimulatorPage() {
                       onClick={() => {
                         setActiveId(item.id);
                         setActiveTab('overview');
+                        setSidebarOpen(false);
                       }}
                       className={`simulator-nav-item ${isActive ? 'is-active' : ''}`}
                       style={{

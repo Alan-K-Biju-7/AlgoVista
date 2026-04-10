@@ -6,6 +6,36 @@
   margin: 0 auto;
   padding: 1.5rem;
   align-items: start;
+  position: relative;
+}
+
+.simulator-mobile-toggle {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.9rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16);
+}
+
+.simulator-mobile-toggle__line {
+  width: 0.95rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--text-primary);
+  display: block;
+}
+
+.simulator-mobile-toggle__text {
+  margin-left: 0.25rem;
 }
 
 .simulator-sidebar,
@@ -385,8 +415,17 @@
     grid-template-columns: 1fr;
   }
 
+  .simulator-mobile-toggle {
+    display: inline-flex;
+  }
+
   .simulator-sidebar {
     position: static;
+    display: none;
+  }
+
+  .simulator-sidebar.is-open {
+    display: block;
   }
 }
 
