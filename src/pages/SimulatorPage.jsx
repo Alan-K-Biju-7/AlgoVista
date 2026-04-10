@@ -29,6 +29,9 @@ const sections = [
     summary: 'Index-based storage, traversal, updates, and shifting operations.',
     difficulty: 'Beginner',
     outcome: 'Understand contiguous memory, indexing, and common mutations.',
+    prerequisite: 'Comfort with loops, variables, and zero-based indexing.',
+    pattern: 'Two pointers, sliding window, prefix processing.',
+    examplePrompt: 'Find the maximum sum subarray of size k.',
     Component: ArrayVisualizer,
   },
   {
@@ -39,6 +42,9 @@ const sections = [
     summary: 'Node connections, pointer movement, insertion, and deletion flow.',
     difficulty: 'Beginner',
     outcome: 'Track references clearly and reason about node-by-node changes.',
+    prerequisite: 'Pointers or references, null checks, iterative traversal.',
+    pattern: 'Fast and slow pointers, dummy node, pointer rewiring.',
+    examplePrompt: 'Reverse a linked list in-place.',
     Component: LinkedListVisualizer,
   },
   {
@@ -49,6 +55,9 @@ const sections = [
     summary: 'LIFO behavior with push, pop, peek, and execution-style thinking.',
     difficulty: 'Beginner',
     outcome: 'Build intuition for undo flows, recursion, and nested evaluation.',
+    prerequisite: 'Arrays, loops, and conditional branching.',
+    pattern: 'Monotonic stack, bracket matching, call stack simulation.',
+    examplePrompt: 'Validate whether a parentheses string is balanced.',
     Component: StackVisualizer,
   },
   {
@@ -59,6 +68,9 @@ const sections = [
     summary: 'FIFO processing with enqueue, dequeue, and ordering intuition.',
     difficulty: 'Beginner',
     outcome: 'Understand service order, buffering, and breadth-first processing.',
+    prerequisite: 'Basic arrays and front/back update logic.',
+    pattern: 'Level-order traversal, task scheduling, stream buffering.',
+    examplePrompt: 'Simulate a queue of requests arriving over time.',
     Component: QueueVisualizer,
   },
   {
@@ -69,6 +81,9 @@ const sections = [
     summary: 'Binary search tree operations, ordering rules, and recursive paths.',
     difficulty: 'Intermediate',
     outcome: 'Reason about ordered insertion, lookup, and tree traversal paths.',
+    prerequisite: 'Recursion, tree terminology, binary decisions.',
+    pattern: 'Ordered recursion, subtree bounds, successor/predecessor logic.',
+    examplePrompt: 'Validate whether a binary tree is a BST.',
     Component: BSTVisualizer,
   },
   {
@@ -79,6 +94,9 @@ const sections = [
     summary: 'Self-balancing tree behavior with rotations and height updates.',
     difficulty: 'Intermediate',
     outcome: 'See how rotations preserve balance after insertions and deletions.',
+    prerequisite: 'BST basics, tree height, recursion.',
+    pattern: 'Rebalancing, LL/LR/RR/RL rotations, height propagation.',
+    examplePrompt: 'Insert a sequence of keys and rebalance after each step.',
     Component: AVLVisualizer,
   },
   {
@@ -89,6 +107,9 @@ const sections = [
     summary: 'Vertices, edges, traversals, adjacency logic, and connectivity.',
     difficulty: 'Intermediate',
     outcome: 'Map problems to graph models and inspect traversal state clearly.',
+    prerequisite: 'Sets, adjacency lists, and traversal fundamentals.',
+    pattern: 'DFS, BFS, visited tracking, connected components.',
+    examplePrompt: 'Count connected components in an undirected graph.',
     Component: GraphVisualizer,
   },
   {
@@ -99,6 +120,9 @@ const sections = [
     summary: 'Priority-based structure with heapify, insert, and delete behavior.',
     difficulty: 'Intermediate',
     outcome: 'Understand parent-child ordering and priority queue mechanics.',
+    prerequisite: 'Tree indexing inside arrays and swap operations.',
+    pattern: 'Top-k, greedy selection, priority-driven processing.',
+    examplePrompt: 'Return the k largest elements from a stream.',
     Component: HeapVisualizer,
   },
   {
@@ -109,6 +133,9 @@ const sections = [
     summary: 'Hashing, collisions, bucket behavior, and lookup efficiency.',
     difficulty: 'Intermediate',
     outcome: 'Visualize hashing tradeoffs, collisions, and bucket placement.',
+    prerequisite: 'Arrays, modulo intuition, key-value storage.',
+    pattern: 'Frequency maps, caching, counting, quick membership checks.',
+    examplePrompt: 'Find the first repeated value in an array.',
     Component: HashVisualizer,
   },
   {
@@ -119,6 +146,9 @@ const sections = [
     summary: 'Prefix-based lookup, branching paths, and string search structure.',
     difficulty: 'Intermediate',
     outcome: 'Think in prefixes and branching character paths for fast lookup.',
+    prerequisite: 'Strings, character iteration, tree basics.',
+    pattern: 'Prefix search, autocomplete, dictionary matching.',
+    examplePrompt: 'Build autocomplete suggestions for a search box.',
     Component: TrieVisualizer,
   },
   {
@@ -129,6 +159,9 @@ const sections = [
     summary: 'Midpoint reasoning, shrinking search space, and sorted-array logic.',
     difficulty: 'Beginner',
     outcome: 'Practice boundary updates and off-by-one safe reasoning.',
+    prerequisite: 'Sorted arrays and loop invariants.',
+    pattern: 'Lower bound, upper bound, answer-space search.',
+    examplePrompt: 'Find the first index where value is at least target.',
     Component: BinarySearchVisualizer,
   },
   {
@@ -139,6 +172,9 @@ const sections = [
     summary: 'Adjacent swaps, repeated passes, and comparison-heavy sorting.',
     difficulty: 'Beginner',
     outcome: 'Observe how repeated local swaps gradually create global order.',
+    prerequisite: 'Loops, swaps, and comparison operators.',
+    pattern: 'Pass shrinking, adjacent inversion fixing.',
+    examplePrompt: 'Sort a small list while counting swaps.',
     Component: BubbleSortVisualizer,
   },
   {
@@ -149,6 +185,9 @@ const sections = [
     summary: 'Build a sorted region step by step through insertion and shifting.',
     difficulty: 'Beginner',
     outcome: 'See how partial order grows as each value finds its position.',
+    prerequisite: 'Array traversal and shifting values.',
+    pattern: 'Growing sorted prefix, local insertion.',
+    examplePrompt: 'Insert each number into the right place of a sorted prefix.',
     Component: InsertionSortVisualizer,
   },
   {
@@ -159,6 +198,9 @@ const sections = [
     summary: 'Repeated minimum selection and controlled swap placement.',
     difficulty: 'Beginner',
     outcome: 'Develop a clean mental model for selection and fixed progress.',
+    prerequisite: 'Nested loops and min tracking.',
+    pattern: 'Find-min then place, deterministic progress.',
+    examplePrompt: 'Select the minimum value for each array position.',
     Component: SelectionSortVisualizer,
   },
   {
@@ -169,6 +211,9 @@ const sections = [
     summary: 'Divide-and-conquer splitting, merging, and recursive composition.',
     difficulty: 'Advanced',
     outcome: 'Understand recursive splitting and stable merging mechanics.',
+    prerequisite: 'Recursion, temporary arrays, merge logic.',
+    pattern: 'Divide and conquer, stable sorting, recursion tree.',
+    examplePrompt: 'Sort an unsorted array using merge steps.',
     Component: MergeSortVisualizer,
   },
   {
@@ -179,6 +224,9 @@ const sections = [
     summary: 'Pivot partitioning, recursive sorting, and in-place strategy.',
     difficulty: 'Advanced',
     outcome: 'Track pivots, partitions, and recursive boundaries with confidence.',
+    prerequisite: 'Pointers, swapping, and recursion basics.',
+    pattern: 'Partition around pivot, in-place divide and conquer.',
+    examplePrompt: 'Place each pivot so smaller values go left and larger go right.',
     Component: QuickSortVisualizer,
   },
   {
@@ -189,6 +237,9 @@ const sections = [
     summary: 'Shortest paths with greedy relaxation and frontier updates.',
     difficulty: 'Advanced',
     outcome: 'Learn why the closest unsettled node drives the algorithm forward.',
+    prerequisite: 'Graphs, weights, priority queue intuition.',
+    pattern: 'Greedy shortest path, relax edges, update frontier.',
+    examplePrompt: 'Find the shortest path from source to all nodes.',
     Component: DijkstraVisualizer,
   },
   {
@@ -199,6 +250,9 @@ const sections = [
     summary: 'Edge relaxation across rounds with negative-cycle awareness.',
     difficulty: 'Advanced',
     outcome: 'Inspect repeated relaxation passes and detect impossible states.',
+    prerequisite: 'Weighted graphs and edge relaxation basics.',
+    pattern: 'Repeated relaxation, negative cycle detection, distance updates.',
+    examplePrompt: 'Compute shortest paths even when negative edges exist.',
     Component: BellmanFordVisualizer,
   },
 ];
@@ -226,22 +280,41 @@ export default function SimulatorPage() {
   const renderTabContent = () => {
     if (activeTab === 'overview') {
       return (
-        <div className="simulator-panel-grid">
-          <article className="simulator-info-card">
-            <p className="simulator-info-card__label">What you will learn</p>
-            <h3 className="simulator-info-card__title">{activeSection.label}</h3>
-            <p className="simulator-info-card__body">{activeSection.outcome}</p>
-          </article>
+        <div className="simulator-overview-stack">
+          <div className="simulator-panel-grid">
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Learning outcome</p>
+              <h3 className="simulator-info-card__title">{activeSection.label}</h3>
+              <p className="simulator-info-card__body">{activeSection.outcome}</p>
+            </article>
+
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Difficulty</p>
+              <h3 className="simulator-info-card__title">{activeSection.difficulty}</h3>
+              <p className="simulator-info-card__body">
+                Start here to build intuition before moving into timed problem solving.
+              </p>
+            </article>
+          </div>
+
+          <div className="simulator-panel-grid simulator-panel-grid--meta">
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Prerequisite</p>
+              <p className="simulator-info-card__body">{activeSection.prerequisite}</p>
+            </article>
+
+            <article className="simulator-info-card">
+              <p className="simulator-info-card__label">Common pattern</p>
+              <p className="simulator-info-card__body">{activeSection.pattern}</p>
+            </article>
+
+            <article className="simulator-info-card simulator-info-card--wide">
+              <p className="simulator-info-card__label">Example prompt</p>
+              <p className="simulator-info-card__body">{activeSection.examplePrompt}</p>
+            </article>
+          </div>
 
           <article className="simulator-info-card">
-            <p className="simulator-info-card__label">Difficulty</p>
-            <h3 className="simulator-info-card__title">{activeSection.difficulty}</h3>
-            <p className="simulator-info-card__body">
-              Start here to build intuition before moving into timed problem solving.
-            </p>
-          </article>
-
-          <article className="simulator-info-card simulator-info-card--wide">
             <p className="simulator-info-card__label">How to use this module</p>
             <p className="simulator-info-card__body">
               First inspect the state changes, then step through operations slowly, and only after that
