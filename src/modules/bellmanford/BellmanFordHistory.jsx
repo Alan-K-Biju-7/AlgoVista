@@ -1,94 +1,110 @@
 import React from 'react';
 
-export default function BellmanFordHistory({
-  history = [],
-  step = null,
-  currentStepIndex = 0,
-}) {
-  const items = normalizeHistory(history, step, currentStepIndex);
+export default function BellmanFordHistory({ history = [] }) {
+  const items = Array.isArray(history) ? history : [];
 
   return (
-    <section
-      className="bellmanford-history"
-      style={panelStyle}
-    >
+    <section style={panelStyle} className="bellmanford-history">
       <div style={headerStyle}>
         <div>
           <p style={eyebrowStyle}>Event log</p>
           <h3 style={titleStyle}>Relaxation history</h3>
         </div>
-
-        <span style={countBadgeStyle}>
-          {items.length} {items.length === 1 ? 'entry' : 'entries'}
-        </span>
+        <span style={countPillStyle}>{items.length}</span>
       </div>
 
       {items.length === 0 ? (
-        <div style={emptyStyle}>
-          No history available for this step yet.
+        <div style={emptyStateStyle}>
+          <p style={emptyTitleStyle}>No steps recorded yet</p>
+          <p style={emptyBodyStyle}>
+            Start the visualizer to see edge checks, relaxations, and cycle alerts appear here.
+          </p>
         </div>
       ) : (
         <div style={listStyle}>
-          {items.map((entry, index) => (
-            <article
-              key={`${index}-${entry}`}
-              style={itemStyle}
-            >
-              <div style={markerWrapStyle}>
-                <span style={markerStyle} />
-                {index !== items.length - 1 && <span style={connectorStyle} />}
-              </div>
+          {items.map((item, index) => {
+            const tone = getTone(item?.type);
 
-              <div style={contentStyle}>
-                <div style={entryMetaStyle}>
-                  <span style={stepChipStyle}>Step {currentStepIndex + 1}</span>
-                  <span style={indexBadgeStyle}>#{index + 1}</span>
+            return (
+              <article
+                key={item?.id ?? index}
+                style={{
+                  ...rowStyle,
+                  borderColor: tone.border,
+                  background: tone.bg,
+                }}
+              >
+                <div
+                  style={{
+                    ...dotStyle,
+                    background: tone.dot,
+                    boxShadow: `0 0 0 4px ${tone.ring}`,
+                  }}
+                />
+                <div style={contentStyle}>
+                  <div style={metaRowStyle}>
+                    <span style={stepBadgeStyle}>Step {index + 1}</span>
+                    <span style={{ ...typeBadgeStyle, color: tone.text }}>
+                      {labelForType(item?.type)}
+                    </span>
+                  </div>
+                  <p style={messageStyle}>
+                    {item?.message || 'Bellman-Ford state updated.'}
+                  </p>
                 </div>
-
-                <p style={entryTextStyle}>{entry}</p>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>
   );
 }
 
-function normalizeHistory(history, step, currentStepIndex) {
-  if (Array.isArray(history) && history.length > 0) {
-    return history.map((item) => String(item));
+function getTone(type) {
+  if (type === 'warning') {
+    return {
+      bg: 'rgba(161, 53, 68, 0.10)',
+      border: 'rgba(221, 105, 116, 0.26)',
+      dot: '#ff8b98',
+      ring: 'rgba(255, 139, 152, 0.14)',
+      text: '#ffb3bc',
+    };
   }
 
-  if (Array.isArray(step?.history) && step.history.length > 0) {
-    return step.history.map((item) => String(item));
+  if (type === 'success') {
+    return {
+      bg: 'rgba(67, 122, 34, 0.10)',
+      border: 'rgba(109, 170, 69, 0.22)',
+      dot: '#7ed957',
+      ring: 'rgba(126, 217, 87, 0.12)',
+      text: '#a6ec89',
+    };
   }
 
-  if (Array.isArray(step?.events) && step.events.length > 0) {
-    return step.events.map((item) => String(item));
-  }
+  return {
+    bg: 'rgba(74, 158, 255, 0.08)',
+    border: 'rgba(74, 158, 255, 0.18)',
+    dot: '#78b7ff',
+    ring: 'rgba(120, 183, 255, 0.12)',
+    text: '#9fcbff',
+  };
+}
 
-  if (typeof step?.description === 'string' && step.description.trim()) {
-    return [step.description.trim()];
-  }
-
-  if (typeof step?.message === 'string' && step.message.trim()) {
-    return [step.message.trim()];
-  }
-
-  if (step) {
-    return [`Viewing Bellman-Ford state at step ${currentStepIndex + 1}.`];
-  }
-
-  return [];
+function labelForType(type) {
+  if (type === 'warning') return 'Cycle alert';
+  if (type === 'success') return 'Relaxed';
+  return 'Checked';
 }
 
 const panelStyle = {
   background: 'var(--bg-card, #161b22)',
   border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
-  borderRadius: '16px',
+  borderRadius: '18px',
   padding: '16px',
-  minHeight: '220px',
+  display: 'grid',
+  gap: '14px',
+  minHeight: '260px',
 };
 
 const headerStyle = {
@@ -96,118 +112,125 @@ const headerStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: '12px',
-  marginBottom: '14px',
 };
 
 const eyebrowStyle = {
   margin: 0,
   fontSize: '12px',
-  fontWeight: 700,
-  letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--text-secondary, #94a3b8)',
+  letterSpacing: '0.08em',
+  color: 'var(--text-muted, #94a3b8)',
+  fontWeight: 700,
 };
 
 const titleStyle = {
   margin: '4px 0 0',
+  color: 'var(--text-primary, #f8fafc)',
   fontSize: '18px',
   fontWeight: 800,
-  color: 'var(--text-primary, #f8fafc)',
 };
 
-const countBadgeStyle = {
-  padding: '7px 10px',
+const countPillStyle = {
+  minWidth: '34px',
+  height: '34px',
   borderRadius: '999px',
-  background: 'rgba(74, 158, 255, 0.14)',
-  color: '#4a9eff',
-  fontSize: '12px',
-  fontWeight: 700,
-  whiteSpace: 'nowrap',
-};
-
-const emptyStyle = {
   display: 'grid',
   placeItems: 'center',
-  minHeight: '140px',
-  borderRadius: '12px',
-  border: '1px dashed var(--border-color, rgba(255,255,255,0.08))',
-  color: 'var(--text-secondary, #94a3b8)',
+  padding: '0 10px',
+  background: 'rgba(245, 166, 35, 0.14)',
+  color: '#f5a623',
+  fontWeight: 800,
+  fontSize: '12px',
+};
+
+const emptyStateStyle = {
+  borderRadius: '14px',
+  border: '1px dashed rgba(255,255,255,0.12)',
+  background: 'rgba(255,255,255,0.02)',
+  padding: '18px',
+  display: 'grid',
+  gap: '8px',
+  alignContent: 'center',
+  minHeight: '170px',
+};
+
+const emptyTitleStyle = {
+  margin: 0,
+  color: 'var(--text-primary, #f8fafc)',
+  fontSize: '15px',
+  fontWeight: 700,
+};
+
+const emptyBodyStyle = {
+  margin: 0,
+  color: 'var(--text-secondary, #cbd5e1)',
   fontSize: '14px',
-  textAlign: 'center',
-  padding: '16px',
+  lineHeight: 1.6,
 };
 
 const listStyle = {
   display: 'grid',
-  gap: '12px',
+  gap: '10px',
+  maxHeight: '360px',
+  overflowY: 'auto',
+  paddingRight: '4px',
 };
 
-const itemStyle = {
+const rowStyle = {
   display: 'grid',
-  gridTemplateColumns: '18px 1fr',
+  gridTemplateColumns: '14px 1fr',
   gap: '12px',
-  alignItems: 'flex-start',
+  alignItems: 'start',
+  border: '1px solid',
+  borderRadius: '14px',
+  padding: '12px',
 };
 
-const markerWrapStyle = {
-  position: 'relative',
-  display: 'flex',
-  justifyContent: 'center',
-  minHeight: '100%',
-};
-
-const markerStyle = {
+const dotStyle = {
   width: '10px',
   height: '10px',
   borderRadius: '999px',
-  background: '#00d4aa',
   marginTop: '8px',
-  boxShadow: '0 0 0 4px rgba(0, 212, 170, 0.15)',
-};
-
-const connectorStyle = {
-  position: 'absolute',
-  top: '22px',
-  bottom: '-12px',
-  width: '2px',
-  background: 'rgba(255,255,255,0.08)',
 };
 
 const contentStyle = {
-  background: 'var(--bg-secondary, #0f172a)',
-  border: '1px solid var(--border-color, rgba(255,255,255,0.06))',
-  borderRadius: '12px',
-  padding: '12px 14px',
+  display: 'grid',
+  gap: '8px',
 };
 
-const entryMetaStyle = {
+const metaRowStyle = {
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '10px',
-  marginBottom: '8px',
+  gap: '8px',
+  flexWrap: 'wrap',
 };
 
-const stepChipStyle = {
-  padding: '4px 8px',
+const stepBadgeStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: '24px',
+  padding: '0 8px',
   borderRadius: '999px',
-  background: 'rgba(245, 166, 35, 0.14)',
-  color: '#f5a623',
+  background: 'rgba(255,255,255,0.06)',
+  color: 'var(--text-primary, #f8fafc)',
   fontSize: '11px',
   fontWeight: 700,
-  letterSpacing: '0.04em',
-  textTransform: 'uppercase',
 };
 
-const indexBadgeStyle = {
-  fontSize: '12px',
-  color: 'var(--text-secondary, #94a3b8)',
+const typeBadgeStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: '24px',
+  padding: '0 8px',
+  borderRadius: '999px',
+  background: 'rgba(255,255,255,0.04)',
+  fontSize: '11px',
   fontWeight: 700,
 };
 
-const entryTextStyle = {
+const messageStyle = {
   margin: 0,
-  color: 'var(--text-primary, #e5e7eb)',
+  color: 'var(--text-secondary, #cbd5e1)',
   fontSize: '14px',
   lineHeight: 1.6,
 };
