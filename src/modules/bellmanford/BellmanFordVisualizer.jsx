@@ -6,31 +6,24 @@ import BellmanFordPathPanel from './BellmanFordPathPanel';
 import BellmanFordNegCycleAlert from './BellmanFordNegCycleAlert';
 import BellmanFordHistory from './BellmanFordHistory';
 import BellmanFordInfo from './BellmanFordInfo';
+import * as stepsModule from './bellmanFordSteps';
+import * as dataModule from './bellmanFordData';
 
-let generateBellmanFordSteps = null;
-let bellmanFordPresets = null;
-
-try {
-  const stepsModule = await import('./bellmanFordSteps');
-  generateBellmanFordSteps =
+export default function BellmanFordVisualizer() {
+  const generateBellmanFordSteps =
     stepsModule.default ||
     stepsModule.generateBellmanFordSteps ||
     stepsModule.createBellmanFordSteps ||
     null;
-} catch {}
 
-try {
-  const dataModule = await import('./bellmanFordData');
-  bellmanFordPresets =
+  const presets =
     dataModule.default ||
     dataModule.bellmanFordPresets ||
     dataModule.presets ||
     dataModule.graphPresets ||
     null;
-} catch {}
 
-export default function BellmanFordVisualizer() {
-  const preset = useMemo(() => getDefaultPreset(bellmanFordPresets), []);
+  const preset = useMemo(() => getDefaultPreset(presets), [presets]);
   const [speed, setSpeed] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
   const [stepIdx, setStepIdx] = useState(0);
@@ -75,11 +68,13 @@ export default function BellmanFordVisualizer() {
             normalizeStep(step, { index, nodes, edges, source, target })
           );
         }
-      } catch {}
+      } catch (error) {
+        console.error('Bellman-Ford step generation failed:', error);
+      }
     }
 
     return buildFallbackSteps({ nodes, edges, source, target });
-  }, [nodes, edges, source, target, preset]);
+  }, [generateBellmanFordSteps, nodes, edges, source, target, preset]);
 
   const safeStepIdx = Math.min(stepIdx, Math.max(computedSteps.length - 1, 0));
   const currentStep = computedSteps[safeStepIdx] || null;
@@ -90,12 +85,11 @@ export default function BellmanFordVisualizer() {
   }, [source, target, nodes.length, edges.length]);
 
   useEffect(() => {
-    if (!isPlaying || computedSteps.length <= 1) return;
+    if (!isPlaying || computedSteps.length <= 1) return undefined;
 
     const timer = window.setInterval(() => {
       setStepIdx((prev) => {
         if (prev >= computedSteps.length - 1) {
-          window.clearInterval(timer);
           setIsPlaying(false);
           return prev;
         }
@@ -126,9 +120,8 @@ export default function BellmanFordVisualizer() {
     {};
 
   const historyItems = useMemo(
-    () => computedSteps
-      .slice(0, safeStepIdx + 1)
-      .map((step, index) => ({
+    () =>
+      computedSteps.slice(0, safeStepIdx + 1).map((step, index) => ({
         id: index,
         message:
           step.message ||
@@ -142,8 +135,8 @@ export default function BellmanFordVisualizer() {
 
   const hasNegativeCycle = Boolean(
     currentStep?.hasNegativeCycle ||
-    currentStep?.negativeCycle ||
-    currentStep?.cycleDetected
+      currentStep?.negativeCycle ||
+      currentStep?.cycleDetected
   );
 
   return (
@@ -434,7 +427,9 @@ function buildFallbackSteps({ nodes, edges, source, target }) {
     });
   }
 
-  return steps.map((step, index) => normalizeStep(step, { index, nodes, edges, source, target }));
+  return steps.map((step, index) =>
+    normalizeStep(step, { index, nodes, edges, source, target })
+  );
 }
 
 function buildPathsFromParents(parents, source, nodeIds) {
