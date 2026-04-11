@@ -1,223 +1,270 @@
-import { useState, useEffect, useRef } from 'react';
-import { PRESET_GRAPHS, addDirectedEdge } from './bellmanFordData';
-import { reconstructPath } from './bellmanFordLogic';
-import { generateBellmanFordSteps } from './bellmanFordSteps';
-import BellmanFordCanvas    from './BellmanFordCanvas';
+import React, { useEffect, useMemo, useState } from 'react';
+import BellmanFordCanvas from './BellmanFordCanvas';
+import BellmanFordControls from './BellmanFordControls';
 import BellmanFordIterTable from './BellmanFordIterTable';
-import BellmanFordEdgeList  from './BellmanFordEdgeList';
+import BellmanFordEdgeList from './BellmanFordEdgeList';
 import BellmanFordDistPanel from './BellmanFordDistPanel';
-import BellmanFordNegCycleAlert from './BellmanFordNegCycleAlert';
 import BellmanFordPathPanel from './BellmanFordPathPanel';
-import BellmanFordControls  from './BellmanFordControls';
-import BellmanFordInfo      from './BellmanFordInfo';
-import BellmanFordHistory   from './BellmanFordHistory';
+import BellmanFordNegCycleAlert from './BellmanFordNegCycleAlert';
+import BellmanFordHistory from './BellmanFordHistory';
+import BellmanFordInfo from './BellmanFordInfo';
+import { bellmanFordPresets } from './bellmanFordData';
+import { generateBellmanFordSteps } from './bellmanFordSteps';
 
-function buildIterHistory(steps, nodes) {
-  const snapshots = [];
-  const INF = Infinity;
-  const init = {};
-  nodes.forEach((n) => { init[n.id] = INF; });
-  snapshots.push({ ...init });
+const FALLBACK_PRESET = {
+  name: 'Default graph',
+  source: 'A',
+  nodes: [
+    { id: 'A', x: 120, y: 120 },
+    { id: 'B', x: 280, y: 90 },
+    { id: 'C', x: 280, y: 220 },
+    { id: 'D', x: 450, y: 160 },
+  ],
+  edges: [
+    { from: 'A', to: 'B', weight: 4 },
+    { from: 'A', to: 'C', weight: 2 },
+    { from: 'C', to: 'B', weight: -1 },
+    { from: 'B', to: 'D', weight: 2 },
+    { from: 'C', to: 'D', weight: 3 },
+  ],
+};
 
-  let lastIterEnd = { ...init };
-  for (const s of steps) {
-    if (s.phase === 'iter_end') {
-      snapshots.push({ ...s.dist });
+function resolvePreset() {
+  if (Array.isArray(bellmanFordPresets) && bellmanFordPresets.length > 0) {
+    return bellmanFordPresets[0];
+  }
+
+  if (bellmanFordPresets && typeof bellmanFordPresets === 'object') {
+    if (Array.isArray(bellmanFordPresets.presets) && bellmanFordPresets.presets.length > 0) {
+      return bellmanFordPresets.presets[0];
+    }
+
+    if (Array.isArray(bellmanFordPresets.graphs) && bellmanFordPresets.graphs.length > 0) {
+      return bellmanFordPresets.graphs[0];
     }
   }
-  return snapshots;
+
+  return FALLBACK_PRESET;
+}
+
+function safeGenerateSteps(preset) {
+  try {
+    const result = generateBellmanFordSteps?.(preset);
+
+    if (Array.isArray(result)) return result;
+    if (result?.steps && Array.isArray(result.steps)) return result.steps;
+  } catch (error) {
+    console.error('Bellman-Ford step generation failed:', error);
+  }
+
+  return [
+    {
+      type: 'init',
+      title: 'Initialization',
+      description: 'Initialized source distance and prepared first pass.',
+      distances: { [preset.source || 'A']: 0 },
+      history: ['Initialized Bellman-Ford state.'],
+      iteration: 0,
+      activeEdge: null,
+      path: [],
+      hasNegativeCycle: false,
+    },
+  ];
+}
+
+function getStepHistory(step, index) {
+  if (Array.isArray(step?.history) && step.history.length > 0) return step.history;
+  if (Array.isArray(step?.events) && step.events.length > 0) return step.events;
+  if (step?.description) return [step.description];
+  return [`Viewing step ${index + 1}`];
 }
 
 export default function BellmanFordVisualizer() {
-  const [nodes,    setNodes]    = useState(PRESET_GRAPHS.default.nodes);
-  const [edges,    setEdges]    = useState(PRESET_GRAPHS.default.edges);
-  const [steps,    setSteps]    = useState([]);
-  const [stepIdx,  setStepIdx]  = useState(-1);
-  const [isRunning, setIsRunning] = useState(false);
-  const [speed,    setSpeed]    = useState(500);
-  const [startNode, setStartNode] = useState('S');
-  const [endNode,   setEndNode]   = useState('');
-  const [history,  setHistory]  = useState([]);
-  const [message,  setMessage]  = useState('Default graph loaded (CLRS classic with negative edges). Click Auto ▶ or Step ▶.');
-  const [addEdgeFrom,   setAddEdgeFrom]   = useState('');
-  const [addEdgeTo,     setAddEdgeTo]     = useState('');
-  const [addEdgeWeight, setAddEdgeWeight] = useState('');
-  const timerRef = useRef(null);
+  const preset = useMemo(() => resolvePreset(), []);
+  const [steps] = useState(() => safeGenerateSteps(preset));
+  const [stepIdx, setStepIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1000);
 
-  const pushHistory = (type, text) =>
-    setHistory((prev) => [{ id: Date.now() + Math.random(), type, text }, ...prev.slice(0, 19)]);
+  const hasSteps = steps.length > 0;
+  const safeIndex = hasSteps ? Math.min(stepIdx, steps.length - 1) : 0;
+  const currentStep = hasSteps ? steps[safeIndex] : null;
+  const isFinished = !hasSteps || safeIndex >= steps.length - 1;
+  const canStep = hasSteps && safeIndex < steps.length - 1;
 
-  const cur     = stepIdx >= 0 && stepIdx < steps.length ? steps[stepIdx] : null;
-  const dist    = cur ? cur.dist            : null;
-  const prev_   = cur ? cur.prev            : null;
-  const activeEdge   = cur ? cur.activeEdge   : null;
-  const relaxedEdge  = cur ? cur.relaxedEdge  : null;
-  const negCycleEdges = cur ? cur.negCycleEdges : [];
-  const iteration    = cur ? cur.iteration    : 0;
-  const isDone       = cur ? cur.phase === 'done' : false;
-  const V = nodes.length;
+  useEffect(() => {
+    if (!isPlaying || !hasSteps) return undefined;
 
-  const shortestPath = isDone && endNode && prev_ && dist
-    ? reconstructPath(prev_, startNode, endNode)
-    : [];
+    if (safeIndex >= steps.length - 1) {
+      setIsPlaying(false);
+      return undefined;
+    }
 
-  const iterHistory = steps.length > 0 ? buildIterHistory(steps, nodes) : [];
+    const timer = window.setTimeout(() => {
+      setStepIdx((prev) => {
+        const next = Math.min(prev + 1, steps.length - 1);
+        if (next >= steps.length - 1) {
+          setIsPlaying(false);
+        }
+        return next;
+      });
+    }, speed);
 
-  const ensureSteps = () => {
-    if (steps.length > 0) return steps;
-    const gen = generateBellmanFordSteps(nodes, edges, startNode);
-    setSteps(gen);
-    return gen;
-  };
+    return () => window.clearTimeout(timer);
+  }, [isPlaying, speed, safeIndex, steps, hasSteps]);
 
-  const handleAutoRun = () => {
-    const gen = ensureSteps();
-    if (stepIdx >= gen.length - 1) return;
-    setIsRunning(true);
-    pushHistory('run', `Bellman-Ford from ${startNode} on ${nodes.length} nodes, ${edges.length} edges`);
-  };
+  const handlePlayPause = () => {
+    if (!hasSteps) return;
 
-  const handleStepForward = () => {
-    const gen = ensureSteps();
-    if (steps.length === 0) {
-      setSteps(gen); setStepIdx(0); setMessage(gen[0].message);
-      pushHistory('run', `Bellman-Ford from ${startNode} — stepping`);
+    if (isFinished) {
+      setStepIdx(0);
+      setIsPlaying(true);
       return;
     }
-    const next = Math.min(stepIdx + 1, steps.length - 1);
-    setStepIdx(next);
-    setMessage(steps[next].message);
-    if (steps[next].phase === 'done') {
-      const hasCycle = steps[next].negCycleEdges.length > 0;
-      if (hasCycle) pushHistory('cycle', 'Negative cycle detected!');
-      else          pushHistory('run',   `Complete — no negative cycle`);
-    }
+
+    setIsPlaying((prev) => !prev);
   };
 
-  const handleStepBack = () => {
-    if (stepIdx <= 0) return;
-    const p = stepIdx - 1;
-    setStepIdx(p);
-    setMessage(steps[p].message);
+  const handleStep = () => {
+    if (!canStep) return;
+    setIsPlaying(false);
+    setStepIdx((prev) => Math.min(prev + 1, steps.length - 1));
   };
-
-  const handleStop  = () => { setIsRunning(false); clearTimeout(timerRef.current); };
 
   const handleReset = () => {
-    clearTimeout(timerRef.current); setIsRunning(false);
-    setSteps([]); setStepIdx(-1);
-    setMessage('Reset. Click Auto ▶ or Step ▶.');
-    setHistory([]);
+    setIsPlaying(false);
+    setStepIdx(0);
   };
 
-  const handleLoadPreset = (key) => {
-    clearTimeout(timerRef.current); setIsRunning(false);
-    const g = PRESET_GRAPHS[key];
-    setNodes(g.nodes); setEdges(g.edges);
-    setStartNode(g.nodes[0].id); setEndNode('');
-    setSteps([]); setStepIdx(-1);
-    setMessage(key === 'negCycle'
-      ? '⚠ Negative cycle graph loaded. Run to detect the cycle!'
-      : `Loaded "${key}" graph. Ready to run Bellman-Ford.`);
-    pushHistory('preset', `Loaded preset: ${key}`);
+  const handleSpeedChange = (value) => {
+    setSpeed(value);
   };
 
-  const handleNodeDrag = (id, x, y) =>
-    setNodes((prev) => prev.map((n) => n.id === id ? { ...n, x, y } : n));
+  const distances = currentStep?.distances || currentStep?.distanceMap || {};
+  const activeEdge = currentStep?.activeEdge || currentStep?.edge || null;
+  const iteration = currentStep?.iteration ?? safeIndex;
+  const path = currentStep?.path || currentStep?.shortestPath || [];
+  const hasNegativeCycle =
+    currentStep?.hasNegativeCycle ||
+    currentStep?.negativeCycleDetected ||
+    currentStep?.isNegativeCycle ||
+    false;
 
-  const handleAddEdge = () => {
-    const updated = addDirectedEdge(edges, nodes, addEdgeFrom, addEdgeTo, addEdgeWeight);
-    if (updated.length > edges.length) {
-      setEdges(updated);
-      setSteps([]); setStepIdx(-1);
-      pushHistory('add', `Added edge ${addEdgeFrom.toUpperCase()}→${addEdgeTo.toUpperCase()} (w=${addEdgeWeight})`);
-      setAddEdgeFrom(''); setAddEdgeTo(''); setAddEdgeWeight('');
-    }
-  };
-
-  useEffect(() => {
-    if (isDone && endNode && prev_ && dist) {
-      const path = reconstructPath(prev_, startNode, endNode);
-      if (path.length > 1) pushHistory('path', `Shortest path ${startNode}→${endNode}: ${path.join('→')} (cost ${dist[endNode]})`);
-    }
-  }, [endNode, isDone]);
-
-  useEffect(() => {
-    if (!isRunning) return;
-    if (stepIdx >= steps.length - 1) { setIsRunning(false); return; }
-    const next = stepIdx < 0 ? 0 : stepIdx + 1;
-    timerRef.current = setTimeout(() => {
-      setStepIdx(next);
-      setMessage(steps[next].message);
-      if (steps[next].phase === 'done') {
-        setIsRunning(false);
-        const hasCycle = steps[next].negCycleEdges.length > 0;
-        if (hasCycle) pushHistory('cycle', 'Negative cycle detected!');
-        else          pushHistory('run',   'Complete — no negative cycle');
-      }
-    }, speed);
-    return () => clearTimeout(timerRef.current);
-  }, [isRunning, stepIdx, steps, speed]);
+  const historyItems = getStepHistory(currentStep, safeIndex);
 
   return (
-    <div>
-      <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent)', marginBottom: '1rem' }}>Bellman-Ford — Shortest Paths with Negative Weights</p>
+    <div
+      className="bellmanford-visualizer"
+      style={{
+        display: 'grid',
+        gap: '16px',
+      }}
+    >
+      <BellmanFordControls
+        isPlaying={isPlaying}
+        onPlayPause={handlePlayPause}
+        onStep={handleStep}
+        onReset={handleReset}
+        speed={speed}
+        onSpeedChange={handleSpeedChange}
+        hasSteps={hasSteps}
+        isFinished={isFinished}
+        canStep={canStep}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '1rem', marginBottom: '1rem' }}>
-        <BellmanFordControls
-          nodes={nodes} startNode={startNode} setStartNode={setStartNode}
-          endNode={endNode} setEndNode={setEndNode}
-          onRun={handleAutoRun} onStepForward={handleStepForward}
-          onStepBack={handleStepBack} onStop={handleStop} onReset={handleReset}
-          onLoadPreset={handleLoadPreset}
-          speed={speed} setSpeed={setSpeed}
-          isRunning={isRunning} stepIndex={stepIdx} totalSteps={steps.length}
-          message={message}
-          addEdgeFrom={addEdgeFrom} setAddEdgeFrom={setAddEdgeFrom}
-          addEdgeTo={addEdgeTo} setAddEdgeTo={setAddEdgeTo}
-          addEdgeWeight={addEdgeWeight} setAddEdgeWeight={setAddEdgeWeight}
-          onAddEdge={handleAddEdge}
-        />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div
+        className="bellmanford-hero-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 2fr) minmax(320px, 1fr)',
+          gap: '16px',
+        }}
+      >
+        <div
+          style={{
+            background: 'var(--bg-card, #161b22)',
+            border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+            borderRadius: '16px',
+            padding: '16px',
+          }}
+        >
           <BellmanFordCanvas
-            nodes={nodes} edges={edges} dist={dist} prev={prev_}
-            shortestPath={shortestPath} activeEdge={activeEdge}
-            relaxedEdge={relaxedEdge} negCycleEdges={negCycleEdges}
-            onNodeDrag={handleNodeDrag}
+            nodes={preset.nodes || []}
+            edges={preset.edges || []}
+            step={currentStep}
+            activeEdge={activeEdge}
+            source={preset.source}
           />
-          {isDone && (
-            <BellmanFordNegCycleAlert
-              negCycleEdges={negCycleEdges} edges={edges} isDone={isDone}
-            />
-          )}
         </div>
-      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-        <BellmanFordIterTable
-          nodes={nodes} iterHistory={iterHistory}
-          currentIter={iteration} shortestPath={shortestPath}
-          negCycleEdges={negCycleEdges}
-        />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <BellmanFordEdgeList
-            edges={edges} activeEdge={activeEdge} relaxedEdge={relaxedEdge}
-            negCycleEdges={negCycleEdges} iteration={iteration} totalIter={V - 1}
-          />
+        <div
+          style={{
+            display: 'grid',
+            gap: '16px',
+          }}
+        >
           <BellmanFordDistPanel
-            nodes={nodes} dist={dist} prev={prev_}
-            shortestPath={shortestPath} negCycleEdges={negCycleEdges} isDone={isDone}
+            distances={distances}
+            source={preset.source}
+            step={currentStep}
           />
+
           <BellmanFordPathPanel
-            shortestPath={shortestPath} dist={dist}
-            startId={startNode} endId={endNode} isDone={isDone}
+            path={path}
+            step={currentStep}
+            source={preset.source}
+          />
+
+          <BellmanFordNegCycleAlert
+            hasNegativeCycle={hasNegativeCycle}
+            step={currentStep}
           />
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px', gap: '1rem' }}>
-        <BellmanFordInfo nodeCount={nodes.length} edgeCount={edges.length} />
-        <BellmanFordHistory history={history} />
+      <div
+        className="bellmanford-detail-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
+          gap: '16px',
+        }}
+      >
+        <BellmanFordIterTable
+          steps={steps}
+          currentStepIndex={safeIndex}
+          currentIteration={iteration}
+          step={currentStep}
+        />
+
+        <BellmanFordEdgeList
+          edges={preset.edges || []}
+          activeEdge={activeEdge}
+          step={currentStep}
+        />
+      </div>
+
+      <div
+        className="bellmanford-bottom-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
+          gap: '16px',
+        }}
+      >
+        <BellmanFordHistory
+          history={historyItems}
+          step={currentStep}
+          currentStepIndex={safeIndex}
+        />
+
+        <BellmanFordInfo
+          algorithm="Bellman-Ford"
+          source={preset.source}
+          totalSteps={steps.length}
+          currentStepIndex={safeIndex}
+          presetName={preset.name}
+        />
       </div>
     </div>
   );
