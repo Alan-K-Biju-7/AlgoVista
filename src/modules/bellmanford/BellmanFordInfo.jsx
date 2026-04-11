@@ -1,77 +1,207 @@
-const card = { background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', padding: '1.1rem' };
-const lbl  = { fontSize: '0.65rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '0.65rem' };
+import React from 'react';
 
-export default function BellmanFordInfo({ nodeCount, edgeCount }) {
+export default function BellmanFordInfo({
+  title = 'Bellman-Ford',
+  complexity = 'O(VE)',
+  supportsNegativeEdges = true,
+  detectsNegativeCycles = true,
+  description = 'Bellman-Ford computes shortest paths from a single source even when some edges are negative.',
+}) {
+  const highlights = [
+    {
+      label: 'Time',
+      value: complexity,
+      tone: '#f5a623',
+      bg: 'rgba(245, 166, 35, 0.14)',
+    },
+    {
+      label: 'Negative edges',
+      value: supportsNegativeEdges ? 'Supported' : 'Not supported',
+      tone: supportsNegativeEdges ? '#7ed957' : '#ff8b98',
+      bg: supportsNegativeEdges ? 'rgba(67, 122, 34, 0.14)' : 'rgba(161, 53, 68, 0.14)',
+    },
+    {
+      label: 'Cycle check',
+      value: detectsNegativeCycles ? 'Detects reachable negative cycles' : 'No cycle detection',
+      tone: detectsNegativeCycles ? '#78b7ff' : '#cbd5e1',
+      bg: detectsNegativeCycles ? 'rgba(74, 158, 255, 0.12)' : 'rgba(255,255,255,0.06)',
+    },
+  ];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <section style={panelStyle} className="bellmanford-info">
+      <div style={headerStyle}>
+        <div>
+          <p style={eyebrowStyle}>Algorithm info</p>
+          <h3 style={titleStyle}>{title}</h3>
+        </div>
+        <span style={badgeStyle}>P4</span>
+      </div>
 
-      <div style={card}>
-        <p style={lbl}>How Bellman-Ford works</p>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.85 }}>
-          <strong style={{ color: 'var(--text-primary)' }}>Initialize</strong> — dist[source]=0, all others=∞.<br />
-          <strong style={{ color: '#ffd166' }}>Relax V−1 times</strong> — for each of the V−1 iterations, scan every edge: if dist[u]+w(u,v) &lt; dist[v], update dist[v].
-          After k iterations, shortest paths using at most k edges are correct.<br />
-          <strong style={{ color: '#ef4444' }}>Detect negative cycle</strong> — run a V-th iteration. If any edge still relaxes, a negative cycle exists.
+      <p style={descriptionStyle}>{description}</p>
+
+      <div style={pillGridStyle}>
+        {highlights.map((item) => (
+          <div
+            key={item.label}
+            style={{
+              ...pillCardStyle,
+              background: item.bg,
+              borderColor: `${item.tone}33`,
+            }}
+          >
+            <p style={pillLabelStyle}>{item.label}</p>
+            <p style={{ ...pillValueStyle, color: item.tone }}>{item.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div style={sectionStyle}>
+        <p style={sectionLabelStyle}>How it works</p>
+        <ul style={listStyle}>
+          <li style={listItemStyle}>
+            Initialize the source distance as 0 and every other node as infinity.
+          </li>
+          <li style={listItemStyle}>
+            Relax every edge for exactly V - 1 rounds to propagate shortest-path improvements.
+          </li>
+          <li style={listItemStyle}>
+            Run one extra pass; if any distance still improves, a reachable negative cycle exists.
+          </li>
+        </ul>
+      </div>
+
+      <div style={sectionStyle}>
+        <p style={sectionLabelStyle}>When to use it</p>
+        <p style={bodyStyle}>
+          Choose Bellman-Ford when edge weights can be negative and you still need single-source
+          shortest paths with explicit negative-cycle detection.
         </p>
-        <div style={{ marginTop: '0.85rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {[
-            { c: '#8b7cf8',       t: 'Active edge' },
-            { c: '#ffd166',       t: 'Relaxed edge' },
-            { c: '#f87171',       t: 'Negative weight' },
-            { c: '#ef4444',       t: 'Negative cycle' },
-            { c: 'var(--accent)', t: 'Shortest path' },
-          ].map((l) => (
-            <span key={l.t} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.28rem', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-              <span style={{ width: '7px', height: '7px', borderRadius: '2px', background: l.c, flexShrink: 0 }} />{l.t}
-            </span>
-          ))}
-        </div>
       </div>
 
-      <div style={card}>
-        <p style={lbl}>Complexity</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-          {[
-            { op: 'Time',              val: 'O(V × E)',      color: '#ffd166', note: 'V−1 passes × E edges' },
-            { op: 'Space',             val: 'O(V)',          color: '#4a9eff', note: 'dist + prev arrays' },
-            { op: 'Neg. weights',      val: '✓ Handles',    color: '#34d399', note: 'Unlike Dijkstra' },
-            { op: 'Neg. cycle detect', val: '✓ V-th pass',  color: '#34d399', note: 'Extra iteration' },
-            { op: `Current graph`,     val: `V=${nodeCount}, E=${edgeCount}`, color: 'var(--text-muted)', note: `= ${nodeCount * edgeCount} ops max` },
-          ].map((c) => (
-            <div key={c.op} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.32rem 0.5rem', background: 'var(--bg-elevated)', borderRadius: '0.35rem' }}>
-              <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>{c.op}</span>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>{c.note}</span>
-                <span style={{ fontFamily: 'monospace', fontSize: '0.77rem', fontWeight: '700', color: c.color, minWidth: '88px', textAlign: 'right' }}>{c.val}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div style={sectionStyle}>
+        <p style={sectionLabelStyle}>Key contrast with Dijkstra</p>
+        <p style={bodyStyle}>
+          Dijkstra is faster on non-negative graphs, but Bellman-Ford is safer when negative edges
+          are part of the problem.
+        </p>
       </div>
-
-      <div style={card}>
-        <p style={lbl}>Bellman-Ford vs Dijkstra</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.3rem 0.5rem', fontSize: '0.72rem' }}>
-          {['', 'Bellman-Ford', 'Dijkstra'].map((h, i) => (
-            <span key={i} style={{ fontSize: '0.62rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{h}</span>
-          ))}
-          {[
-            ['Time',          'O(V×E)',       'O((V+E) log V)'],
-            ['Neg. weights',  '✓ Yes',        '✗ No'],
-            ['Neg. cycles',   '✓ Detects',    '✗ Undefined'],
-            ['Direction',     'Directed',     'Undirected/Dir'],
-            ['Strategy',      'Relaxation',   'Greedy min-PQ'],
-            ['Dense graphs',  'Better',       'Better'],
-          ].map(([p, bf, dj]) => (
-            <>
-              <span key={p}     style={{ color: 'var(--text-muted)' }}>{p}</span>
-              <span key={p+'b'} style={{ color: 'var(--accent)', fontWeight: '600' }}>{bf}</span>
-              <span key={p+'d'} style={{ color: 'var(--text-secondary)' }}>{dj}</span>
-            </>
-          ))}
-        </div>
-      </div>
-
-    </div>
+    </section>
   );
 }
+
+const panelStyle = {
+  background: 'var(--bg-card, #161b22)',
+  border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+  borderRadius: '18px',
+  padding: '16px',
+  display: 'grid',
+  gap: '16px',
+  minHeight: '260px',
+};
+
+const headerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '12px',
+};
+
+const eyebrowStyle = {
+  margin: 0,
+  fontSize: '12px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: 'var(--text-muted, #94a3b8)',
+  fontWeight: 700,
+};
+
+const titleStyle = {
+  margin: '4px 0 0',
+  color: 'var(--text-primary, #f8fafc)',
+  fontSize: '18px',
+  fontWeight: 800,
+};
+
+const badgeStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: '42px',
+  height: '32px',
+  padding: '0 10px',
+  borderRadius: '999px',
+  background: 'rgba(245, 166, 35, 0.14)',
+  color: '#f5a623',
+  fontWeight: 800,
+  fontSize: '12px',
+};
+
+const descriptionStyle = {
+  margin: 0,
+  color: 'var(--text-secondary, #cbd5e1)',
+  fontSize: '14px',
+  lineHeight: 1.7,
+};
+
+const pillGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+  gap: '10px',
+};
+
+const pillCardStyle = {
+  border: '1px solid',
+  borderRadius: '14px',
+  padding: '12px',
+  display: 'grid',
+  gap: '6px',
+};
+
+const pillLabelStyle = {
+  margin: 0,
+  fontSize: '11px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: 'var(--text-muted, #94a3b8)',
+  fontWeight: 700,
+};
+
+const pillValueStyle = {
+  margin: 0,
+  fontSize: '13px',
+  fontWeight: 800,
+  lineHeight: 1.5,
+};
+
+const sectionStyle = {
+  display: 'grid',
+  gap: '8px',
+};
+
+const sectionLabelStyle = {
+  margin: 0,
+  color: 'var(--text-primary, #f8fafc)',
+  fontSize: '13px',
+  fontWeight: 800,
+};
+
+const bodyStyle = {
+  margin: 0,
+  color: 'var(--text-secondary, #cbd5e1)',
+  fontSize: '14px',
+  lineHeight: 1.7,
+};
+
+const listStyle = {
+  margin: 0,
+  paddingLeft: '18px',
+  display: 'grid',
+  gap: '8px',
+};
+
+const listItemStyle = {
+  color: 'var(--text-secondary, #cbd5e1)',
+  fontSize: '14px',
+  lineHeight: 1.6,
+};
