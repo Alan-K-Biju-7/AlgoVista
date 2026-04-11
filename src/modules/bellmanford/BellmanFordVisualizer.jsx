@@ -1,271 +1,512 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import BellmanFordCanvas from './BellmanFordCanvas';
 import BellmanFordControls from './BellmanFordControls';
-import BellmanFordIterTable from './BellmanFordIterTable';
-import BellmanFordEdgeList from './BellmanFordEdgeList';
 import BellmanFordDistPanel from './BellmanFordDistPanel';
 import BellmanFordPathPanel from './BellmanFordPathPanel';
 import BellmanFordNegCycleAlert from './BellmanFordNegCycleAlert';
 import BellmanFordHistory from './BellmanFordHistory';
 import BellmanFordInfo from './BellmanFordInfo';
-import { bellmanFordPresets } from './bellmanFordData';
-import { generateBellmanFordSteps } from './bellmanFordSteps';
 
-const FALLBACK_PRESET = {
-  name: 'Default graph',
-  source: 'A',
-  nodes: [
-    { id: 'A', x: 120, y: 120 },
-    { id: 'B', x: 280, y: 90 },
-    { id: 'C', x: 280, y: 220 },
-    { id: 'D', x: 450, y: 160 },
-  ],
-  edges: [
-    { from: 'A', to: 'B', weight: 4 },
-    { from: 'A', to: 'C', weight: 2 },
-    { from: 'C', to: 'B', weight: -1 },
-    { from: 'B', to: 'D', weight: 2 },
-    { from: 'C', to: 'D', weight: 3 },
-  ],
-};
+let generateBellmanFordSteps = null;
+let bellmanFordPresets = null;
 
-function resolvePreset() {
-  if (Array.isArray(bellmanFordPresets) && bellmanFordPresets.length > 0) {
-    return bellmanFordPresets[0];
-  }
+try {
+  const stepsModule = await import('./bellmanFordSteps');
+  generateBellmanFordSteps =
+    stepsModule.default ||
+    stepsModule.generateBellmanFordSteps ||
+    stepsModule.createBellmanFordSteps ||
+    null;
+} catch {}
 
-  if (bellmanFordPresets && typeof bellmanFordPresets === 'object') {
-    if (Array.isArray(bellmanFordPresets.presets) && bellmanFordPresets.presets.length > 0) {
-      return bellmanFordPresets.presets[0];
-    }
-
-    if (Array.isArray(bellmanFordPresets.graphs) && bellmanFordPresets.graphs.length > 0) {
-      return bellmanFordPresets.graphs[0];
-    }
-  }
-
-  return FALLBACK_PRESET;
-}
-
-function safeGenerateSteps(preset) {
-  try {
-    const result = generateBellmanFordSteps?.(preset);
-
-    if (Array.isArray(result)) return result;
-    if (result?.steps && Array.isArray(result.steps)) return result.steps;
-  } catch (error) {
-    console.error('Bellman-Ford step generation failed:', error);
-  }
-
-  return [
-    {
-      type: 'init',
-      title: 'Initialization',
-      description: 'Initialized source distance and prepared first pass.',
-      distances: { [preset.source || 'A']: 0 },
-      history: ['Initialized Bellman-Ford state.'],
-      iteration: 0,
-      activeEdge: null,
-      path: [],
-      hasNegativeCycle: false,
-    },
-  ];
-}
-
-function getStepHistory(step, index) {
-  if (Array.isArray(step?.history) && step.history.length > 0) return step.history;
-  if (Array.isArray(step?.events) && step.events.length > 0) return step.events;
-  if (step?.description) return [step.description];
-  return [`Viewing step ${index + 1}`];
-}
+try {
+  const dataModule = await import('./bellmanFordData');
+  bellmanFordPresets =
+    dataModule.default ||
+    dataModule.bellmanFordPresets ||
+    dataModule.presets ||
+    dataModule.graphPresets ||
+    null;
+} catch {}
 
 export default function BellmanFordVisualizer() {
-  const preset = useMemo(() => resolvePreset(), []);
-  const [steps] = useState(() => safeGenerateSteps(preset));
-  const [stepIdx, setStepIdx] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const preset = useMemo(() => getDefaultPreset(bellmanFordPresets), []);
   const [speed, setSpeed] = useState(1000);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [stepIdx, setStepIdx] = useState(0);
 
-  const hasSteps = steps.length > 0;
-  const safeIndex = hasSteps ? Math.min(stepIdx, steps.length - 1) : 0;
-  const currentStep = hasSteps ? steps[safeIndex] : null;
-  const isFinished = !hasSteps || safeIndex >= steps.length - 1;
-  const canStep = hasSteps && safeIndex < steps.length - 1;
+  const nodes = useMemo(
+    () => normalizeNodes(
+      preset?.nodes || preset?.vertices || preset?.graph?.nodes || []
+    ),
+    [preset]
+  );
 
-  useEffect(() => {
-    if (!isPlaying || !hasSteps) return undefined;
+  const edges = useMemo(
+    () => normalizeEdges(
+      preset?.edges || preset?.graph?.edges || preset?.edgeList || []
+    ),
+    [preset]
+  );
 
-    if (safeIndex >= steps.length - 1) {
-      setIsPlaying(false);
-      return undefined;
+  const source = useMemo(
+    () => preset?.source ?? preset?.start ?? nodes[0]?.id ?? null,
+    [preset, nodes]
+  );
+
+  const target = useMemo(
+    () => preset?.target ?? preset?.end ?? nodes[nodes.length - 1]?.id ?? null,
+    [preset, nodes]
+  );
+
+  const computedSteps = useMemo(() => {
+    if (typeof generateBellmanFordSteps === 'function') {
+      try {
+        const generated = generateBellmanFordSteps({
+          nodes,
+          edges,
+          source,
+          target,
+          preset,
+        });
+
+        if (Array.isArray(generated) && generated.length > 0) {
+          return generated.map((step, index) =>
+            normalizeStep(step, { index, nodes, edges, source, target })
+          );
+        }
+      } catch {}
     }
 
-    const timer = window.setTimeout(() => {
+    return buildFallbackSteps({ nodes, edges, source, target });
+  }, [nodes, edges, source, target, preset]);
+
+  const safeStepIdx = Math.min(stepIdx, Math.max(computedSteps.length - 1, 0));
+  const currentStep = computedSteps[safeStepIdx] || null;
+
+  useEffect(() => {
+    setStepIdx(0);
+    setIsPlaying(false);
+  }, [source, target, nodes.length, edges.length]);
+
+  useEffect(() => {
+    if (!isPlaying || computedSteps.length <= 1) return;
+
+    const timer = window.setInterval(() => {
       setStepIdx((prev) => {
-        const next = Math.min(prev + 1, steps.length - 1);
-        if (next >= steps.length - 1) {
+        if (prev >= computedSteps.length - 1) {
+          window.clearInterval(timer);
           setIsPlaying(false);
+          return prev;
         }
-        return next;
+        return prev + 1;
       });
     }, speed);
 
-    return () => window.clearTimeout(timer);
-  }, [isPlaying, speed, safeIndex, steps, hasSteps]);
+    return () => window.clearInterval(timer);
+  }, [isPlaying, speed, computedSteps.length]);
 
-  const handlePlayPause = () => {
-    if (!hasSteps) return;
+  const distances =
+    currentStep?.distances ||
+    currentStep?.distanceMap ||
+    currentStep?.dist ||
+    {};
 
-    if (isFinished) {
-      setStepIdx(0);
-      setIsPlaying(true);
-      return;
-    }
+  const pathModel =
+    currentStep?.paths ||
+    currentStep?.shortestPaths ||
+    currentStep?.path ||
+    currentStep?.shortestPath ||
+    null;
 
-    setIsPlaying((prev) => !prev);
-  };
+  const parentMap =
+    currentStep?.parentMap ||
+    currentStep?.parents ||
+    currentStep?.prev ||
+    {};
 
-  const handleStep = () => {
-    if (!canStep) return;
-    setIsPlaying(false);
-    setStepIdx((prev) => Math.min(prev + 1, steps.length - 1));
-  };
+  const historyItems = useMemo(
+    () => computedSteps
+      .slice(0, safeStepIdx + 1)
+      .map((step, index) => ({
+        id: index,
+        message:
+          step.message ||
+          step.description ||
+          step.label ||
+          `Processed step ${index + 1}`,
+        type: step.hasNegativeCycle ? 'warning' : step.updated ? 'success' : 'info',
+      })),
+    [computedSteps, safeStepIdx]
+  );
 
-  const handleReset = () => {
-    setIsPlaying(false);
-    setStepIdx(0);
-  };
-
-  const handleSpeedChange = (value) => {
-    setSpeed(value);
-  };
-
-  const distances = currentStep?.distances || currentStep?.distanceMap || {};
-  const activeEdge = currentStep?.activeEdge || currentStep?.edge || null;
-  const iteration = currentStep?.iteration ?? safeIndex;
-  const path = currentStep?.path || currentStep?.shortestPath || [];
-  const hasNegativeCycle =
+  const hasNegativeCycle = Boolean(
     currentStep?.hasNegativeCycle ||
-    currentStep?.negativeCycleDetected ||
-    currentStep?.isNegativeCycle ||
-    false;
-
-  const historyItems = getStepHistory(currentStep, safeIndex);
+    currentStep?.negativeCycle ||
+    currentStep?.cycleDetected
+  );
 
   return (
-    <div
-      className="bellmanford-visualizer"
-      style={{
-        display: 'grid',
-        gap: '16px',
-      }}
-    >
-      <BellmanFordControls
-        isPlaying={isPlaying}
-        onPlayPause={handlePlayPause}
-        onStep={handleStep}
-        onReset={handleReset}
-        speed={speed}
-        onSpeedChange={handleSpeedChange}
-        hasSteps={hasSteps}
-        isFinished={isFinished}
-        canStep={canStep}
-      />
-
-      <div
-        className="bellmanford-hero-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 2fr) minmax(320px, 1fr)',
-          gap: '16px',
-        }}
-      >
-        <div
-          style={{
-            background: 'var(--bg-card, #161b22)',
-            border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
-            borderRadius: '16px',
-            padding: '16px',
+    <div style={pageStyle} className="bellmanford-visualizer">
+      <div style={stackStyle}>
+        <BellmanFordControls
+          isPlaying={isPlaying}
+          onPlayPause={() => {
+            if (safeStepIdx >= computedSteps.length - 1) {
+              setStepIdx(0);
+            }
+            setIsPlaying((prev) => !prev);
           }}
-        >
-          <BellmanFordCanvas
-            nodes={preset.nodes || []}
-            edges={preset.edges || []}
-            step={currentStep}
-            activeEdge={activeEdge}
-            source={preset.source}
-          />
+          onStep={() => {
+            setIsPlaying(false);
+            setStepIdx((prev) => Math.min(prev + 1, computedSteps.length - 1));
+          }}
+          onReset={() => {
+            setIsPlaying(false);
+            setStepIdx(0);
+          }}
+          speed={speed}
+          onSpeedChange={setSpeed}
+        />
+
+        <div style={statusBarStyle}>
+          <span style={statusPillStyle}>
+            Step {safeStepIdx + 1} / {computedSteps.length}
+          </span>
+          <span style={statusTextStyle}>
+            {currentStep?.message || 'Bellman-Ford state update'}
+          </span>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gap: '16px',
-          }}
-        >
+        <BellmanFordNegCycleAlert
+          hasNegativeCycle={hasNegativeCycle}
+          cycleNodes={
+            currentStep?.cycleNodes ||
+            currentStep?.negativeCycleNodes ||
+            []
+          }
+          message={currentStep?.negativeCycleMessage || currentStep?.message || ''}
+          step={currentStep}
+        />
+
+        <BellmanFordCanvas
+          nodes={nodes}
+          edges={edges}
+          step={currentStep}
+          activeEdge={
+            currentStep?.activeEdge ||
+            currentStep?.edge ||
+            currentStep?.relaxedEdge ||
+            null
+          }
+          source={source}
+        />
+
+        <div style={gridStyle}>
           <BellmanFordDistPanel
             distances={distances}
-            source={preset.source}
+            source={source}
             step={currentStep}
           />
 
           <BellmanFordPathPanel
-            path={path}
-            step={currentStep}
-            source={preset.source}
-          />
-
-          <BellmanFordNegCycleAlert
-            hasNegativeCycle={hasNegativeCycle}
+            path={Array.isArray(pathModel) ? pathModel : null}
+            paths={!Array.isArray(pathModel) && typeof pathModel === 'object' ? pathModel : null}
+            parentMap={parentMap}
+            source={source}
+            target={target}
             step={currentStep}
           />
         </div>
-      </div>
 
-      <div
-        className="bellmanford-detail-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-          gap: '16px',
-        }}
-      >
-        <BellmanFordIterTable
-          steps={steps}
-          currentStepIndex={safeIndex}
-          currentIteration={iteration}
-          step={currentStep}
-        />
-
-        <BellmanFordEdgeList
-          edges={preset.edges || []}
-          activeEdge={activeEdge}
-          step={currentStep}
-        />
-      </div>
-
-      <div
-        className="bellmanford-bottom-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-          gap: '16px',
-        }}
-      >
-        <BellmanFordHistory
-          history={historyItems}
-          step={currentStep}
-          currentStepIndex={safeIndex}
-        />
-
-        <BellmanFordInfo
-          algorithm="Bellman-Ford"
-          source={preset.source}
-          totalSteps={steps.length}
-          currentStepIndex={safeIndex}
-          presetName={preset.name}
-        />
+        <div style={gridStyle}>
+          <BellmanFordHistory history={historyItems} />
+          <BellmanFordInfo
+            title="Bellman-Ford"
+            complexity="O(VE)"
+            supportsNegativeEdges
+            detectsNegativeCycles
+            description="Bellman-Ford relaxes every edge repeatedly, which lets it compute shortest paths even when edge weights can be negative."
+          />
+        </div>
       </div>
     </div>
   );
 }
+
+function getDefaultPreset(presets) {
+  if (Array.isArray(presets) && presets.length > 0) return presets[0];
+  if (presets && typeof presets === 'object') {
+    const firstKey = Object.keys(presets)[0];
+    if (firstKey) return presets[firstKey];
+  }
+
+  return {
+    source: 'A',
+    target: 'D',
+    nodes: [
+      { id: 'A', x: 110, y: 130 },
+      { id: 'B', x: 280, y: 90 },
+      { id: 'C', x: 280, y: 250 },
+      { id: 'D', x: 500, y: 170 },
+    ],
+    edges: [
+      { from: 'A', to: 'B', weight: 4 },
+      { from: 'A', to: 'C', weight: 5 },
+      { from: 'B', to: 'C', weight: -2 },
+      { from: 'B', to: 'D', weight: 6 },
+      { from: 'C', to: 'D', weight: 3 },
+    ],
+  };
+}
+
+function normalizeNodes(nodes) {
+  if (!Array.isArray(nodes)) return [];
+  return nodes.map((node, index) => ({
+    id: node.id ?? node.label ?? String(index),
+    x: typeof node.x === 'number' ? node.x : 120 + index * 130,
+    y: typeof node.y === 'number' ? node.y : 180,
+  }));
+}
+
+function normalizeEdges(edges) {
+  if (!Array.isArray(edges)) return [];
+  return edges
+    .map((edge) => ({
+      from: edge.from ?? edge.u ?? edge.source,
+      to: edge.to ?? edge.v ?? edge.target,
+      weight: edge.weight ?? edge.w ?? edge.cost ?? 0,
+    }))
+    .filter((edge) => edge.from !== undefined && edge.to !== undefined);
+}
+
+function normalizeStep(step, context) {
+  return {
+    index: context.index,
+    message:
+      step?.message ||
+      step?.description ||
+      step?.label ||
+      `Step ${context.index + 1}`,
+    distances:
+      step?.distances ||
+      step?.distanceMap ||
+      step?.dist ||
+      {},
+    parentMap:
+      step?.parentMap ||
+      step?.parents ||
+      step?.prev ||
+      {},
+    activeEdge:
+      step?.activeEdge ||
+      step?.edge ||
+      step?.relaxedEdge ||
+      null,
+    path:
+      step?.path ||
+      step?.shortestPath ||
+      null,
+    paths:
+      step?.paths ||
+      step?.shortestPaths ||
+      null,
+    hasNegativeCycle: Boolean(
+      step?.hasNegativeCycle ||
+      step?.negativeCycle ||
+      step?.cycleDetected
+    ),
+    cycleNodes:
+      step?.cycleNodes ||
+      step?.negativeCycleNodes ||
+      [],
+    negativeCycleMessage:
+      step?.negativeCycleMessage ||
+      '',
+    updated: Boolean(step?.updated ?? step?.didRelax ?? false),
+    raw: step,
+  };
+}
+
+function buildFallbackSteps({ nodes, edges, source, target }) {
+  const nodeIds = nodes.map((node) => node.id);
+  const distances = Object.fromEntries(nodeIds.map((id) => [id, Infinity]));
+  const parents = Object.fromEntries(nodeIds.map((id) => [id, null]));
+  if (source != null) distances[source] = 0;
+
+  const steps = [
+    {
+      message: `Initialize distances. Source ${source} starts at 0.`,
+      distances: { ...distances },
+      parentMap: { ...parents },
+      activeEdge: null,
+      paths: buildPathsFromParents(parents, source, nodeIds),
+      hasNegativeCycle: false,
+      cycleNodes: [],
+      updated: false,
+    },
+  ];
+
+  const rounds = Math.max(nodeIds.length - 1, 1);
+
+  for (let round = 0; round < rounds; round += 1) {
+    let changed = false;
+
+    edges.forEach((edge) => {
+      const fromDist = distances[edge.from];
+      const toDist = distances[edge.to];
+
+      if (fromDist !== Infinity && fromDist + edge.weight < toDist) {
+        distances[edge.to] = fromDist + edge.weight;
+        parents[edge.to] = edge.from;
+        changed = true;
+
+        steps.push({
+          message: `Relax edge ${edge.from} → ${edge.to} with weight ${edge.weight}.`,
+          distances: { ...distances },
+          parentMap: { ...parents },
+          activeEdge: edge,
+          paths: buildPathsFromParents(parents, source, nodeIds),
+          hasNegativeCycle: false,
+          cycleNodes: [],
+          updated: true,
+        });
+      } else {
+        steps.push({
+          message: `Check edge ${edge.from} → ${edge.to}; no shorter path found.`,
+          distances: { ...distances },
+          parentMap: { ...parents },
+          activeEdge: edge,
+          paths: buildPathsFromParents(parents, source, nodeIds),
+          hasNegativeCycle: false,
+          cycleNodes: [],
+          updated: false,
+        });
+      }
+    });
+
+    if (!changed) {
+      steps.push({
+        message: `Round ${round + 1} finished with no updates, so the distances are stable.`,
+        distances: { ...distances },
+        parentMap: { ...parents },
+        activeEdge: null,
+        paths: buildPathsFromParents(parents, source, nodeIds),
+        hasNegativeCycle: false,
+        cycleNodes: [],
+        updated: false,
+      });
+      break;
+    }
+  }
+
+  const cycleEdge = edges.find((edge) => {
+    const fromDist = distances[edge.from];
+    return fromDist !== Infinity && fromDist + edge.weight < distances[edge.to];
+  });
+
+  if (cycleEdge) {
+    steps.push({
+      message: `Extra pass still improved ${cycleEdge.to}, so a negative cycle is reachable.`,
+      distances: { ...distances },
+      parentMap: { ...parents },
+      activeEdge: cycleEdge,
+      paths: buildPathsFromParents(parents, source, nodeIds),
+      hasNegativeCycle: true,
+      cycleNodes: [cycleEdge.from, cycleEdge.to],
+      negativeCycleMessage:
+        'A further relaxation was possible after V - 1 rounds, which indicates a reachable negative cycle.',
+      updated: true,
+    });
+  } else {
+    steps.push({
+      message:
+        target != null
+          ? `Finished. Best known path to ${target} is ready to inspect.`
+          : 'Finished Bellman-Ford run.',
+      distances: { ...distances },
+      parentMap: { ...parents },
+      activeEdge: null,
+      paths: buildPathsFromParents(parents, source, nodeIds),
+      hasNegativeCycle: false,
+      cycleNodes: [],
+      updated: false,
+    });
+  }
+
+  return steps.map((step, index) => normalizeStep(step, { index, nodes, edges, source, target }));
+}
+
+function buildPathsFromParents(parents, source, nodeIds) {
+  const paths = {};
+
+  nodeIds.forEach((nodeId) => {
+    if (String(nodeId) === String(source)) {
+      paths[nodeId] = [source];
+      return;
+    }
+
+    const path = [];
+    const seen = new Set();
+    let current = nodeId;
+
+    while (current != null && !seen.has(String(current))) {
+      path.push(current);
+      seen.add(String(current));
+
+      if (String(current) === String(source)) {
+        paths[nodeId] = path.reverse();
+        return;
+      }
+
+      current = parents[current];
+    }
+
+    paths[nodeId] = [];
+  });
+
+  return paths;
+}
+
+const pageStyle = {
+  width: '100%',
+};
+
+const stackStyle = {
+  display: 'grid',
+  gap: '16px',
+};
+
+const statusBarStyle = {
+  display: 'flex',
+  gap: '12px',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  padding: '12px 14px',
+  borderRadius: '14px',
+  background: 'var(--bg-card, #161b22)',
+  border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+};
+
+const statusPillStyle = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  minHeight: '30px',
+  padding: '0 10px',
+  borderRadius: '999px',
+  background: 'rgba(245, 166, 35, 0.14)',
+  color: '#f5a623',
+  fontWeight: 800,
+  fontSize: '12px',
+};
+
+const statusTextStyle = {
+  color: 'var(--text-secondary, #cbd5e1)',
+  fontSize: '14px',
+};
+
+const gridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+  gap: '16px',
+};
