@@ -88,7 +88,7 @@ export default function TopicSidebar({ activeTopic, onSelect, getStatus }) {
                       color: solved > 0 ? '#00d4aa' : 'var(--text-muted)',
                     }}
                   >
-                    {solved}/{topic.problems.length}
+                    {solved}/{topic.problems.length || 0}
                   </span>
                 </button>
               );
