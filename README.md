@@ -1,3 +1,95 @@
+AlgoVista
+
+AlgoVista is an interactive platform for learning Data Structures and Algorithms through visual simulation, concept-driven exploration, and guided coding practice. It is built to help learners understand how algorithms work internally — not just memorize solutions.
+
+What it does
+AlgoVista brings together four core parts of the DSA learning workflow into one product:
+
+Home for product-level onboarding and navigation.
+
+Concepts for understanding topics before implementation.
+
+Simulator for visualizing algorithm behavior step by step across multiple modules such as AVL, Bellman-Ford, BST, Dijkstra, graph, heap, linked list, merge sort, queue, quicksort, searching, sorting, stack, trie, and hash table.
+
+Practice for solving curated problems with hints, complexity tags, test execution, tracing, and progress tracking.
+
+Key features
+Interactive visualizers for core data structures and algorithms.
+
+Dedicated concept, simulator, and practice flows instead of a single mixed interface.
+
+Topic-based practice organization with problems grouped under categories like Arrays & Hashing, Stack, Linked List, Binary Search, Binary Tree / BST, Heap, Graphs, and Sorting.
+
+Problem detail views with description, examples, hints, pattern explanation, solution view, and test cases.
+
+Built-in practice utilities including CodeEditor, HintSystem, TestResults, testRunner, tracer components, and progress tracking hooks.
+
+Tech stack
+React
+
+JavaScript
+
+CSS
+
+React Router
+
+Modular feature-based front-end architecture for simulators and practice flows.
+
+Project structure
+text
+src/
+├── modules/
+│   ├── avl/
+│   ├── bellmanford/
+│   ├── bst/
+│   ├── dijkstra/
+│   ├── graph/
+│   ├── hashtable/
+│   ├── heap/
+│   ├── linkedlist/
+│   ├── mergesort/
+│   ├── queue/
+│   ├── quicksort/
+│   ├── searching/
+│   ├── sorting/
+│   ├── stack/
+│   └── trie/
+├── pages/
+│   ├── HomePage.jsx
+│   ├── ConceptsPage.jsx
+│   ├── SimulatorPage.jsx
+│   ├── PracticePage.jsx
+│   ├── AboutPage.jsx
+│   └── practice/
+│       ├── allProblems.js
+│       ├── TopicSidebar.jsx
+│       ├── ProblemList.jsx
+│       ├── ProblemDetail.jsx
+│       ├── CodeEditor.jsx
+│       ├── HintSystem.jsx
+│       ├── EmptyState.jsx
+│       ├── TestResults.jsx
+│       ├── testRunner.js
+│       ├── usePracticeProgress.js
+│       ├── problems_array.js
+│       ├── problems_bsearch.js
+│       ├── problems_linkedlist.js
+│       ├── problems_stack.js
+│       ├── problems_trees.js
+│       └── tracer/
+
+Why AlgoVista
+Most DSA tools focus on either theory or coding problems. AlgoVista is designed to connect both with visualization, so learners can study a concept, see it in motion, and then apply it through practice in the same system.
+
+Current focus
+The current codebase shows strong investment in two areas:
+
+algorithm visualizers, with multiple dedicated modules under src/modules.
+
+a richer practice experience, including topic metadata, searchable problem lists, detailed problem views, and progress-aware practice flows.
+
+Vision
+AlgoVista aims to make DSA learning more visual, structured, and intuitive for students, interview candidates, and self-learners. The goal is to turn algorithms from abstract code into something users can explore, reason about, and confidently apply.
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -68,3 +160,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+AlgoVista — Master DSA by watching it happen
