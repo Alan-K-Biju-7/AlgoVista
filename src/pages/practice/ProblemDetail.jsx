@@ -15,7 +15,7 @@ const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted }) {
   const [code, setCode]         = useState(problem.solution || '// Write your solution here\n');
   const [results, setResults]   = useState(null);
-  const [showSolution, setShowSolution] = useState(false);
+  const [, setShowSolution] = useState(false);
   const [tab, setTab]           = useState('problem');
   const tracer        = useTracerSteps();
   const tracerConfig  = TRACER_CONFIGS[problem.id] || null;

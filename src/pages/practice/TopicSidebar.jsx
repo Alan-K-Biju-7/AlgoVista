@@ -1,5 +1,4 @@
-import { ALL_PROBLEMS, PHASE_META, getTopicList } from './allProblems';
-
+import { PHASE_META, getTopicList } from './allProblems';
 export default function TopicSidebar({ activeTopic, onSelect, getStatus }) {
   const topics = getTopicList();
   const phases = Object.values(PHASE_META);
