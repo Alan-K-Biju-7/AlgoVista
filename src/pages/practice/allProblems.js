@@ -99,3 +99,12 @@ export const getTopicList = () =>
 
 export const getAllProblemsFlat = () =>
   getTopicList().flatMap((topic) => topic.problems);
+
+
+export const getTopicProblemCount = (topicId) =>
+  ALL_PROBLEMS[topicId]?.problems?.length || 0;
+
+export const getSolvedCountForTopic = (topicId, getStatus) =>
+  (ALL_PROBLEMS[topicId]?.problems || []).filter(
+    (problem) => getStatus(problem.id) === 'solved'
+  ).length;
