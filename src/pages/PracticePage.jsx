@@ -25,7 +25,7 @@ export default function PracticePage() {
   const [activeProblem, setActiveProblem] = useState(null);
   const { markSolved, markAttempted, getStatus } = usePracticeProgress();
 
-  const topic = ALL_PROBLEMS[activeTopic];
+  const topic = ALL_PROBLEMS[activeTopic] || ALL_PROBLEMS.array;
 
   return (
     <div style={{ display: 'flex', maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem', gap: '1.75rem' }}>
