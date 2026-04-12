@@ -81,9 +81,23 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
             <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Examples</p>
             {problem.examples.map((ex, i) => (
               <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '0.5rem', padding: '0.75rem', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-                <div style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Input: <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>{ex.input}</span></div>
-                <div style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Output: <span style={{ color: '#00d4aa', fontFamily: 'monospace' }}>{ex.output}</span></div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{ex.explanation}</div>
+                <div style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                  Input:{' '}
+                  <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+                    {ex.input}
+                  </span>
+                </div>
+                <div style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                  Output:{' '}
+                  <span style={{ color: '#00d4aa', fontFamily: 'monospace' }}>
+                    {ex.output}
+                  </span>
+                </div>
+                {ex.explanation ? (
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                    {ex.explanation}
+                  </div>
+                ) : null}
               </div>
             ))}
             <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '0.5rem', background: topicColor + '0d', border: `1px solid ${topicColor}30` }}>
