@@ -161,4 +161,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-AlgoVista — Master DSA by watching it happen
+Master algorithms by seeing them work.
+
+<p align="center">
+  <b>AlgoVista — Master DSA by watching it happen</b>
+</p>
