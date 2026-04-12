@@ -8,7 +8,7 @@ import { usePracticeProgress } from './practice/usePracticeProgress';
 function ProgressBanner({ allProblems, getStatus }) {
   const all = Object.values(allProblems).flatMap(t => t.problems);
   const solved = all.filter(p => getStatus(p.id) === 'solved').length;
-  const pct = Math.round((solved / all.length) * 100);
+  const pct = all.length ? Math.round((solved / all.length) * 100) : 0;
   return (
     <div style={{ display:'flex', alignItems:'center', gap:'1rem', padding:'0.75rem 1rem', borderRadius:'0.6rem', background:'var(--bg-card)', border:'1px solid var(--border-default)', marginBottom:'1.5rem' }}>
       <span style={{ fontSize:'0.82rem', color:'var(--text-muted)' }}>Overall Progress</span>
