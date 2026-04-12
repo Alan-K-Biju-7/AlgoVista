@@ -5,6 +5,8 @@ AlgoVista is an interactive platform for learning Data Structures and Algorithms
 What it does
 AlgoVista brings together four core parts of the DSA learning workflow into one product:
 
+Designed to turn abstract algorithms into intuitive learning experiences through modular visualizers, curated practice sets, and progress-driven exploration.
+
 Home for product-level onboarding and navigation.
 
 Concepts for understanding topics before implementation.
