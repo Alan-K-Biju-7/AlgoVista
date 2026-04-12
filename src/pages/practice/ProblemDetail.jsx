@@ -51,6 +51,10 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
           border: `1px solid ${DIFF_COLOR[problem.difficulty]}40` }}>{problem.difficulty}</span>
         <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
           color: topicColor, background: topicColor + '18', border: `1px solid ${topicColor}40` }}>{problem.pattern}</span>
+        {problem.timeO && <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
+          color: '#4a9eff', background: '#4a9eff12', border: '1px solid #4a9eff30' }}>{problem.timeO}</span>}
+        {problem.spaceO && <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
+          color: '#f5a623', background: '#f5a62312', border: '1px solid #f5a62330' }}>{problem.spaceO}</span>}
         <Link to={`/simulator#${problem.viz}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
           fontWeight: '600', background: topicColor + '20', color: topicColor, border: `1px solid ${topicColor}40`,
           textDecoration: 'none' }}>Open Visualizer →</Link>
