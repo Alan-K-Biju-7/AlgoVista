@@ -14,10 +14,7 @@ export default function BellmanFordVisualizer() {
     stepsModule.generateBellmanFordSteps || null;
 
   const presets =
-    dataModule.bellmanFordPresets ||
-    dataModule.presets ||
-    dataModule.graphPresets ||
-    null;
+    dataModule.PRESET_GRAPHS || null;
 
   const preset = useMemo(() => getDefaultPreset(presets), [presets]);
   const [speed, setSpeed] = useState(1000);
