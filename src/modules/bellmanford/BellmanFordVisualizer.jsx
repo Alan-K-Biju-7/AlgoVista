@@ -11,17 +11,10 @@ import * as dataModule from './bellmanFordData';
 
 export default function BellmanFordVisualizer() {
   const generateBellmanFordSteps =
-    stepsModule.default ||
-    stepsModule.generateBellmanFordSteps ||
-    stepsModule.createBellmanFordSteps ||
-    null;
+    stepsModule.generateBellmanFordSteps || null;
 
   const presets =
-    dataModule.default ||
-    dataModule.bellmanFordPresets ||
-    dataModule.presets ||
-    dataModule.graphPresets ||
-    null;
+    dataModule.PRESET_GRAPHS || null;
 
   const preset = useMemo(() => getDefaultPreset(presets), [presets]);
   const [speed, setSpeed] = useState(1000);
