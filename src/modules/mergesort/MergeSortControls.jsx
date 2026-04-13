@@ -1,4 +1,3 @@
-import { PRESET_ARRAYS } from './mergeSortLogic';
 
 export default function MergeSortControls({
   onStepForward, onStepBack, onAutoRun, onStop, onReset, onLoadPreset,
