@@ -160,6 +160,9 @@ export default function BellmanFordVisualizer() {
           }}
           speed={speed}
           onSpeedChange={setSpeed}
+          hasSteps={computedSteps.length > 0}
+          isFinished={safeStepIdx >= computedSteps.length - 1}
+          canStep={safeStepIdx < computedSteps.length - 1}
         />
 
         <div style={statusBarStyle}>
