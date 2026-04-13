@@ -82,10 +82,11 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
         </div>
       </div>
 
-      {filtered.length === 0 && <EmptyState topicLabel={topic.label} />}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-        {filtered.map((p) => {
+      {filtered.length === 0 ? (
+        <EmptyState topicLabel={topic.label} />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          {filtered.map((p) => {
           const status = getStatus(p.id);
 
           return (
@@ -187,8 +188,9 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
               )}
             </button>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }
