@@ -11,7 +11,6 @@ import * as dataModule from './bellmanFordData';
 
 export default function BellmanFordVisualizer() {
   const generateBellmanFordSteps =
-    stepsModule.default ||
     stepsModule.generateBellmanFordSteps ||
     stepsModule.createBellmanFordSteps ||
     null;
