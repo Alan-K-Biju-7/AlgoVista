@@ -83,19 +83,35 @@ src/
 │       ├── problems_trees.js
 │       └── tracer/
 
-Why AlgoVista
-Most DSA tools focus on either theory or coding problems. AlgoVista is designed to connect both with visualization, so learners can study a concept, see it in motion, and then apply it through practice in the same system.
+---
 
-Current focus
-The current codebase shows strong investment in two areas:
+## Why AlgoVista
 
-algorithm visualizers, with multiple dedicated modules under src/modules.
+Most DSA platforms focus either on theory or problem-solving.
 
-a richer practice experience, including topic metadata, searchable problem lists, detailed problem views, and progress-aware practice flows.
+AlgoVista bridges the gap by combining:
+- Conceptual understanding  
+- Visual learning  
+- Hands-on practice  
 
-Vision
-AlgoVista aims to make DSA learning more visual, structured, and intuitive for students, interview candidates, and self-learners. The goal is to turn algorithms from abstract code into something users can explore, reason about, and confidently apply.
-# Getting Started with Create React App
+All in one system.
+
+---
+
+## Current Focus
+
+- Expanding algorithm visualizers across modules  
+- Enhancing practice experience with better problem organization and tracking  
+
+---
+
+## Vision
+
+To make DSA learning more visual, structured, and intuitive for students, interview candidates, and self-learners.
+
+---
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
