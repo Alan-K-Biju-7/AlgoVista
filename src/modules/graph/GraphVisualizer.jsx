@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { DEFAULT_NODES, DEFAULT_EDGES, buildAdjList, addNode, addEdge, removeNode } from './graphData';
+import { DEFAULT_NODES, DEFAULT_EDGES, buildAdjList, addNode, addEdge } from './graphData';
 import { generateBFSSteps } from './bfsLogic';
 import { generateDFSSteps } from './dfsLogic';
 import GraphCanvas from './GraphCanvas';
