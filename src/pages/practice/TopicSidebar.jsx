@@ -73,9 +73,9 @@ export default function TopicSidebar({ activeTopic, onSelect, getStatus }) {
                     fontWeight: isActive ? '600' : '400',
                     transition: 'all 0.15s',
                     marginBottom: '0.1rem',
-                    borderLeft: isActive
-                      ? `2px solid ${topic.color}`
-                      : '2px solid transparent',
+                    boxShadow: isActive
+                      ? `inset 0 0 0 1px ${topic.color}40`
+                      : 'inset 0 0 0 1px transparent',
                   }}
                 >
                   <span>
