@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getDefaultTable, htInsert } from './hashTable';
+import { getDefaultTable } from './hashTable';
 import { generateInsertSteps } from './hashInsertSteps';
 import { generateSearchSteps } from './hashSearchSteps';
 import { generateDeleteSteps } from './hashDeleteSteps';
