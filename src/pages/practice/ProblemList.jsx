@@ -31,6 +31,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
         >
           {topic.icon} {topic.label}
         </h2>
+
         <p
           style={{
             fontSize: '0.83rem',
@@ -39,8 +40,8 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
           }}
         >
           {query.trim() || filter !== 'All'
-            ? `${filtered.length} matching problem${filtered.length === 1 ? '' : 's'}`
-            : `${problems.length} problem${problems.length === 1 ? '' : 's'}`}
+            ? `Showing ${filtered.length} of ${problems.length} problem${problems.length === 1 ? '' : 's'}`
+            : `${problems.length} problem${problems.length === 1 ? '' : 's'} available`}
         </p>
 
         <input
@@ -128,6 +129,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
                 >
                   {p.title}
                 </div>
+
                 {p.description ? (
                   <div
                     style={{
