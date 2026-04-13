@@ -20,8 +20,6 @@ export default function TracerPanel({ tracer, code, topicColor }) {
   if (!currentStep) return null;
 
   const isError = currentStep.type === 'error';
-  const allErrors = isError; // only one error step is ever pushed
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
       {/* Step message */}
