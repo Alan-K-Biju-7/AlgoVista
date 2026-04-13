@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { buildDefaultTrie, createTrie, trieInsert } from './trieLogic';
+import { buildDefaultTrie } from './trieLogic';
 import { generateInsertSteps } from './trieInsertSteps';
 import { generateSearchSteps } from './trieSearchSteps';
 import { generateDeleteSteps } from './trieDeleteSteps';
