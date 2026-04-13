@@ -19,7 +19,7 @@ Designed to turn abstract algorithms into intuitive learning experiences.
 
 ---
 
-## 🔥 Key Features
+## Key Features
 
 - Interactive visualizers for core DSA concepts  
 - Clean separation of Concepts, Simulator, and Practice flows  
@@ -185,9 +185,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ---
 
-## 📌 Status
+## Status
 
-🚧 Demo coming soon  
+ Demo coming soon  
 
 ---
 
