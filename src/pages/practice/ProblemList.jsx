@@ -38,7 +38,9 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
             marginTop: '0.25rem',
           }}
         >
-          {filtered.length} of {problems.length} problems
+          {query.trim() || filter !== 'All'
+            ? `${filtered.length} matching problem${filtered.length === 1 ? '' : 's'}`
+            : `${problems.length} problem${problems.length === 1 ? '' : 's'}`}
         </p>
 
         <input
