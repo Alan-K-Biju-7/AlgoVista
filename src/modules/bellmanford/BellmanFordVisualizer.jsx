@@ -14,7 +14,6 @@ export default function BellmanFordVisualizer() {
     stepsModule.generateBellmanFordSteps || null;
 
   const presets =
-    dataModule.default ||
     dataModule.bellmanFordPresets ||
     dataModule.presets ||
     dataModule.graphPresets ||
