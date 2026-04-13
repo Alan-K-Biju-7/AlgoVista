@@ -1,44 +1,47 @@
-AlgoVista
+# AlgoVista
 
-AlgoVista is an interactive platform for learning Data Structures and Algorithms through visual simulation, concept-driven exploration, and guided coding practice. It is built to help learners understand how algorithms work internally — not just memorize solutions.
+AlgoVista is an interactive platform for learning Data Structures and Algorithms through visual simulation, concept-driven exploration, and guided coding practice.
 
-What it does
-AlgoVista brings together four core parts of the DSA learning workflow into one product:
+It helps learners understand how algorithms work internally — not just memorize solutions.
 
-Designed to turn abstract algorithms into intuitive learning experiences through modular visualizers, curated practice sets, and progress-driven exploration.
+---
 
-Home for product-level onboarding and navigation.
+## What it does
 
-Concepts for understanding topics before implementation.
+AlgoVista combines four core parts of the DSA learning workflow into one unified platform:
 
-Simulator for visualizing algorithm behavior step by step across multiple modules such as AVL, Bellman-Ford, BST, Dijkstra, graph, heap, linked list, merge sort, queue, quicksort, searching, sorting, stack, trie, and hash table.
+- **Home** – Entry point for onboarding and navigation  
+- **Concepts** – Learn topics before implementation  
+- **Simulator** – Visualize algorithms step-by-step (AVL, Dijkstra, BST, Graphs, Sorting, etc.)  
+- **Practice** – Solve curated problems with hints, tracing, and progress tracking  
 
-Practice for solving curated problems with hints, complexity tags, test execution, tracing, and progress tracking.
+Designed to turn abstract algorithms into intuitive learning experiences.
 
-Key features
-Interactive visualizers for core data structures and algorithms.
+---
 
-Dedicated concept, simulator, and practice flows instead of a single mixed interface.
+## 🔥 Key Features
 
-Topic-based practice organization with problems grouped under categories like Arrays & Hashing, Stack, Linked List, Binary Search, Binary Tree / BST, Heap, Graphs, and Sorting.
+- Interactive visualizers for core DSA concepts  
+- Clean separation of Concepts, Simulator, and Practice flows  
+- Topic-based problem organization (Arrays, Graphs, Trees, etc.)  
+- Detailed problem views with examples, hints, and solutions  
+- Built-in tools: Code Editor, Test Runner, Tracer, Progress Tracking  
 
-Problem detail views with description, examples, hints, pattern explanation, solution view, and test cases.
+---
 
-Built-in practice utilities including CodeEditor, HintSystem, TestResults, testRunner, tracer components, and progress tracking hooks.
+## Tech Stack
 
-Tech stack
-React
+- React  
+- JavaScript  
+- CSS  
+- React Router  
 
-JavaScript
+Built with a modular, feature-based architecture for scalability.
 
-CSS
+---
 
-React Router
+## Project Structure
 
-Modular feature-based front-end architecture for simulators and practice flows.
-
-Project structure
-text
 src/
 ├── modules/
 │   ├── avl/
