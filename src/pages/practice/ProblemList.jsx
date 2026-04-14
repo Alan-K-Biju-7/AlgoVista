@@ -44,6 +44,16 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
             : `${problems.length} problem${problems.length === 1 ? '' : 's'} available`}
         </p>
 
+        <p
+          style={{
+            fontSize: '0.76rem',
+            color: 'var(--text-muted)',
+            marginTop: '0.35rem',
+          }}
+        >
+          Filter by difficulty or search by keyword to narrow this list.
+        </p>
+
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
