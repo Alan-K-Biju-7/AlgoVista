@@ -24,7 +24,7 @@ export default function TopicSidebar({ activeTopic, onSelect, getStatus }) {
           marginBottom: '1rem',
         }}
       >
-        Topics
+        Practice topics
       </p>
 
       {phases.map((phase) => {
