@@ -57,7 +57,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search problems by title, pattern, or description"
+          placeholder="Search this topic by title, pattern, or description"
           style={{
             width: '100%',
             marginTop: '0.8rem',
