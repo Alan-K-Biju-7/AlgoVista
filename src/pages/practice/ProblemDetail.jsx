@@ -12,7 +12,7 @@ import TracerErrorBoundary from './tracer/TracerErrorBoundary';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
-export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted }) {
+export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted, isBookmarked, toggleBookmark }) {
   const [code, setCode]         = useState(problem.solution || '// Write your solution here\n');
   const [results, setResults]   = useState(null);
   const [, setShowSolution] = useState(false);
@@ -21,6 +21,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
   const tracerConfig  = TRACER_CONFIGS[problem.id] || null;
 
   const [traceWarnings, setTraceWarnings] = useState([]);
+  const bookmarked = isBookmarked ? isBookmarked(problem.id) : false;
 
   const handleTrace = () => {
     if (!tracerConfig) return;
@@ -55,6 +56,24 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
           color: '#4a9eff', background: '#4a9eff12', border: '1px solid #4a9eff30' }}>{problem.timeO}</span>}
         {problem.spaceO && <span style={{ padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '600',
           color: '#f5a623', background: '#f5a62312', border: '1px solid #f5a62330' }}>{problem.spaceO}</span>}
+        <button
+          type="button"
+          onClick={() => toggleBookmark?.(problem.id)}
+          aria-label={bookmarked ? `Remove ${problem.title} from bookmarks` : `Add ${problem.title} to bookmarks`}
+          title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+          style={{
+            padding: '0.3rem 0.75rem',
+            borderRadius: '0.4rem',
+            fontSize: '0.78rem',
+            fontWeight: '600',
+            background: bookmarked ? topicColor + '16' : 'transparent',
+            color: bookmarked ? topicColor : 'var(--text-muted)',
+            border: bookmarked ? `1px solid ${topicColor}55` : '1px solid var(--border-default)',
+            cursor: 'pointer',
+          }}
+        >
+          {bookmarked ? '🔖 Bookmarked' : '📑 Bookmark'}
+        </button>
         <Link to={`/simulator#${problem.viz}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
           fontWeight: '600', background: topicColor + '20', color: topicColor, border: `1px solid ${topicColor}40`,
           textDecoration: 'none' }}>Open Visualizer →</Link>
