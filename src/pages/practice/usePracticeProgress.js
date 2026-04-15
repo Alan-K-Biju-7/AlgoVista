@@ -1,16 +1,18 @@
 import { useState } from 'react';
 
-const initialState = {};
+const initialProgressState = {};
+const initialBookmarksState = {};
 
 export function usePracticeProgress() {
-  const [progress, setProgress] = useState(initialState);
+  const [progress, setProgress] = useState(initialProgressState);
+  const [bookmarks, setBookmarks] = useState(initialBookmarksState);
 
   const markSolved = (problemId) => {
-    setProgress(prev => ({ ...prev, [problemId]: 'solved' }));
+    setProgress((prev) => ({ ...prev, [problemId]: 'solved' }));
   };
 
   const markAttempted = (problemId) => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       [problemId]: prev[problemId] === 'solved' ? 'solved' : 'attempted',
     }));
@@ -19,10 +21,26 @@ export function usePracticeProgress() {
   const getStatus = (problemId) => progress[problemId] || 'unsolved';
 
   const getStats = (problemIds) => ({
-    solved:    problemIds.filter(id => progress[id] === 'solved').length,
-    attempted: problemIds.filter(id => progress[id] === 'attempted').length,
-    total:     problemIds.length,
+    solved: problemIds.filter((id) => progress[id] === 'solved').length,
+    attempted: problemIds.filter((id) => progress[id] === 'attempted').length,
+    total: problemIds.length,
   });
 
-  return { markSolved, markAttempted, getStatus, getStats };
+  const toggleBookmark = (problemId) => {
+    setBookmarks((prev) => ({
+      ...prev,
+      [problemId]: !prev[problemId],
+    }));
+  };
+
+  const isBookmarked = (problemId) => Boolean(bookmarks[problemId]);
+
+  return {
+    markSolved,
+    markAttempted,
+    getStatus,
+    getStats,
+    toggleBookmark,
+    isBookmarked,
+  };
 }
