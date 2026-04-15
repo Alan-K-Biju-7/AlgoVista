@@ -23,7 +23,13 @@ function ProgressBanner({ allProblems, getStatus }) {
 export default function PracticePage() {
   const [activeTopic,   setActiveTopic]   = useState('array');
   const [activeProblem, setActiveProblem] = useState(null);
-  const { markSolved, markAttempted, getStatus } = usePracticeProgress();
+  const {
+    markSolved,
+    markAttempted,
+    getStatus,
+    toggleBookmark,
+    isBookmarked,
+  } = usePracticeProgress();
 
   const topic = ALL_PROBLEMS[activeTopic] || ALL_PROBLEMS.array;
 
@@ -43,6 +49,8 @@ export default function PracticePage() {
             onBack={() => setActiveProblem(null)}
             onSolved={markSolved}
             onAttempted={markAttempted}
+            isBookmarked={isBookmarked}
+            toggleBookmark={toggleBookmark}
           />
         ) : (
           <ProblemList
@@ -50,6 +58,8 @@ export default function PracticePage() {
             problems={topic.problems}
             onSelect={setActiveProblem}
             getStatus={getStatus}
+            isBookmarked={isBookmarked}
+            toggleBookmark={toggleBookmark}
           />
         )}
       </div>
