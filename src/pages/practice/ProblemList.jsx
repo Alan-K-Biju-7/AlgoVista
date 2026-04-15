@@ -3,7 +3,7 @@ import EmptyState from './EmptyState';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
-export default function ProblemList({ topic, problems, onSelect, getStatus }) {
+export default function ProblemList({ topic, problems, onSelect, getStatus, isBookmarked, toggleBookmark }) {
   const [filter, setFilter] = React.useState('All');
   const [query, setQuery] = React.useState('');
 
@@ -99,6 +99,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           {filtered.map((p) => {
           const status = getStatus(p.id);
+          const bookmarked = isBookmarked ? isBookmarked(p.id) : false;
 
           return (
             <button
@@ -198,6 +199,29 @@ export default function ProblemList({ topic, problems, onSelect, getStatus }) {
                   {p.timeO}
                 </span>
               )}
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleBookmark?.(p.id);
+                }}
+                aria-label={bookmarked ? `Remove ${p.title} from bookmarks` : `Add ${p.title} to bookmarks`}
+                title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                style={{
+                  border: '1px solid ' + (bookmarked ? topic.color + '55' : 'var(--border-default)'),
+                  background: bookmarked ? topic.color + '16' : 'transparent',
+                  color: bookmarked ? topic.color : 'var(--text-muted)',
+                  borderRadius: '0.5rem',
+                  padding: '0.35rem 0.55rem',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}
+              >
+                {bookmarked ? '🔖' : '📑'}
+              </button>
             </button>
           );
           })}
