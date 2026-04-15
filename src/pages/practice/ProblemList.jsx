@@ -102,9 +102,8 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
           const bookmarked = isBookmarked ? isBookmarked(p.id) : false;
 
           return (
-            <button
+            <div
               key={p.id}
-              onClick={() => onSelect(p)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -113,7 +112,6 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
                 borderRadius: '0.6rem',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-default)',
-                cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'border-color 0.15s',
                 width: '100%',
@@ -129,7 +127,21 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
                 {status === 'solved' ? '✅' : status === 'attempted' ? '🟡' : '⬜'}
               </span>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <button
+                type="button"
+                onClick={() => onSelect(p)}
+                aria-label={`Open ${p.title}`}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  margin: 0,
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                }}
+              >
                 <div
                   style={{
                     fontSize: '0.88rem',
@@ -154,7 +166,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
                     {p.description}
                   </div>
                 ) : null}
-              </div>
+              </button>
 
               <span
                 style={{
@@ -222,7 +234,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
               >
                 {bookmarked ? '🔖' : '📑'}
               </button>
-            </button>
+            </div>
           );
           })}
         </div>
