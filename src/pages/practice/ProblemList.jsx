@@ -6,9 +6,11 @@ const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 export default function ProblemList({ topic, problems, onSelect, getStatus, isBookmarked, toggleBookmark }) {
   const [filter, setFilter] = React.useState('All');
   const [query, setQuery] = React.useState('');
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = React.useState(false);
 
   const filtered = problems.filter((p) => {
     const matchesDifficulty = filter === 'All' ? true : p.difficulty === filter;
+    const matchesBookmark = showBookmarkedOnly ? isBookmarked?.(p.id) : true;
     const q = query.trim().toLowerCase();
     const matchesQuery =
       !q ||
@@ -16,7 +18,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
       (p.pattern || '').toLowerCase().includes(q) ||
       (p.description || '').toLowerCase().includes(q);
 
-    return matchesDifficulty && matchesQuery;
+    return matchesDifficulty && matchesBookmark && matchesQuery;
   });
 
   return (
@@ -71,7 +73,7 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
           }}
         />
 
-        <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
           {['All', 'Easy', 'Medium', 'Hard'].map((d) => (
             <button
               key={d}
@@ -90,6 +92,24 @@ export default function ProblemList({ topic, problems, onSelect, getStatus, isBo
               {d}
             </button>
           ))}
+
+          <button
+            type="button"
+            onClick={() => setShowBookmarkedOnly((prev) => !prev)}
+            style={{
+              padding: '0.2rem 0.65rem',
+              borderRadius: '999px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              fontWeight: showBookmarkedOnly ? '700' : '400',
+              background: showBookmarkedOnly ? topic.color + '25' : 'transparent',
+              color: showBookmarkedOnly ? topic.color : 'var(--text-muted)',
+            }}
+            aria-pressed={showBookmarkedOnly}
+          >
+            🔖 Bookmarked
+          </button>
         </div>
       </div>
 
