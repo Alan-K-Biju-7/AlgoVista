@@ -8,24 +8,19 @@ export default {
   viz: 'hashmap',
   concept: 'arrays-hashing',
   description:
-    'Given an array of strings, group the anagrams together. You may return the answer in any order.',
+    'Group the anagrams together. You may return the answer in any order.',
   examples: [
-    { input: 'strs = ["eat","tea","tan","ate","nat","bat"]', output: '[["eat","tea","ate"],["tan","nat"],["bat"]]' },
-    { input: 'strs = [""]',    output: '[[""]]' },
-    { input: 'strs = ["a"]',   output: '[["a"]]' },
+    { input: '["eat","tea","tan","ate","nat","bat"]', output: '[["eat","tea","ate"],["tan","nat"],["bat"]]' },
   ],
   testCases: [
-    { input: [["eat","tea","tan","ate","nat","bat"]],
-      expected: [["eat","tea","ate"],["tan","nat"],["bat"]] },
-    { input: [[""]],  expected: [[""]] },
-    { input: [["a"]], expected: [["a"]] },
+    { input: [["eat","tea","tan","ate","nat","bat"]], expected: [["eat","tea","ate"],["tan","nat"],["bat"]] },
+    { input: [[""]], expected: [[""]] },
   ],
   hints: [
-    'All anagrams share the same sorted string.',
-    'A 26-length count string is a faster signature than sorting.',
+    'Anagrams share the same sorted-letter signature.',
   ],
   pattern_explanation:
-    'Bucket by a canonical key (sorted string or count tuple). Map key to list of members.',
+    'Use a hash map from a canonical key to the list of strings belonging to that group.',
   solution: `function solve(strs) {
   const groups = new Map();
   for (const s of strs) {

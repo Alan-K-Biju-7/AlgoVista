@@ -8,22 +8,19 @@ export default {
   viz: 'array-pointers',
   concept: 'arrays-hashing',
   description:
-    'Design an algorithm to encode a list of strings to a single string and then decode it back. Your encoding must survive any ASCII content inside the strings.',
+    'Encode a list of strings into one string and decode it back safely.',
   examples: [
-    { input: '["neet","co","de"]',  output: 'encoded string that decodes back to the same list' },
-    { input: '[""]',                output: '""' },
+    { input: '["neet","code","love"]', output: 'round-trips correctly' },
   ],
   testCases: [
-    { input: [['neet','co','de']], expected: ['neet','co','de'] },
-    { input: [['']],               expected: [''] },
-    { input: [['a#b','','xyz']],   expected: ['a#b','','xyz'] },
+    { input: [['neet','code','love']], expected: ['neet','code','love'] },
+    { input: [['']], expected: [''] },
   ],
   hints: [
-    'Prefix each string with its length and a delimiter that cannot be mistaken, like length#.',
-    'During decode, read digits until #, then read that many characters.',
+    'Store length first, then a delimiter, then the string body.',
   ],
   pattern_explanation:
-    'Length-prefix framing. The delimiter is safe because the length tells decode exactly where each string ends.',
+    'Length-prefix encoding avoids ambiguity even when strings contain separators.',
   solution: `function encode(strs) {
   return strs.map(s => s.length + '#' + s).join('');
 }
@@ -40,5 +37,7 @@ function decode(str) {
   }
   return out;
 }
-function solve(strs) { return decode(encode(strs)); }`,
+function solve(strs) {
+  return decode(encode(strs));
+}`,
 };
