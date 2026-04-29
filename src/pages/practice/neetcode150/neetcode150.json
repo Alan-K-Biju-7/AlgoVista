@@ -7,5 +7,18 @@
   { "id": "product-except-self", "title": "Product of Array Except Self", "pattern": "Arrays & Hashing", "difficulty": "Medium", "viz": "array-pointers" },
   { "id": "valid-sudoku", "title": "Valid Sudoku", "pattern": "Arrays & Hashing", "difficulty": "Medium", "viz": "hashset" },
   { "id": "encode-decode-strings", "title": "Encode and Decode Strings", "pattern": "Arrays & Hashing", "difficulty": "Medium", "viz": "array-pointers" },
-  { "id": "longest-consecutive-sequence", "title": "Longest Consecutive Sequence", "pattern": "Arrays & Hashing", "difficulty": "Medium", "viz": "hashset" }
+  { "id": "longest-consecutive-sequence", "title": "Longest Consecutive Sequence", "pattern": "Arrays & Hashing", "difficulty": "Medium", "viz": "hashset" },
+
+  { "id": "valid-palindrome", "title": "Valid Palindrome", "pattern": "Two Pointers", "difficulty": "Easy", "viz": "array-pointers" },
+  { "id": "two-sum-ii-input-array-is-sorted", "title": "Two Sum II - Input Array Is Sorted", "pattern": "Two Pointers", "difficulty": "Medium", "viz": "array-pointers" },
+  { "id": "3sum", "title": "3Sum", "pattern": "Two Pointers", "difficulty": "Medium", "viz": "array-pointers" },
+  { "id": "container-with-most-water", "title": "Container With Most Water", "pattern": "Two Pointers", "difficulty": "Medium", "viz": "array-pointers" },
+  { "id": "trapping-rain-water", "title": "Trapping Rain Water", "pattern": "Two Pointers", "difficulty": "Hard", "viz": "array-pointers" },
+
+  { "id": "best-time-to-buy-and-sell-stock", "title": "Best Time to Buy and Sell Stock", "pattern": "Sliding Window", "difficulty": "Easy", "viz": "array-pointers" },
+  { "id": "longest-substring-without-repeating-characters", "title": "Longest Substring Without Repeating Characters", "pattern": "Sliding Window", "difficulty": "Medium", "viz": "hashset" },
+  { "id": "longest-repeating-character-replacement", "title": "Longest Repeating Character Replacement", "pattern": "Sliding Window", "difficulty": "Medium", "viz": "hashmap" },
+  { "id": "permutation-in-string", "title": "Permutation in String", "pattern": "Sliding Window", "difficulty": "Medium", "viz": "hashmap" },
+  { "id": "minimum-window-substring", "title": "Minimum Window Substring", "pattern": "Sliding Window", "difficulty": "Hard", "viz": "hashmap" },
+  { "id": "sliding-window-maximum", "title": "Sliding Window Maximum", "pattern": "Sliding Window", "difficulty": "Hard", "viz": "array-pointers" }
 ]
