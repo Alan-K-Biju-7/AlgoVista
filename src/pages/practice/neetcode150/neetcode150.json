@@ -20,5 +20,13 @@
   { "id": "longest-repeating-character-replacement", "title": "Longest Repeating Character Replacement", "pattern": "Sliding Window", "difficulty": "Medium", "viz": "hashmap" },
   { "id": "permutation-in-string", "title": "Permutation in String", "pattern": "Sliding Window", "difficulty": "Medium", "viz": "hashmap" },
   { "id": "minimum-window-substring", "title": "Minimum Window Substring", "pattern": "Sliding Window", "difficulty": "Hard", "viz": "hashmap" },
-  { "id": "sliding-window-maximum", "title": "Sliding Window Maximum", "pattern": "Sliding Window", "difficulty": "Hard", "viz": "array-pointers" }
+  { "id": "sliding-window-maximum", "title": "Sliding Window Maximum", "pattern": "Sliding Window", "difficulty": "Hard", "viz": "array-pointers" },
+
+  { "id": "valid-parentheses", "title": "Valid Parentheses", "pattern": "Stack", "difficulty": "Easy", "viz": "stack" },
+  { "id": "min-stack", "title": "Min Stack", "pattern": "Stack", "difficulty": "Medium", "viz": "stack" },
+  { "id": "evaluate-reverse-polish-notation", "title": "Evaluate Reverse Polish Notation", "pattern": "Stack", "difficulty": "Medium", "viz": "stack" },
+  { "id": "generate-parentheses", "title": "Generate Parentheses", "pattern": "Stack", "difficulty": "Medium", "viz": "stack" },
+  { "id": "daily-temperatures", "title": "Daily Temperatures", "pattern": "Stack", "difficulty": "Medium", "viz": "stack" },
+  { "id": "car-fleet", "title": "Car Fleet", "pattern": "Stack", "difficulty": "Medium", "viz": "stack" },
+  { "id": "largest-rectangle-in-histogram", "title": "Largest Rectangle in Histogram", "pattern": "Stack", "difficulty": "Hard", "viz": "stack" }
 ]
