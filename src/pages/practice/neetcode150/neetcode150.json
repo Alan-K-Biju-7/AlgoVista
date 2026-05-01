@@ -36,5 +36,14 @@
   { "id": "find-minimum-in-rotated-sorted-array", "title": "Find Minimum in Rotated Sorted Array", "pattern": "Binary Search", "difficulty": "Medium", "viz": "array-pointers" },
   { "id": "search-in-rotated-sorted-array", "title": "Search in Rotated Sorted Array", "pattern": "Binary Search", "difficulty": "Medium", "viz": "array-pointers" },
   { "id": "time-based-key-value-store", "title": "Time Based Key Value Store", "pattern": "Binary Search", "difficulty": "Medium", "viz": "hashmap" },
-  { "id": "median-of-two-sorted-arrays", "title": "Median of Two Sorted Arrays", "pattern": "Binary Search", "difficulty": "Hard", "viz": "array-pointers" }
+  { "id": "median-of-two-sorted-arrays", "title": "Median of Two Sorted Arrays", "pattern": "Binary Search", "difficulty": "Hard", "viz": "array-pointers" },
+
+  { "id": "reverse-linked-list", "title": "Reverse Linked List", "pattern": "Linked List", "difficulty": "Easy", "viz": "linked-list" },
+  { "id": "merge-two-sorted-lists", "title": "Merge Two Sorted Lists", "pattern": "Linked List", "difficulty": "Easy", "viz": "linked-list" },
+  { "id": "reorder-list", "title": "Reorder List", "pattern": "Linked List", "difficulty": "Medium", "viz": "linked-list" },
+  { "id": "remove-nth-node-from-end-of-list", "title": "Remove Nth Node From End of List", "pattern": "Linked List", "difficulty": "Medium", "viz": "linked-list" },
+  { "id": "copy-list-with-random-pointer", "title": "Copy List With Random Pointer", "pattern": "Linked List", "difficulty": "Medium", "viz": "linked-list" },
+  { "id": "add-two-numbers", "title": "Add Two Numbers", "pattern": "Linked List", "difficulty": "Medium", "viz": "linked-list" },
+  { "id": "linked-list-cycle", "title": "Linked List Cycle", "pattern": "Linked List", "difficulty": "Easy", "viz": "linked-list" },
+  { "id": "lru-cache", "title": "LRU Cache", "pattern": "Linked List", "difficulty": "Medium", "viz": "linked-list" }
 ]
