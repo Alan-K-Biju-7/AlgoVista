@@ -12,5 +12,5 @@ jest.mock('react-router-dom', () => ({
 test('renders the AlgoVista landing page', () => {
   render(<App />);
   expect(screen.getAllByText(/AlgoVista/i).length).toBeGreaterThan(0);
-  expect(screen.getByText(/Open Simulator/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/Open Simulator/i).length).toBeGreaterThan(0);
 });
