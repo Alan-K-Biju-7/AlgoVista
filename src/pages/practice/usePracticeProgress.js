@@ -2,10 +2,21 @@ import { useState } from 'react';
 
 const initialProgressState = {};
 const initialBookmarksState = {};
+const PROGRESS_KEY = 'algovista.practice.progress';
+const BOOKMARKS_KEY = 'algovista.practice.bookmarks';
+
+function readStoredState(key, fallback) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export function usePracticeProgress() {
-  const [progress, setProgress] = useState(initialProgressState);
-  const [bookmarks, setBookmarks] = useState(initialBookmarksState);
+  const [progress, setProgress] = useState(() => readStoredState(PROGRESS_KEY, initialProgressState));
+  const [bookmarks, setBookmarks] = useState(() => readStoredState(BOOKMARKS_KEY, initialBookmarksState));
 
   const markSolved = (problemId) => {
     setProgress((prev) => ({ ...prev, [problemId]: 'solved' }));
