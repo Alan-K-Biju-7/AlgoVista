@@ -35,7 +35,7 @@ const topics = [
   { icon: '↘', label: 'Bellman-Ford',   phase: 'P4', desc: 'Negative edges, relaxation passes, and cycle detection.' },
 ];
 
-const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#4a5a7a' };
+const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#f5a623' };
 
 export default function HomePage() {
   return (
