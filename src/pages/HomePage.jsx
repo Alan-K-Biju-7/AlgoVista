@@ -30,6 +30,9 @@ const topics = [
   { icon: '↕', label: 'Bubble Sort',    phase: 'P3', desc: 'Adjacent swaps, pass counter.' },
   { icon: '⤓', label: 'Insertion Sort', phase: 'P3', desc: 'Key element, shift counter.' },
   { icon: '↓', label: 'Selection Sort', phase: 'P3', desc: 'Min tracker, n−1 swaps.' },
+  { icon: '⇵', label: 'Merge Sort',     phase: 'P4', desc: 'Recursive splits, merge bands, and stable combine steps.' },
+  { icon: '⇄', label: 'Quick Sort',     phase: 'P4', desc: 'Pivot placement, partitions, and in-place swaps.' },
+  { icon: '↘', label: 'Bellman-Ford',   phase: 'P4', desc: 'Negative edges, relaxation passes, and cycle detection.' },
 ];
 
 const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#4a5a7a' };
