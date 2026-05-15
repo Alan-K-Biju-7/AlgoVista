@@ -15,4 +15,11 @@ export const TRACER_CONFIGS = {
   6:  validParensTracer,
   8:  dailyTempsTracer,
   13: binarySearchTracer,
+  'two-sum': twoSumTracer,
+  'contains-duplicate': containsDuplicateTracer,
+  'best-time-to-buy-and-sell-stock': stockProfitTracer,
+  'maximum-subarray': maxSubarrayTracer,
+  'valid-parentheses': validParensTracer,
+  'daily-temperatures': dailyTempsTracer,
+  'binary-search': binarySearchTracer,
 };

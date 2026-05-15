@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'trapping-rain-water',
   title: 'Trapping Rain Water',

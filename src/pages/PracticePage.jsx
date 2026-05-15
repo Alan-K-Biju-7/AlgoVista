@@ -4,56 +4,88 @@ import TopicSidebar from './practice/TopicSidebar';
 import ProblemList from './practice/ProblemList';
 import ProblemDetail from './practice/ProblemDetail';
 import { usePracticeProgress } from './practice/usePracticeProgress';
+import { NEETCODE150 } from './practice/neetcode150';
 
-function ProgressBanner({ allProblems, getStatus }) {
-  const all = Object.values(allProblems).flatMap((t) => t.problems);
-  const solved = all.filter((p) => getStatus(p.id) === 'solved').length;
-  const pct = all.length ? Math.round((solved / all.length) * 100) : 0;
+function PracticeScoreboard({ getStatus }) {
+  const solved = NEETCODE150.filter((p) => getStatus(p.id) === 'solved').length;
+  const attempted = NEETCODE150.filter((p) => getStatus(p.id) === 'attempted').length;
+  const total = NEETCODE150.length;
+  const pct = total ? Math.round((solved / total) * 100) : 0;
+  const score = solved * 10 + attempted * 3;
 
   return (
     <div
+      className="practice-scoreboard"
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1rem',
-        padding: '0.75rem 1rem',
-        borderRadius: '0.6rem',
+        display: 'grid',
+        gridTemplateColumns: 'minmax(220px, 1.4fr) repeat(3, minmax(120px, 0.45fr))',
+        gap: '0.75rem',
+        padding: '1rem',
+        borderRadius: '0.85rem',
         background: 'var(--bg-card)',
         border: '1px solid var(--border-default)',
         marginBottom: '1.5rem',
       }}
     >
-      <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-        Overall Progress
-      </span>
-      <div
-        style={{
-          flex: 1,
-          height: '6px',
-          borderRadius: '999px',
-          background: 'var(--border-default)',
-          overflow: 'hidden',
-        }}
-      >
+      <div>
+        <p style={{ fontSize: '0.72rem', fontWeight: '800', color: '#00d4aa', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.35rem' }}>
+          Curated NeetCode 150 track
+        </p>
+        <h2 style={{ fontSize: '1.15rem', marginBottom: '0.35rem' }}>Practice score: {score}</h2>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          Solve curated problems with examples, hints, visualizer links, traces where available, and saved progress.
+        </p>
         <div
           style={{
-            height: '100%',
-            width: pct + '%',
-            background: '#00d4aa',
+            height: '7px',
             borderRadius: '999px',
-            transition: 'width 0.4s',
+            background: 'var(--border-default)',
+            overflow: 'hidden',
+            marginTop: '0.85rem',
           }}
-        />
+        >
+          <div
+            style={{
+              height: '100%',
+              width: pct + '%',
+              background: '#00d4aa',
+              borderRadius: '999px',
+              transition: 'width 0.4s',
+            }}
+          />
+        </div>
       </div>
-      <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#00d4aa' }}>
-        {solved}/{all.length}
-      </span>
+
+      {[
+        { label: 'Solved', value: `${solved}/${total}` },
+        { label: 'Attempted', value: attempted },
+        { label: 'Completion', value: `${pct}%` },
+      ].map((item) => (
+        <div
+          key={item.label}
+          style={{
+            border: '1px solid var(--border-default)',
+            borderRadius: '0.75rem',
+            padding: '0.85rem',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '800' }}>
+            {item.label}
+          </span>
+          <span style={{ fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: '900', marginTop: '0.3rem' }}>
+            {item.value}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
 
 export default function PracticePage() {
-  const [activeTopic, setActiveTopic] = useState('array');
+  const [activeTopic, setActiveTopic] = useState('nc-arrays-hashing');
   const [activeProblem, setActiveProblem] = useState(null);
 
   const {
@@ -68,6 +100,7 @@ export default function PracticePage() {
 
   return (
     <div
+      className="practice-shell"
       style={{
         display: 'flex',
         maxWidth: '1200px',
@@ -85,16 +118,17 @@ export default function PracticePage() {
         getStatus={getStatus}
       />
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="practice-content" style={{ flex: 1, minWidth: 0 }}>
         <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '0.3rem' }}>
-            Practice
+          <span className="badge-teal" style={{ marginBottom: '0.85rem' }}>NC150 Practice</span>
+          <h1 style={{ fontSize: '1.9rem', fontWeight: '900', marginBottom: '0.35rem' }}>
+            Curated NeetCode 150 Practice
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-            Solve problems, get visual hints, and run your code against test cases.
+            Build score by solving curated interview patterns with explanations, test cases, and visual support.
           </p>
           <div style={{ marginTop: '0.75rem' }}>
-            <ProgressBanner allProblems={ALL_PROBLEMS} getStatus={getStatus} />
+            <PracticeScoreboard getStatus={getStatus} />
           </div>
         </div>
 

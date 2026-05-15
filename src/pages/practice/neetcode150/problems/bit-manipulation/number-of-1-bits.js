@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'number-of-1-bits',
   title: 'Number of 1 Bits',

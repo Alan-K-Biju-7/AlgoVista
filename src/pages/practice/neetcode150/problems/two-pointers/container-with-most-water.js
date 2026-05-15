@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'container-with-most-water',
   title: 'Container With Most Water',

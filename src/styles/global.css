@@ -177,3 +177,57 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
 .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; }
+
+@media (max-width: 900px) {
+  .app-header {
+    height: auto !important;
+    min-height: 60px;
+    padding: 0.75rem 1rem !important;
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .app-nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.1rem;
+  }
+
+  .app-footer {
+    padding: 1.25rem 1rem !important;
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
+
+  .practice-shell {
+    flex-direction: column;
+    padding: 1.25rem 1rem !important;
+  }
+
+  .practice-sidebar {
+    position: static !important;
+    width: 100% !important;
+  }
+
+  .practice-content {
+    width: 100%;
+  }
+
+  .practice-scoreboard {
+    grid-template-columns: 1fr !important;
+  }
+
+  .practice-home-panel {
+    grid-template-columns: 1fr !important;
+  }
+
+  .practice-problem-row {
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+  }
+
+  .practice-problem-chip {
+    white-space: normal;
+  }
+}

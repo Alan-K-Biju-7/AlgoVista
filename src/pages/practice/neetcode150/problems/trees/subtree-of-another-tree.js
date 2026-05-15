@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'subtree-of-another-tree',
   title: 'Subtree of Another Tree',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'cheapest-flights-within-k-stops',
   title: 'Cheapest Flights Within K Stops',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'kth-smallest-integer-in-bst',
   title: 'Kth Smallest Integer in BST',

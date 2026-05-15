@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'jump-game-ii',
   title: 'Jump Game II',

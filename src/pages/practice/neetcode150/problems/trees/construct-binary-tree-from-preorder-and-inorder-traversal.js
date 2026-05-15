@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'construct-binary-tree-from-preorder-and-inorder-traversal',
   title: 'Construct Binary Tree from Preorder and Inorder Traversal',

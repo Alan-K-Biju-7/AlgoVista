@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 const card = {
   background: 'var(--bg-card)',
@@ -30,9 +30,9 @@ function BubbleSortVisualizer() {
   const [swapCount, setSwapCount] = useState(0);
   const intervalRef = useRef(null);
 
-  const pushHistory = (text) => {
+  const pushHistory = useCallback((text) => {
     setHistory((prev) => [{ id: prev.length + 1, text }, ...prev.slice(0, 9)]);
-  };
+  }, []);
 
   const resetPointers = () => {
     setI(0); setJ(0); setIsSorted(false);
@@ -56,7 +56,7 @@ function BubbleSortVisualizer() {
     setHistory([]);
   };
 
-  const performStep = () => {
+  const performStep = useCallback(() => {
     if (isSorted) {
       setIsRunning(false);
       setMessage('Array is fully sorted. Reset or randomize to try again.');
@@ -100,7 +100,7 @@ function BubbleSortVisualizer() {
       setJ(nextJ);
       return arr;
     });
-  };
+  }, [i, isSorted, j, pushHistory]);
 
   const handleStep = () => { if (isRunning) return; performStep(); };
   const toggleAutoRun = () => { if (isSorted) return; setIsRunning((prev) => !prev); };
@@ -113,7 +113,7 @@ function BubbleSortVisualizer() {
       intervalRef.current = null;
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [isRunning, i, j, speed]);
+  }, [isRunning, performStep, speed]);
 
   return (
     <div>

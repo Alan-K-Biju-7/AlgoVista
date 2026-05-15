@@ -5,8 +5,9 @@ export default function TopicSidebar({ activeTopic, onSelect, getStatus }) {
 
   return (
     <aside
+      className="practice-sidebar"
       style={{
-        width: '210px',
+        width: '250px',
         flexShrink: 0,
         position: 'sticky',
         top: '76px',

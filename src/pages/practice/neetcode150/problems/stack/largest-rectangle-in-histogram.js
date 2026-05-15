@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'largest-rectangle-in-histogram',
   title: 'Largest Rectangle in Histogram',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'binary-tree-right-side-view',
   title: 'Binary Tree Right Side View',

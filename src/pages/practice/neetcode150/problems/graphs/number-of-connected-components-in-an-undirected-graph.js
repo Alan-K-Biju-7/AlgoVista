@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'number-of-connected-components-in-an-undirected-graph',
   title: 'Number of Connected Components in an Undirected Graph',

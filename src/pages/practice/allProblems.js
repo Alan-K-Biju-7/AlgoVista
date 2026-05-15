@@ -8,8 +8,10 @@ import {
   graphProblems,
   sortingProblems,
 } from './problems_trees';
+import { NEETCODE_TOPICS } from './neetcode150';
 
 export const TOPIC_ORDER = [
+  ...NEETCODE_TOPICS.map((topic) => topic.id),
   'array',
   'stack',
   'linkedlist',
@@ -21,6 +23,10 @@ export const TOPIC_ORDER = [
 ];
 
 export const PHASE_META = {
+  NC1: { id: 'NC1', label: 'NC150 Foundations', color: '#00d4aa' },
+  NC2: { id: 'NC2', label: 'NC150 Structures', color: '#4a9eff' },
+  NC3: { id: 'NC3', label: 'NC150 Graphs & DP', color: '#8b7cf8' },
+  NC4: { id: 'NC4', label: 'NC150 Advanced', color: '#f5a623' },
   P1: { id: 'P1', label: 'Linear DS', color: '#00d4aa' },
   P2: { id: 'P2', label: 'Trees & Graphs', color: '#4a9eff' },
   P3: { id: 'P3', label: 'Search & Sort', color: '#8b7cf8' },
@@ -28,6 +34,7 @@ export const PHASE_META = {
 };
 
 export const ALL_PROBLEMS = {
+  ...Object.fromEntries(NEETCODE_TOPICS.map((topic) => [topic.id, topic])),
   array: {
     id: 'array',
     label: 'Arrays & Hashing',

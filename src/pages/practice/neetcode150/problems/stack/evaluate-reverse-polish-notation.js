@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'evaluate-reverse-polish-notation',
   title: 'Evaluate Reverse Polish Notation',

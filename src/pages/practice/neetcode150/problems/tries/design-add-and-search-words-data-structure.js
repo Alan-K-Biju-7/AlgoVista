@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'design-add-and-search-words-data-structure',
   title: 'Design Add and Search Words Data Structure',

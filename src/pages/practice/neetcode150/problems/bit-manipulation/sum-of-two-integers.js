@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'sum-of-two-integers',
   title: 'Sum of Two Integers',

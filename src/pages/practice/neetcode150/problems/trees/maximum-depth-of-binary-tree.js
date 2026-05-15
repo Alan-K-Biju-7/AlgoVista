@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'maximum-depth-of-binary-tree',
   title: 'Maximum Depth of Binary Tree',

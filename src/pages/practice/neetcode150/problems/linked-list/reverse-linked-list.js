@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'reverse-linked-list',
   title: 'Reverse Linked List',

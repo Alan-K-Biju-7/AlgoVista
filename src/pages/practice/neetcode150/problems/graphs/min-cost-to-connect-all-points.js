@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'min-cost-to-connect-all-points',
   title: 'Min Cost to Connect All Points',

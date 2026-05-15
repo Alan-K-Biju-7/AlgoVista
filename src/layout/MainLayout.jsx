@@ -4,6 +4,7 @@ const navLinks = [
   { to: '/',          label: 'Home'      },
   { to: '/concepts',  label: 'Concepts'  },
   { to: '/simulator', label: 'Simulator' },
+  { to: '/practice',  label: 'Practice'  },
   { to: '/about',     label: 'About'     },
 ];
 
@@ -13,7 +14,7 @@ export default function MainLayout({ children }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
 
-      <header style={{
+      <header className="app-header" style={{
         position: 'sticky', top: 0, zIndex: 100,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 2.5rem', height: '60px',
@@ -37,7 +38,7 @@ export default function MainLayout({ children }) {
           </span>
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.15rem' }}>
+        <nav className="app-nav" style={{ display: 'flex', alignItems: 'center', gap: '0.15rem' }}>
           {navLinks.map(({ to, label }) => {
             const active = pathname === to;
             return (
@@ -62,7 +63,7 @@ export default function MainLayout({ children }) {
 
       <main style={{ flex: 1 }}>{children}</main>
 
-      <footer style={{
+      <footer className="app-footer" style={{
         borderTop: '1px solid var(--border-subtle)',
         padding: '1.5rem 2.5rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem',
@@ -76,7 +77,7 @@ export default function MainLayout({ children }) {
           </span>
         </div>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
+          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/practice', l: 'Practice' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
             <Link key={to} to={to} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', transition: 'color 0.15s' }}
               onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
               onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}

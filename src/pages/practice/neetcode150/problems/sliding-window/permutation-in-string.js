@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'permutation-in-string',
   title: 'Permutation in String',

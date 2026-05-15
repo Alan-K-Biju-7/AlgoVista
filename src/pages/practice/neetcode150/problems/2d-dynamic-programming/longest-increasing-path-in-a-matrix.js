@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'longest-increasing-path-in-a-matrix',
   title: 'Longest Increasing Path in a Matrix',

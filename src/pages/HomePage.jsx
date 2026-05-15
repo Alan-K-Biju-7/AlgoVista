@@ -1,17 +1,18 @@
 import { Link } from 'react-router-dom';
+import { NEETCODE150 } from './practice/neetcode150';
 
 const stats = [
-  { value: '19',  label: 'Modules' },
-  { value: '4',   label: 'Data Structures' },
-  { value: '3',   label: 'Sort Algorithms' },
-  { value: '2',   label: 'Tree Types' },
+  { value: String(NEETCODE150.length), label: 'NC150 Problems' },
+  { value: '18',  label: 'Visual Modules' },
+  { value: '17',  label: 'Pattern Groups' },
+  { value: '7',   label: 'Code Tracers' },
 ];
 
 const phases = [
   { num: '01', label: 'Linear DS',    desc: 'Arrays, Linked Lists, Stacks & Queues',  color: '#00d4aa' },
   { num: '02', label: 'Trees, Graphs & ADT',  desc: 'BST, AVL, Graph, Heap, Hash, Trie', color: '#4a9eff' },
   { num: '03', label: 'Algorithms',   desc: 'Binary Search, Bubble, Insertion, Selection Sort', color: '#8b7cf8' },
-  { num: '04', label: 'Coming soon',  desc: 'Graphs, Heaps, Hash Tables, Merge Sort', color: '#4a5a7a' },
+  { num: '04', label: 'Practice Track',  desc: 'Curated NC150 patterns with score, tests, hints, and visual links', color: '#f5a623' },
 ];
 
 const topics = [
@@ -40,7 +41,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section style={{ position: 'relative', overflow: 'hidden', padding: '6rem 2.5rem 5rem', maxWidth: '1160px', margin: '0 auto' }}>
-        <div style={{
+        <div className="practice-home-panel" style={{
           position: 'absolute', top: '-120px', right: '-80px',
           width: '600px', height: '600px', borderRadius: '50%',
           background: 'radial-gradient(ellipse, rgba(0,212,170,0.07) 0%, transparent 65%)',
@@ -66,8 +67,8 @@ export default function HomePage() {
           </h1>
 
           <p style={{ fontSize: '1rem', lineHeight: 1.75, color: 'var(--text-secondary)', marginBottom: '2.25rem', maxWidth: '480px' }}>
-            AlgoVista is a visual lab where every pointer move, swap, rotation, and comparison
-            is animated step by step — no more just reading about algorithms.
+            AlgoVista pairs visual DSA modules with a curated NeetCode practice track,
+            scoring, explanations, tests, and traces where the problem can be replayed.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '4rem' }}>
@@ -109,7 +110,7 @@ export default function HomePage() {
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--border-accent)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--accent-glow2)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
             >
-              Start Practicing
+              NC150 Practice
             </Link>
           </div>
 
@@ -122,6 +123,56 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section style={{ maxWidth: '1160px', margin: '0 auto', padding: '0 2.5rem 4rem' }}>
+        <div style={{
+          border: '1px solid rgba(0,212,170,0.22)',
+          borderRadius: 'var(--radius-2xl)',
+          background: 'var(--bg-card)',
+          padding: '1.5rem',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(260px, 1.1fr) repeat(3, minmax(180px, 0.7fr))',
+          gap: '0.85rem',
+          alignItems: 'stretch',
+        }}>
+          <div>
+            <p className="section-label" style={{ color: 'var(--accent)' }}>Curated practice</p>
+            <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem' }}>NeetCode 150 with score, visuals, and explanations</h2>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '1rem' }}>
+              Start from Arrays & Hashing, move through graphs and DP, save bookmarks, run tests, and build a visible practice score.
+            </p>
+            <Link to="/practice" className="btn-primary" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.65rem 1.15rem',
+              borderRadius: '0.55rem',
+              textDecoration: 'none',
+            }}>
+              Open Practice
+            </Link>
+          </div>
+
+          {[
+            { title: 'Score', copy: 'Solved problems add 10 points; attempts add 3 points.' },
+            { title: 'Visuals', copy: 'Every problem links back to the closest simulator model.' },
+            { title: 'Explanations', copy: 'Each detail page carries examples, hints, and key insight notes.' },
+          ].map((item) => (
+            <div key={item.title} style={{
+              border: '1px solid var(--border-default)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '1rem',
+              background: 'rgba(255,255,255,0.015)',
+            }}>
+              <p style={{ fontWeight: '800', fontSize: '0.92rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                {item.title}
+              </p>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>
+                {item.copy}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 

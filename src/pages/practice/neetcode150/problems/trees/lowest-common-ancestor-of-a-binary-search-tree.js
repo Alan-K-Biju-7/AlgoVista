@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'lowest-common-ancestor-of-a-binary-search-tree',
   title: 'Lowest Common Ancestor of a Binary Search Tree',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'koko-eating-bananas',
   title: 'Koko Eating Bananas',

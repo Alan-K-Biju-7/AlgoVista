@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'longest-common-subsequence',
   title: 'Longest Common Subsequence',

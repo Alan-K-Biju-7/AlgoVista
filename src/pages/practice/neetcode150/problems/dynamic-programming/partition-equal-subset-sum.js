@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'partition-equal-subset-sum',
   title: 'Partition Equal Subset Sum',

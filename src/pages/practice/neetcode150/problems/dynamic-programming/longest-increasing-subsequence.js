@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'longest-increasing-subsequence',
   title: 'Longest Increasing Subsequence',

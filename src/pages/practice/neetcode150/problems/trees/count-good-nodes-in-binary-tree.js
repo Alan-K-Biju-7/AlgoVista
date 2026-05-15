@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'count-good-nodes-in-binary-tree',
   title: 'Count Good Nodes in Binary Tree',

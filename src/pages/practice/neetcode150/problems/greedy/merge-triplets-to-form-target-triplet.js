@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'merge-triplets-to-form-target-triplet',
   title: 'Merge Triplets to Form Target Triplet',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'search-a-2d-matrix',
   title: 'Search a 2D Matrix',

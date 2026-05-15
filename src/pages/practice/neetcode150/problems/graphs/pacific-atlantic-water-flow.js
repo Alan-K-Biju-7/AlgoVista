@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'pacific-atlantic-water-flow',
   title: 'Pacific Atlantic Water Flow',

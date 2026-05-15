@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'longest-repeating-character-replacement',
   title: 'Longest Repeating Character Replacement',

@@ -2,20 +2,47 @@ import { useState } from 'react';
 
 const initialProgressState = {};
 const initialBookmarksState = {};
+const PROGRESS_KEY = 'algovista.practice.progress';
+const BOOKMARKS_KEY = 'algovista.practice.bookmarks';
+
+function readStoredState(key, fallback) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStoredState(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Keep the in-memory session working if browser storage is unavailable.
+  }
+}
 
 export function usePracticeProgress() {
-  const [progress, setProgress] = useState(initialProgressState);
-  const [bookmarks, setBookmarks] = useState(initialBookmarksState);
+  const [progress, setProgress] = useState(() => readStoredState(PROGRESS_KEY, initialProgressState));
+  const [bookmarks, setBookmarks] = useState(() => readStoredState(BOOKMARKS_KEY, initialBookmarksState));
 
   const markSolved = (problemId) => {
-    setProgress((prev) => ({ ...prev, [problemId]: 'solved' }));
+    setProgress((prev) => {
+      const next = { ...prev, [problemId]: 'solved' };
+      writeStoredState(PROGRESS_KEY, next);
+      return next;
+    });
   };
 
   const markAttempted = (problemId) => {
-    setProgress((prev) => ({
-      ...prev,
-      [problemId]: prev[problemId] === 'solved' ? 'solved' : 'attempted',
-    }));
+    setProgress((prev) => {
+      const next = {
+        ...prev,
+        [problemId]: prev[problemId] === 'solved' ? 'solved' : 'attempted',
+      };
+      writeStoredState(PROGRESS_KEY, next);
+      return next;
+    });
   };
 
   const getStatus = (problemId) => progress[problemId] || 'unsolved';
@@ -27,10 +54,14 @@ export function usePracticeProgress() {
   });
 
   const toggleBookmark = (problemId) => {
-    setBookmarks((prev) => ({
-      ...prev,
-      [problemId]: !prev[problemId],
-    }));
+    setBookmarks((prev) => {
+      const next = {
+        ...prev,
+        [problemId]: !prev[problemId],
+      };
+      writeStoredState(BOOKMARKS_KEY, next);
+      return next;
+    });
   };
 
   const isBookmarked = (problemId) => Boolean(bookmarks[problemId]);

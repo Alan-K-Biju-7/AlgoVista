@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'non-overlapping-intervals',
   title: 'Non-Overlapping Intervals',

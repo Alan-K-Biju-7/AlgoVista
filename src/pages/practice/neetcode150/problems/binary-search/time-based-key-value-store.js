@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'time-based-key-value-store',
   title: 'Time Based Key Value Store',

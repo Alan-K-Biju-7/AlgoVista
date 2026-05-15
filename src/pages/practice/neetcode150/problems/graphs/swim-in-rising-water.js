@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'swim-in-rising-water',
   title: 'Swim in Rising Water',

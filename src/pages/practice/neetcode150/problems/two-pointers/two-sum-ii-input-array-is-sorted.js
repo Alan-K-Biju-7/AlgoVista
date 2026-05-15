@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'two-sum-ii-input-array-is-sorted',
   title: 'Two Sum II - Input Array Is Sorted',

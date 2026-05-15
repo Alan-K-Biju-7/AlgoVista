@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'binary-tree-maximum-path-sum',
   title: 'Binary Tree Maximum Path Sum',

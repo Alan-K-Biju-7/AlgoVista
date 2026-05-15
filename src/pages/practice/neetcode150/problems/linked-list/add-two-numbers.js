@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'add-two-numbers',
   title: 'Add Two Numbers',

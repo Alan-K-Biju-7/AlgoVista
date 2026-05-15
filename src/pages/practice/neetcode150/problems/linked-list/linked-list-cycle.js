@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'linked-list-cycle',
   title: 'Linked List Cycle',

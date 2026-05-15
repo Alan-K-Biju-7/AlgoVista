@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'binary-tree-level-order-traversal',
   title: 'Binary Tree Level Order Traversal',

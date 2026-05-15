@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'best-time-to-buy-and-sell-stock',
   title: 'Best Time to Buy and Sell Stock',

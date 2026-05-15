@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'diameter-of-binary-tree',
   title: 'Diameter of Binary Tree',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'product-except-self',
   title: 'Product of Array Except Self',

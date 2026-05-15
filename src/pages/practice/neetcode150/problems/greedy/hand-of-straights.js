@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'hand-of-straights',
   title: 'Hand of Straights',

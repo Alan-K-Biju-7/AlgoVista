@@ -11,17 +11,45 @@ import { validateCodeForTracer } from './tracer/validateCode';
 import TracerErrorBoundary from './tracer/TracerErrorBoundary';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
+const VISUALIZER_TARGETS = {
+  'array-pointers': 'array',
+  hashmap: 'hashtable',
+  hashset: 'hashtable',
+  stack: 'stack',
+  'linked-list': 'linkedlist',
+  tree: 'bst',
+  bst: 'bst',
+  trie: 'trie',
+  heap: 'heap',
+  'priority-queue': 'heap',
+  graph: 'graph',
+  'grid-search': 'graph',
+  'binary-search': 'bsearch',
+  dp: 'array',
+  intervals: 'array',
+  math: 'array',
+  bits: 'array',
+};
+
+function getVisualizerTarget(problem) {
+  return (
+    VISUALIZER_TARGETS[problem.viz] ||
+    VISUALIZER_TARGETS[problem.concept] ||
+    problem.viz ||
+    'array'
+  );
+}
 
 export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted, isBookmarked, toggleBookmark }) {
   const [code, setCode]         = useState(problem.solution || '// Write your solution here\n');
   const [results, setResults]   = useState(null);
-  const [, setShowSolution] = useState(false);
   const [tab, setTab]           = useState('problem');
   const tracer        = useTracerSteps();
   const tracerConfig  = TRACER_CONFIGS[problem.id] || null;
 
   const [traceWarnings, setTraceWarnings] = useState([]);
   const bookmarked = isBookmarked ? isBookmarked(problem.id) : false;
+  const visualizerTarget = getVisualizerTarget(problem);
 
   const handleTrace = () => {
     if (!tracerConfig) return;
@@ -74,7 +102,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
         >
           {bookmarked ? '🔖 Bookmarked' : '📑 Bookmark'}
         </button>
-        <Link to={`/simulator#${problem.viz}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
+        <Link to={`/simulator#${visualizerTarget}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
           fontWeight: '600', background: topicColor + '20', color: topicColor, border: `1px solid ${topicColor}40`,
           textDecoration: 'none' }}>Open Visualizer →</Link>
       </div>
@@ -98,7 +126,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
           <div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.7, marginBottom: '1.25rem' }}>{problem.description}</p>
             <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Examples</p>
-            {problem.examples.map((ex, i) => (
+            {(problem.examples || []).map((ex, i) => (
               <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: '0.5rem', padding: '0.75rem', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
                 <div style={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}>
                   Input:{' '}
@@ -123,7 +151,15 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
               <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: topicColor, marginBottom: '0.35rem' }}>Pattern</p>
               <p style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>{problem.pattern_explanation}</p>
             </div>
-            <HintSystem hints={problem.hints} />
+            <div style={{ marginTop: '0.75rem', padding: '0.75rem', borderRadius: '0.5rem', background: '#4a9eff0d', border: '1px solid #4a9eff30' }}>
+              <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', color: '#4a9eff', marginBottom: '0.35rem' }}>
+                Visual support
+              </p>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+                Open the matching simulator for the core movement model. Problems with a trace tab can also replay code state step by step.
+              </p>
+            </div>
+            <HintSystem hints={problem.hints || []} />
           </div>
           {/* Right: editor + run */}
           <div>
@@ -134,7 +170,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
                 padding: '0.55rem 1.25rem', borderRadius: '0.45rem', border: 'none', cursor: 'pointer',
                 background: topicColor, color: '#000', fontWeight: '700', fontSize: '0.85rem',
               }}>▶ Run Tests</button>
-              <button onClick={() => { setCode(problem.solution); setShowSolution(true); setTab('solution'); }} style={{
+              <button onClick={() => { setCode(problem.solution); setTab('solution'); }} style={{
                 padding: '0.55rem 1.25rem', borderRadius: '0.45rem', cursor: 'pointer',
                 background: 'transparent', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem',
                 border: '1px solid var(--border-default)',

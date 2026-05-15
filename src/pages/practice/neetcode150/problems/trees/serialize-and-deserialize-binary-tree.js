@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'serialize-and-deserialize-binary-tree',
   title: 'Serialize and Deserialize Binary Tree',

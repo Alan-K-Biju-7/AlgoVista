@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'course-schedule-ii',
   title: 'Course Schedule II',

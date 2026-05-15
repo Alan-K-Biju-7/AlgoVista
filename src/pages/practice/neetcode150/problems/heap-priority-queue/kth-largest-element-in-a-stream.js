@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'kth-largest-element-in-a-stream',
   title: 'Kth Largest Element in a Stream',

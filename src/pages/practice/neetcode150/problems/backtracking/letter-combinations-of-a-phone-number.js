@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'letter-combinations-of-a-phone-number',
   title: 'Letter Combinations of a Phone Number',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'copy-list-with-random-pointer',
   title: 'Copy List With Random Pointer',

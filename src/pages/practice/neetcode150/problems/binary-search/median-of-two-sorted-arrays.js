@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'median-of-two-sorted-arrays',
   title: 'Median of Two Sorted Arrays',

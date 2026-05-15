@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'merge-two-sorted-lists',
   title: 'Merge Two Sorted Lists',

@@ -1,15 +1,15 @@
-import validPalindrome from './valid-palindrome';
-import twoSumII from './two-sum-ii-input-array-is-sorted';
-import threeSum from './3sum';
+import problem3sum from './3sum';
 import containerWithMostWater from './container-with-most-water';
 import trappingRainWater from './trapping-rain-water';
+import twoSumIiInputArrayIsSorted from './two-sum-ii-input-array-is-sorted';
+import validPalindrome from './valid-palindrome';
 
 const TWO_POINTERS_PROBLEMS = [
-  validPalindrome,
-  twoSumII,
-  threeSum,
+  problem3sum,
   containerWithMostWater,
   trappingRainWater,
+  twoSumIiInputArrayIsSorted,
+  validPalindrome,
 ];
 
 export default TWO_POINTERS_PROBLEMS;

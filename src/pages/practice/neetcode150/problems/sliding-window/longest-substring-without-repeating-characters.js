@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'longest-substring-without-repeating-characters',
   title: 'Longest Substring Without Repeating Characters',

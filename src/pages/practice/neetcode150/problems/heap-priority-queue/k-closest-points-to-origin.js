@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'k-closest-points-to-origin',
   title: 'K Closest Points to Origin',

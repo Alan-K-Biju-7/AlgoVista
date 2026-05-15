@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'min-cost-climbing-stairs',
   title: 'Min Cost Climbing Stairs',

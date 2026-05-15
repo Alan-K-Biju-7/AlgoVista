@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'last-stone-weight',
   title: 'Last Stone Weight',

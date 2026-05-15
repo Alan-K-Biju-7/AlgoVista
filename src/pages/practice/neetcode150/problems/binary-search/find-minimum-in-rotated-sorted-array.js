@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'find-minimum-in-rotated-sorted-array',
   title: 'Find Minimum in Rotated Sorted Array',

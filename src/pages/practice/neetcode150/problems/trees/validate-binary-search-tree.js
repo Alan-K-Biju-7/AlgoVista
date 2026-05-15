@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'validate-binary-search-tree',
   title: 'Validate Binary Search Tree',

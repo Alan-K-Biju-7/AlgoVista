@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'top-k-frequent-elements',
   title: 'Top K Frequent Elements',

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default {
   id: 'remove-nth-node-from-end-of-list',
   title: 'Remove Nth Node From End of List',
