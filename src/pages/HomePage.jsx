@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
 
 const stats = [
-  { value: '19',  label: 'Modules' },
-  { value: '4',   label: 'Data Structures' },
-  { value: '3',   label: 'Sort Algorithms' },
-  { value: '2',   label: 'Tree Types' },
+  { value: '18',  label: 'Modules' },
+  { value: '6',   label: 'Structure Families' },
+  { value: '5',   label: 'Sorting Views' },
+  { value: '4',   label: 'Graph Tools' },
 ];
 
 const phases = [
   { num: '01', label: 'Linear DS',    desc: 'Arrays, Linked Lists, Stacks & Queues',  color: '#00d4aa' },
   { num: '02', label: 'Trees, Graphs & ADT',  desc: 'BST, AVL, Graph, Heap, Hash, Trie', color: '#4a9eff' },
   { num: '03', label: 'Algorithms',   desc: 'Binary Search, Bubble, Insertion, Selection Sort', color: '#8b7cf8' },
-  { num: '04', label: 'Coming soon',  desc: 'Graphs, Heaps, Hash Tables, Merge Sort', color: '#4a5a7a' },
+  { num: '04', label: 'Advanced paths',  desc: 'Merge sort, quick sort, Dijkstra, and Bellman-Ford', color: '#f5a623' },
 ];
 
 const topics = [
