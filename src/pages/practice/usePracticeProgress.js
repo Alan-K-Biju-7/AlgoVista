@@ -54,10 +54,14 @@ export function usePracticeProgress() {
   });
 
   const toggleBookmark = (problemId) => {
-    setBookmarks((prev) => ({
-      ...prev,
-      [problemId]: !prev[problemId],
-    }));
+    setBookmarks((prev) => {
+      const next = {
+        ...prev,
+        [problemId]: !prev[problemId],
+      };
+      writeStoredState(BOOKMARKS_KEY, next);
+      return next;
+    });
   };
 
   const isBookmarked = (problemId) => Boolean(bookmarks[problemId]);
