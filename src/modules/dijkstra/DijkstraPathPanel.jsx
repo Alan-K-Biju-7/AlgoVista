@@ -42,11 +42,11 @@ export default function DijkstraPathPanel({ shortestPath, dist, startId, endId, 
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <div style={{ padding: '0.45rem 0.85rem', borderRadius: '0.5rem', background: 'rgba(0,212,170,0.08)', border: '1px solid rgba(0,212,170,0.2)' }}>
                 <p style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.1rem' }}>Total cost</p>
-                <p style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: '-0.03em' }}>{totalCost}</p>
+                <p style={{ fontSize: '1.2rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: 0 }}>{totalCost}</p>
               </div>
               <div style={{ padding: '0.45rem 0.85rem', borderRadius: '0.5rem', background: 'rgba(74,158,255,0.08)', border: '1px solid rgba(74,158,255,0.2)' }}>
                 <p style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.1rem' }}>Hops</p>
-                <p style={{ fontSize: '1.2rem', fontWeight: '900', color: '#4a9eff', letterSpacing: '-0.03em' }}>{shortestPath.length - 1}</p>
+                <p style={{ fontSize: '1.2rem', fontWeight: '900', color: '#4a9eff', letterSpacing: 0 }}>{shortestPath.length - 1}</p>
               </div>
             </div>
           )}

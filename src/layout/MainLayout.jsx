@@ -33,7 +33,7 @@ export default function MainLayout({ children }) {
           }}>
             <span style={{ fontSize: '0.75rem', fontWeight: '900', color: '#031a14' }}>A</span>
           </div>
-          <span style={{ fontWeight: '800', fontSize: '1rem', letterSpacing: '-0.03em', color: 'var(--text-primary)' }}>
+          <span style={{ fontWeight: '800', fontSize: '1rem', letterSpacing: 0, color: 'var(--text-primary)' }}>
             Algo<span style={{ color: 'var(--accent)' }}>Vista</span>
           </span>
         </Link>

@@ -26,11 +26,11 @@ export default function HeapInfo({ heapSize, minVal }) {
           <div style={{ marginTop: '0.85rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <div style={{ padding: '0.5rem 0.85rem', borderRadius: '0.5rem', background: 'rgba(0,212,170,0.08)', border: '1px solid rgba(0,212,170,0.25)' }}>
               <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.15rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Current min</p>
-              <p style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: '-0.03em' }}>{minVal}</p>
+              <p style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: 0 }}>{minVal}</p>
             </div>
             <div style={{ padding: '0.5rem 0.85rem', borderRadius: '0.5rem', background: 'rgba(74,158,255,0.08)', border: '1px solid rgba(74,158,255,0.25)' }}>
               <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.15rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Heap size</p>
-              <p style={{ fontSize: '1.3rem', fontWeight: '900', color: '#4a9eff', letterSpacing: '-0.03em' }}>{heapSize}</p>
+              <p style={{ fontSize: '1.3rem', fontWeight: '900', color: '#4a9eff', letterSpacing: 0 }}>{heapSize}</p>
             </div>
           </div>
         )}
