@@ -1,4 +1,4 @@
-import { parent, heapifyUp } from './heapLogic';
+import { parent } from './heapLogic';
 
 export function generateInsertSteps(heap, val) {
   const steps = [];

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEFAULT_NODES, DEFAULT_EDGES, buildWeightedAdj, addWeightedEdge } from './dijkstraData';
 import { generateDijkstraSteps } from './dijkstraSteps';
 import { reconstructPath } from './dijkstraLogic';
@@ -43,12 +43,10 @@ export default function DijkstraVisualizer() {
     ? reconstructPath(prev, startNode, endNode)
     : [];
 
-  const adjList = buildWeightedAdj(nodes, edges);
-
-  const generateSteps = () => {
+  const generateSteps = useCallback(() => {
     const adj = buildWeightedAdj(nodes, edges);
     return generateDijkstraSteps(adj, nodes, startNode);
-  };
+  }, [edges, nodes, startNode]);
 
   const handleRun = () => {
     if (isRunning) return;
@@ -101,7 +99,7 @@ export default function DijkstraVisualizer() {
         pushHistory('path', `Shortest ${startNode}→${endNode}: [${path.join('→')}] cost=${dist[endNode]}`);
       }
     }
-  }, [isDone, endNode]);
+  }, [dist, endNode, isDone, prev, startNode]);
 
   const handleReset = () => {
     clearTimeout(timerRef.current);
