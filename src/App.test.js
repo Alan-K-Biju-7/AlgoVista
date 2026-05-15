@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('react-router-dom', () => ({
+  BrowserRouter: ({ children }) => <div>{children}</div>,
+  Routes: ({ children }) => <div>{children}</div>,
+  Route: ({ element }) => element,
+  Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
+  useLocation: () => ({ pathname: '/' }),
+}), { virtual: true });
+
+test('renders the AlgoVista landing page', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getAllByText(/AlgoVista/i).length).toBeGreaterThan(0);
+  expect(screen.getByText(/Open Simulator/i)).toBeInTheDocument();
 });
