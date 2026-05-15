@@ -4,6 +4,7 @@ const navLinks = [
   { to: '/',          label: 'Home'      },
   { to: '/concepts',  label: 'Concepts'  },
   { to: '/simulator', label: 'Simulator' },
+  { to: '/practice',  label: 'Practice'  },
   { to: '/about',     label: 'About'     },
 ];
 
@@ -76,7 +77,7 @@ export default function MainLayout({ children }) {
           </span>
         </div>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
+          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/practice', l: 'Practice' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
             <Link key={to} to={to} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', transition: 'color 0.15s' }}
               onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
               onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
