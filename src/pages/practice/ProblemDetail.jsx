@@ -92,7 +92,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
       </div>
 
       {tab === 'problem' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        <div className="practice-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           {/* Left: problem info */}
           <div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.7, marginBottom: '1.25rem' }}>{problem.description}</p>
@@ -151,7 +151,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
               Visual tracer not yet available for this problem.
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="practice-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div>
                 <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Your Code</p>
                 <CodeEditor value={code} onChange={setCode} height="260px" />
