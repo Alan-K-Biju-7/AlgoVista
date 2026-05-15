@@ -12,6 +12,7 @@ function ProgressBanner({ allProblems, getStatus }) {
 
   return (
     <div
+      className="practice-shell"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -85,7 +86,7 @@ export default function PracticePage() {
         getStatus={getStatus}
       />
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="practice-content" style={{ flex: 1, minWidth: 0 }}>
         <div style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '0.3rem' }}>
             Practice
