@@ -199,4 +199,18 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
     align-items: flex-start !important;
     flex-direction: column;
   }
+
+  .practice-shell {
+    flex-direction: column;
+    padding: 1.25rem 1rem !important;
+  }
+
+  .practice-sidebar {
+    position: static !important;
+    width: 100% !important;
+  }
+
+  .practice-content {
+    width: 100%;
+  }
 }
