@@ -16,7 +16,7 @@ function App() {
           <Route path="/concepts"  element={<ConceptsPage />} />
           <Route path="/simulator" element={<SimulatorPage />} />
           <Route path="/about"     element={<AboutPage />} />
-            <Route path="/practice" element={<PracticePage />} />
+          <Route path="/practice"  element={<PracticePage />} />
         </Routes>
       </MainLayout>
     </Router>
