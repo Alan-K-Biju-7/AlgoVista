@@ -177,3 +177,26 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
 .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; }
+
+@media (max-width: 760px) {
+  .app-header {
+    height: auto !important;
+    min-height: 60px;
+    padding: 0.75rem 1rem !important;
+    align-items: flex-start !important;
+    gap: 0.75rem;
+    flex-direction: column;
+  }
+
+  .app-nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.1rem;
+  }
+
+  .app-footer {
+    padding: 1.25rem 1rem !important;
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
+}
