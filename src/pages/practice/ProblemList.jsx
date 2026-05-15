@@ -1,5 +1,6 @@
 import React from 'react';
 import EmptyState from './EmptyState';
+import { isNeetcode150 } from './neetcode150';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
@@ -233,6 +234,24 @@ export default function ProblemList({
                 >
                   {p.pattern}
                 </span>
+
+                {isNeetcode150(p.id) ? (
+                  <span
+                    className="practice-problem-chip"
+                    title="Part of NeetCode 150"
+                    style={{
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '999px',
+                      fontSize: '0.68rem',
+                      fontWeight: '700',
+                      color: '#00d4aa',
+                      background: '#00d4aa14',
+                      border: '1px solid #00d4aa40',
+                    }}
+                  >
+                    NC150
+                  </span>
+                ) : null}
 
                 {p.timeO && (
                   <span

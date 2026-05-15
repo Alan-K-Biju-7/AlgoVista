@@ -11,6 +11,33 @@ import { validateCodeForTracer } from './tracer/validateCode';
 import TracerErrorBoundary from './tracer/TracerErrorBoundary';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
+const VISUALIZER_TARGETS = {
+  'array-pointers': 'array',
+  hashmap: 'hashtable',
+  hashset: 'hashtable',
+  stack: 'stack',
+  'linked-list': 'linkedlist',
+  tree: 'bst',
+  bst: 'bst',
+  trie: 'trie',
+  heap: 'heap',
+  graph: 'graph',
+  'grid-search': 'graph',
+  'binary-search': 'bsearch',
+  dp: 'array',
+  intervals: 'array',
+  math: 'array',
+  bits: 'array',
+};
+
+function getVisualizerTarget(problem) {
+  return (
+    VISUALIZER_TARGETS[problem.viz] ||
+    VISUALIZER_TARGETS[problem.concept] ||
+    problem.viz ||
+    'array'
+  );
+}
 
 export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted, isBookmarked, toggleBookmark }) {
   const [code, setCode]         = useState(problem.solution || '// Write your solution here\n');
@@ -21,6 +48,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
 
   const [traceWarnings, setTraceWarnings] = useState([]);
   const bookmarked = isBookmarked ? isBookmarked(problem.id) : false;
+  const visualizerTarget = getVisualizerTarget(problem);
 
   const handleTrace = () => {
     if (!tracerConfig) return;
@@ -73,7 +101,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
         >
           {bookmarked ? '🔖 Bookmarked' : '📑 Bookmark'}
         </button>
-        <Link to={`/simulator#${problem.viz}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
+        <Link to={`/simulator#${visualizerTarget}`} style={{ padding: '0.3rem 0.75rem', borderRadius: '0.4rem', fontSize: '0.78rem',
           fontWeight: '600', background: topicColor + '20', color: topicColor, border: `1px solid ${topicColor}40`,
           textDecoration: 'none' }}>Open Visualizer →</Link>
       </div>

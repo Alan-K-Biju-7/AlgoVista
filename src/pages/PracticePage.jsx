@@ -54,7 +54,7 @@ function ProgressBanner({ allProblems, getStatus }) {
 }
 
 export default function PracticePage() {
-  const [activeTopic, setActiveTopic] = useState('array');
+  const [activeTopic, setActiveTopic] = useState('nc-arrays-hashing');
   const [activeProblem, setActiveProblem] = useState(null);
 
   const {
