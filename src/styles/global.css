@@ -213,4 +213,8 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
   .practice-content {
     width: 100%;
   }
+
+  .practice-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
