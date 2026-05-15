@@ -43,13 +43,6 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section style={{ position: 'relative', overflow: 'hidden', padding: '6rem 2.5rem 5rem', maxWidth: '1160px', margin: '0 auto' }}>
-        <div style={{
-          position: 'absolute', top: '-120px', right: '-80px',
-          width: '600px', height: '600px', borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(0,212,170,0.07) 0%, transparent 65%)',
-          pointerEvents: 'none',
-        }} />
-
         <div style={{ position: 'relative', maxWidth: '640px' }}>
           <span className="badge-teal" style={{ marginBottom: '1.75rem' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
