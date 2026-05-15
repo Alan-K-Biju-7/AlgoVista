@@ -15,7 +15,6 @@ const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 export default function ProblemDetail({ problem, topicColor, onBack, onSolved, onAttempted, isBookmarked, toggleBookmark }) {
   const [code, setCode]         = useState(problem.solution || '// Write your solution here\n');
   const [results, setResults]   = useState(null);
-  const [, setShowSolution] = useState(false);
   const [tab, setTab]           = useState('problem');
   const tracer        = useTracerSteps();
   const tracerConfig  = TRACER_CONFIGS[problem.id] || null;
@@ -134,7 +133,7 @@ export default function ProblemDetail({ problem, topicColor, onBack, onSolved, o
                 padding: '0.55rem 1.25rem', borderRadius: '0.45rem', border: 'none', cursor: 'pointer',
                 background: topicColor, color: '#000', fontWeight: '700', fontSize: '0.85rem',
               }}>▶ Run Tests</button>
-              <button onClick={() => { setCode(problem.solution); setShowSolution(true); setTab('solution'); }} style={{
+              <button onClick={() => { setCode(problem.solution); setTab('solution'); }} style={{
                 padding: '0.55rem 1.25rem', borderRadius: '0.45rem', cursor: 'pointer',
                 background: 'transparent', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem',
                 border: '1px solid var(--border-default)',
