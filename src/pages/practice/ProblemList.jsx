@@ -139,6 +139,7 @@ export default function ProblemList({
             return (
               <div
                 key={p.id}
+                className="practice-problem-row"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -204,6 +205,7 @@ export default function ProblemList({
                 </button>
 
                 <span
+                  className="practice-problem-chip"
                   style={{
                     padding: '0.15rem 0.55rem',
                     borderRadius: '999px',
@@ -218,6 +220,7 @@ export default function ProblemList({
                 </span>
 
                 <span
+                  className="practice-problem-chip"
                   style={{
                     padding: '0.15rem 0.55rem',
                     borderRadius: '999px',
@@ -233,6 +236,7 @@ export default function ProblemList({
 
                 {p.timeO && (
                   <span
+                    className="practice-problem-chip"
                     style={{
                       padding: '0.15rem 0.5rem',
                       borderRadius: '999px',
