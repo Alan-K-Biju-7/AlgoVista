@@ -5,6 +5,7 @@ import ConceptsPage from './pages/ConceptsPage';
 import SimulatorPage from './pages/SimulatorPage';
 import AboutPage from './pages/AboutPage';
 import PracticePage from './pages/PracticePage';
+import AICoachPage from './pages/AICoachPage';
 import './styles/global.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/simulator" element={<SimulatorPage />} />
           <Route path="/about"     element={<AboutPage />} />
           <Route path="/practice"  element={<PracticePage />} />
+          <Route path="/ai"        element={<AICoachPage />} />
         </Routes>
       </MainLayout>
     </Router>
