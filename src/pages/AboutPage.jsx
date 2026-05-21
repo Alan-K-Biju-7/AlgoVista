@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
 const stack = [
-  { label: 'React 18',          desc: 'Component architecture, hooks, state management' },
-  { label: 'React Router v6',   desc: 'Client-side routing and navigation' },
+  { label: 'React 19',          desc: 'Component architecture, hooks, state management' },
+  { label: 'React Router v7',   desc: 'Client-side routing and navigation' },
   { label: 'SVG (native)',      desc: 'All tree visualizations — no canvas library needed' },
   { label: 'Vanilla CSS-in-JS', desc: 'Inline styles + CSS variables, zero dependencies' },
   { label: 'Git + GitHub',      desc: 'Version control, commit-by-commit feature building' },
