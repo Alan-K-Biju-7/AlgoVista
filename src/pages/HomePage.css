@@ -269,3 +269,32 @@
 .home-visual__node--4 { right: 22%; top: 18%; border-color: rgba(139, 124, 248, 0.5); background: rgba(139, 124, 248, 0.13); }
 .home-visual__node--5 { right: 8%; top: 52%; }
 .home-visual__node--6 { left: 28%; top: 74%; border-color: rgba(255, 107, 107, 0.52); background: rgba(255, 107, 107, 0.12); }
+
+.home-visual__edge {
+  position: absolute;
+  z-index: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform-origin: left center;
+}
+
+.home-visual__edge--1 {
+  left: 18%;
+  top: 54%;
+  width: 47%;
+  transform: rotate(-18deg);
+}
+
+.home-visual__edge--2 {
+  left: 35%;
+  top: 31%;
+  width: 46%;
+  transform: rotate(14deg);
+}
+
+.home-visual__edge--3 {
+  left: 36%;
+  top: 80%;
+  width: 51%;
+  transform: rotate(-22deg);
+}
