@@ -335,3 +335,51 @@
   border-radius: 999px;
   background: var(--ai-accent);
 }
+
+.ai-visual-state {
+  position: relative;
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.ai-visual-state::before {
+  content: "";
+  position: absolute;
+  left: 1.1rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: 1px;
+  background: linear-gradient(var(--ai-accent), transparent);
+}
+
+.ai-visual-state__node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ai-visual-state__node span {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: var(--ai-accent);
+  color: #06111f;
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.ai-visual-state__node strong {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-transform: capitalize;
+}
