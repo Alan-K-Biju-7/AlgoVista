@@ -298,3 +298,49 @@
   width: 51%;
   transform: rotate(-22deg);
 }
+
+.home-visual__bars {
+  position: absolute;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 6.8rem;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.5rem;
+  align-items: end;
+  height: 125px;
+  padding: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: rgba(2, 8, 23, 0.42);
+  backdrop-filter: blur(16px);
+}
+
+.home-visual__bar {
+  position: relative;
+  display: block;
+  min-height: 1.8rem;
+  border-radius: 0.45rem 0.45rem 0.22rem 0.22rem;
+  background: linear-gradient(180deg, #00d4aa, #4a9eff);
+  box-shadow: 0 0 22px rgba(0, 212, 170, 0.22);
+  animation: homeBarPulse 2.4s ease-in-out infinite;
+}
+
+.home-visual__bar:nth-child(3n) {
+  background: linear-gradient(180deg, #f5a623, #ff6b6b);
+}
+
+.home-visual__bar:nth-child(4n) {
+  background: linear-gradient(180deg, #8b7cf8, #4a9eff);
+}
+
+.home-visual__bar span {
+  position: absolute;
+  left: 50%;
+  bottom: -1.35rem;
+  transform: translateX(-50%);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
