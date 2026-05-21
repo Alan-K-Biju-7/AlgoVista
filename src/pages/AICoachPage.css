@@ -143,3 +143,72 @@
 .ai-mode-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+.ai-mode-grid button,
+.ai-track-list button {
+  width: 100%;
+  white-space: normal;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text-secondary);
+  border-radius: 0.78rem;
+}
+
+.ai-mode-grid button {
+  min-height: 82px;
+  padding: 0.78rem;
+}
+
+.ai-mode-grid button strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.86rem;
+}
+
+.ai-mode-grid button span {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.ai-mode-grid button.is-active {
+  border-color: rgba(139, 124, 248, 0.52);
+  background: rgba(139, 124, 248, 0.14);
+  box-shadow: 0 0 0 1px rgba(139, 124, 248, 0.08);
+}
+
+.ai-track-list button {
+  display: flex;
+  align-items: center;
+  gap: 0.62rem;
+  min-height: 2.65rem;
+  padding: 0.65rem 0.78rem;
+  font-weight: 800;
+}
+
+.ai-track-list button span {
+  width: 0.48rem;
+  height: 0.48rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--ai-accent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--ai-accent) 45%, transparent);
+}
+
+.ai-track-list button.is-active {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--ai-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--ai-accent) 12%, transparent);
+}
+
+.ai-console textarea {
+  min-height: 130px;
+  resize: vertical;
+  color: var(--text-primary);
+  background: rgba(2, 8, 23, 0.44);
+  border-color: rgba(255, 255, 255, 0.1);
+  line-height: 1.6;
+}
