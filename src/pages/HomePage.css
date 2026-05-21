@@ -176,3 +176,67 @@
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
+
+.home-visual {
+  position: relative;
+  min-height: 520px;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(145deg, rgba(17, 24, 39, 0.78), rgba(12, 18, 32, 0.88)),
+    radial-gradient(circle at 50% 0%, rgba(74, 158, 255, 0.16), transparent 23rem);
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.38);
+  overflow: hidden;
+}
+
+.home-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 78%);
+}
+
+.home-visual__topline,
+.home-visual__trace,
+.home-practice__track {
+  position: relative;
+  z-index: 1;
+}
+
+.home-visual__topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.home-visual__status,
+.home-visual__complexity,
+.home-cockpit-card__eyebrow,
+.home-path-card span,
+.home-practice__track span,
+.home-ribbon span {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-visual__status,
+.home-visual__complexity {
+  padding: 0.35rem 0.65rem;
+}
+
+.home-visual__status {
+  color: var(--accent);
+  border-color: rgba(0, 212, 170, 0.26);
+  background: rgba(0, 212, 170, 0.08);
+}
