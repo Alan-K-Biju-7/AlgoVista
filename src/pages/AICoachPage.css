@@ -383,3 +383,78 @@
   line-height: 1.35;
   text-transform: capitalize;
 }
+
+.ai-question-list,
+.ai-problem-list {
+  display: grid;
+  gap: 0.58rem;
+  margin-top: 0.85rem;
+}
+
+.ai-question-list p,
+.ai-problem-list div {
+  padding: 0.72rem 0.8rem;
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ai-problem-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.ai-problem-list strong {
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 0.83rem;
+  line-height: 1.35;
+}
+
+.ai-problem-list span {
+  flex: 0 0 auto;
+  color: var(--ai-accent);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1060px) {
+  .ai-hero,
+  .ai-response__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ai-hero__links {
+    justify-content: flex-start;
+  }
+
+  .ai-workspace,
+  .ai-response__grid,
+  .ai-lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-console {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-page {
+    padding-inline: 1rem;
+  }
+
+  .ai-mode-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-problem-list div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
