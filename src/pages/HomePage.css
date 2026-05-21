@@ -378,3 +378,52 @@
   color: var(--text-primary);
   font-size: 0.85rem;
 }
+
+.home-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5.25rem 1.5rem 0;
+}
+
+.home-section--tight {
+  padding-top: 4.2rem;
+}
+
+.home-section__head {
+  max-width: 760px;
+  margin-bottom: 1.7rem;
+}
+
+.home-section__head--split {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: none;
+}
+
+.home-section h2,
+.home-final h2 {
+  margin: 0.65rem 0 0;
+  color: var(--text-primary);
+  font-size: clamp(1.65rem, 3vw, 2.55rem);
+  font-weight: 950;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.home-section__head p,
+.home-practice__content p,
+.home-ai-preview__copy p {
+  margin-top: 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.78;
+}
+
+.home-link {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 850;
+}
