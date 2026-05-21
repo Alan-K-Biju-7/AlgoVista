@@ -1,0 +1,56 @@
+.ai-page {
+  min-height: 100%;
+  padding: 2rem 1.5rem 4.5rem;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(139, 124, 248, 0.14), transparent 28rem),
+    radial-gradient(circle at 92% 10%, rgba(0, 212, 170, 0.12), transparent 26rem),
+    var(--bg-base);
+}
+
+.ai-hero,
+.ai-workspace {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.ai-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-end;
+  padding: 2.2rem 0 1.5rem;
+}
+
+.ai-kicker,
+.ai-console__label,
+.ai-card__label {
+  display: inline-flex;
+  color: #8b7cf8;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ai-hero h1 {
+  margin: 0.65rem 0 0.7rem;
+  color: var(--text-primary);
+  font-size: clamp(3.2rem, 8vw, 6.8rem);
+  font-weight: 950;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.ai-hero p {
+  max-width: 680px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.ai-hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: flex-end;
+}
