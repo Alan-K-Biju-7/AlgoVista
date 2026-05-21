@@ -662,3 +662,62 @@
 .home-ribbon span {
   padding: 0.42rem 0.62rem;
 }
+
+.home-ai-preview {
+  grid-template-columns: minmax(360px, 0.85fr) minmax(0, 0.9fr);
+  background:
+    linear-gradient(135deg, rgba(139, 124, 248, 0.11), rgba(74, 158, 255, 0.06)),
+    rgba(17, 24, 39, 0.78);
+}
+
+.home-ai-preview__panel {
+  min-height: 360px;
+  padding: 1rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    rgba(4, 8, 18, 0.46);
+  background-size: 30px 30px;
+}
+
+.home-ai-preview__chat {
+  display: grid;
+  gap: 0.8rem;
+  max-width: 480px;
+}
+
+.home-ai-preview__bubble {
+  width: fit-content;
+  max-width: min(100%, 430px);
+  padding: 0.9rem 1rem;
+  border-radius: 1rem 1rem 1rem 0.3rem;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.home-ai-preview__bubble--user {
+  justify-self: end;
+  border-radius: 1rem 1rem 0.3rem 1rem;
+  background: rgba(139, 124, 248, 0.18);
+  color: #e8e4ff;
+}
+
+.home-ai-preview__steps {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.home-ai-preview__steps span {
+  padding: 0.72rem 0.82rem;
+  border: 1px solid rgba(139, 124, 248, 0.24);
+  border-radius: 0.8rem;
+  background: rgba(139, 124, 248, 0.09);
+  color: #dcd7ff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
