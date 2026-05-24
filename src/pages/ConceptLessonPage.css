@@ -118,6 +118,11 @@
   grid-column: 1 / -1;
 }
 
+.lesson-card--accent {
+  border-color: color-mix(in srgb, var(--lesson-color) 34%, transparent);
+  background: color-mix(in srgb, var(--lesson-color) 8%, rgba(17, 24, 39, 0.88));
+}
+
 .lesson-card h2,
 .lesson-coach h2 {
   margin-bottom: 0.55rem;
@@ -135,6 +140,48 @@
 
 .lesson-card p + p {
   margin-top: 0.75rem;
+}
+
+.lesson-card p strong {
+  color: var(--text-primary);
+}
+
+.lesson-card pre {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(10, 14, 26, 0.72);
+}
+
+.lesson-card code {
+  color: var(--text-primary);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.lesson-complexity {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.lesson-complexity span {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--lesson-color) 30%, transparent);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: rgba(10, 14, 26, 0.42);
+  font-size: 0.84rem;
+}
+
+.lesson-complexity b {
+  color: var(--lesson-color);
+  font-size: 0.72rem;
+  text-transform: uppercase;
 }
 
 .lesson-card ol,
@@ -247,6 +294,185 @@
   bottom: -1.7rem;
   color: var(--text-secondary);
   font-size: 0.74rem;
+}
+
+.viz-array-room,
+.viz-prefix-board,
+.viz-kadane-board,
+.viz-matrix-lesson {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1rem;
+  min-height: 320px;
+}
+
+.array-address-row,
+.array-cell-row,
+.array-state-strip {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.array-address-row span {
+  min-width: 92px;
+  padding: 0.4rem 0.55rem;
+  border: 1px dashed color-mix(in srgb, var(--lesson-color) 28%, transparent);
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: rgba(10, 14, 26, 0.42);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.array-cell-row span,
+.viz-kadane-board span {
+  display: grid;
+  place-items: center;
+  min-width: 74px;
+  min-height: 74px;
+  padding: 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: rgba(10, 14, 26, 0.68);
+}
+
+.array-cell-row b,
+.viz-kadane-board b {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.array-cell-row small,
+.viz-kadane-board small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.array-cell-row .is-active,
+.viz-kadane-board .is-active {
+  border-color: var(--lesson-color);
+  background: var(--lesson-color);
+}
+
+.array-cell-row .is-active b,
+.array-cell-row .is-active small,
+.viz-kadane-board .is-active b,
+.viz-kadane-board .is-active small {
+  color: #031a14;
+}
+
+.array-cell-row .is-done {
+  border-color: color-mix(in srgb, var(--lesson-color) 36%, transparent);
+  background: color-mix(in srgb, var(--lesson-color) 16%, rgba(10, 14, 26, 0.68));
+}
+
+.array-cell-row .is-cut {
+  opacity: 0.3;
+}
+
+.array-cell-row .is-bound {
+  border-color: color-mix(in srgb, var(--lesson-color) 48%, transparent);
+  background: color-mix(in srgb, var(--lesson-color) 10%, rgba(10, 14, 26, 0.68));
+}
+
+.array-cell-row .is-gap {
+  border-style: dashed;
+  color: var(--lesson-color);
+  background: color-mix(in srgb, var(--lesson-color) 10%, transparent);
+}
+
+.array-cell-row .is-moving {
+  transform: translateX(10px);
+  border-color: #ffd166;
+}
+
+.array-state-strip span {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: rgba(10, 14, 26, 0.5);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.viz-array-room p,
+.viz-prefix-board p,
+.viz-kadane-board p,
+.viz-matrix-lesson p {
+  max-width: 680px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.viz-prefix-board {
+  width: 100%;
+}
+
+.viz-prefix-board div {
+  display: grid;
+  grid-template-columns: 82px repeat(5, minmax(48px, 70px));
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.viz-prefix-board div:first-child {
+  grid-template-columns: 82px repeat(4, minmax(48px, 70px));
+}
+
+.viz-prefix-board strong {
+  color: var(--lesson-color);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.viz-prefix-board span,
+.viz-matrix-lesson span {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  background: rgba(10, 14, 26, 0.68);
+  font-weight: 900;
+}
+
+.viz-prefix-board span:nth-child(n + 4),
+.viz-matrix-lesson .is-active {
+  color: #031a14;
+  border-color: var(--lesson-color);
+  background: var(--lesson-color);
+}
+
+.viz-kadane-board {
+  grid-template-columns: repeat(5, minmax(80px, 110px));
+}
+
+.viz-kadane-board p {
+  grid-column: 1 / -1;
+}
+
+.viz-matrix-lesson {
+  grid-template-columns: repeat(4, minmax(54px, 78px));
+}
+
+.viz-matrix-lesson p {
+  grid-column: 1 / -1;
+}
+
+.viz-matrix-lesson--sorted .is-cut {
+  opacity: 0.32;
 }
 
 .viz-search,
