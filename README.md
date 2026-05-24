@@ -13,6 +13,8 @@ AlgoVista combines four core parts of the DSA learning workflow into one unified
 - **Home** – Entry point for onboarding and navigation  
 - **Concepts** – Learn topics before implementation  
 - **Simulator** – Visualize algorithms step-by-step (AVL, Dijkstra, BST, Graphs, Sorting, etc.)  
+- **DSA for Beginners** – A complete foundations-to-advanced roadmap for structured learning  
+- **AI Coach** – Backend-powered coaching endpoint ready for DeepSeek through `DEEPSEEK_API_KEY`  
 - **Practice** – Solve curated problems with hints, tracing, and progress tracking  
 
 Designed to turn abstract algorithms into intuitive learning experiences.
@@ -26,6 +28,9 @@ Designed to turn abstract algorithms into intuitive learning experiences.
 - Topic-based problem organization (Arrays, Graphs, Trees, etc.)  
 - Detailed problem views with examples, hints, and solutions  
 - Built-in tools: Code Editor, Test Runner, Tracer, Progress Tracking  
+- Login/register flow with hashed passwords and bearer-token sessions  
+- File-backed backend storage for learner progress during local development  
+- DeepSeek-compatible AI coach endpoint with local fallback when no API key is configured  
 
 ---
 
@@ -35,6 +40,7 @@ Designed to turn abstract algorithms into intuitive learning experiences.
 - JavaScript  
 - CSS  
 - React Router  
+- Node.js backend using built-in HTTP, crypto, and filesystem modules  
 
 Built with a modular, feature-based architecture for scalability.
 
@@ -83,6 +89,9 @@ src/
 │       ├── problems_trees.js
 │       └── tracer/
 
+server/
+└── index.js
+
 ---
 
 ## Why AlgoVista
@@ -118,6 +127,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm run backend`
+
+Runs the dedicated backend on [http://localhost:8787](http://localhost:8787).
+
+Create a backend environment file from `server/.env.example` and set:
+
+```
+DEEPSEEK_API_KEY=your_key_here
+DEEPSEEK_MODEL=deepseek-v4-flash
+```
+
+Without a DeepSeek key, the AI coach returns a local fallback response so the app still works.
 
 ### `npm start`
 

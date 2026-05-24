@@ -1,10 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 
 const navLinks = [
-  { to: '/',          label: 'Home'      },
-  { to: '/concepts',  label: 'Concepts'  },
-  { to: '/simulator', label: 'Simulator' },
-  { to: '/about',     label: 'About'     },
+  { to: '/',              label: 'Home'      },
+  { to: '/dsa-beginners', label: 'DSA Path'  },
+  { to: '/coach',         label: 'AI Coach'  },
+  { to: '/practice',      label: 'Practice'  },
+  { to: '/simulator',     label: 'Simulator' },
+  { to: '/concepts',      label: 'Concepts'  },
+  { to: '/about',         label: 'About'     },
 ];
 
 export default function MainLayout({ children }) {
@@ -16,7 +19,7 @@ export default function MainLayout({ children }) {
       <header style={{
         position: 'sticky', top: 0, zIndex: 100,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 2.5rem', height: '60px',
+        padding: '0.55rem 2.5rem', minHeight: '60px',
         background: 'rgba(10,14,26,0.85)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
@@ -37,14 +40,14 @@ export default function MainLayout({ children }) {
           </span>
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.15rem' }}>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.15rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {navLinks.map(({ to, label }) => {
             const active = pathname === to;
             return (
               <Link key={to} to={to} style={{
-                padding: '0.38rem 0.9rem',
+                padding: '0.36rem 0.72rem',
                 borderRadius: '0.45rem',
-                fontSize: '0.85rem',
+                fontSize: '0.8rem',
                 fontWeight: active ? '600' : '400',
                 color: active ? 'var(--accent)' : 'var(--text-muted)',
                 background: active ? 'var(--accent-glow)' : 'transparent',
@@ -76,7 +79,7 @@ export default function MainLayout({ children }) {
           </span>
         </div>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {[{ to: '/concepts', l: 'Concepts' }, { to: '/simulator', l: 'Simulator' }, { to: '/about', l: 'About' }].map(({ to, l }) => (
+          {[{ to: '/dsa-beginners', l: 'DSA Path' }, { to: '/coach', l: 'AI Coach' }, { to: '/practice', l: 'Practice' }, { to: '/simulator', l: 'Simulator' }].map(({ to, l }) => (
             <Link key={to} to={to} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', transition: 'color 0.15s' }}
               onMouseEnter={(e) => e.target.style.color = 'var(--accent)'}
               onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}

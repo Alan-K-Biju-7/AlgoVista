@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+import { DSA_BEGINNER_TOTAL } from '../data/dsaBeginnersCurriculum';
 
 const stats = [
+  { value: String(DSA_BEGINNER_TOTAL), label: 'Beginner Concepts' },
   { value: '19',  label: 'Modules' },
   { value: '4',   label: 'Data Structures' },
-  { value: '3',   label: 'Sort Algorithms' },
-  { value: '2',   label: 'Tree Types' },
+  { value: '1',   label: 'AI Coach' },
 ];
 
 const phases = [
@@ -71,7 +72,7 @@ export default function HomePage() {
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '4rem' }}>
-            <Link to="/simulator" className="btn-primary" style={{
+            <Link to="/dsa-beginners" className="btn-primary" style={{
               padding: '0.75rem 1.6rem', borderRadius: '0.55rem',
               fontSize: '0.9rem', fontWeight: '700',
               display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
@@ -83,7 +84,20 @@ export default function HomePage() {
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--teal-bright)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(0,212,170,0.35)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(0,212,170,0.2)'; }}
             >
-              Open Simulator →
+              Start DSA Path →
+            </Link>
+            <Link to="/coach" style={{
+              padding: '0.75rem 1.6rem', borderRadius: '0.55rem',
+              fontSize: '0.9rem', fontWeight: '500',
+              display: 'inline-flex', alignItems: 'center',
+              border: '1px solid var(--border-strong)',
+              background: 'transparent', color: 'var(--text-secondary)',
+              textDecoration: 'none', transition: 'all 0.15s',
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(74,158,255,0.5)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'rgba(74,158,255,0.08)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              AI Coach
             </Link>
             <Link to="/concepts" style={{
               padding: '0.75rem 1.6rem', borderRadius: '0.55rem',
