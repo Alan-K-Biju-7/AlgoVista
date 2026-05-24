@@ -243,9 +243,9 @@ function buildCoachMessages({ message, concept, progress }) {
 }
 
 async function callAiProvider({ message, concept, progress }) {
-  const apiKey = process.env.AI_PROVIDER_API_KEY;
-  const baseUrl = String(process.env.AI_PROVIDER_BASE_URL || '').replace(/\/$/, '');
-  const model = process.env.AI_PROVIDER_MODEL;
+  const apiKey = process.env.GROQ_API_KEY || process.env.AI_PROVIDER_API_KEY;
+  const baseUrl = String(process.env.AI_PROVIDER_BASE_URL || 'https://api.groq.com/openai/v1').replace(/\/$/, '');
+  const model = process.env.AI_PROVIDER_MODEL || 'llama-3.1-8b-instant';
 
   if (!apiKey || !baseUrl || !model) {
     return {
@@ -263,8 +263,6 @@ async function callAiProvider({ message, concept, progress }) {
     body: JSON.stringify({
       model,
       messages: buildCoachMessages({ message, concept, progress }),
-      thinking: { type: 'disabled' },
-      reasoning_effort: 'low',
       temperature: 0.35,
       max_tokens: 700,
       stream: false,

@@ -135,9 +135,9 @@ Runs the dedicated backend on [http://localhost:8787](http://localhost:8787).
 Create a backend environment file from `server/.env.example` and set:
 
 ```
-AI_PROVIDER_API_KEY=your_key_here
-AI_PROVIDER_BASE_URL=https://api.example.com
-AI_PROVIDER_MODEL=your_model_id_here
+GROQ_API_KEY=your_key_here
+AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
+AI_PROVIDER_MODEL=llama-3.1-8b-instant
 ```
 
 Without an AI provider key, the AI coach returns a local fallback response so the app still works.
