@@ -212,7 +212,7 @@ function fallbackCoachReply({ message, concept, progress }) {
       ? `Progress signal: you still have ${needsPractice} beginner concepts that need repetition, so keep this answer practical and example-driven.`
       : 'Progress signal: your map is looking strong, so push toward edge cases and proof quality.',
     '',
-    'DeepSeek is not configured yet. Add DEEPSEEK_API_KEY to the backend environment to turn this into live AI coaching.',
+    'Offline tutor mode is active right now; the lesson still works while live coaching is unavailable.',
   ].join('\n');
 }
 
@@ -242,17 +242,19 @@ function buildCoachMessages({ message, concept, progress }) {
   ];
 }
 
-async function callDeepSeek({ message, concept, progress }) {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) {
+async function callAiProvider({ message, concept, progress }) {
+  const apiKey = process.env.AI_PROVIDER_API_KEY;
+  const baseUrl = String(process.env.AI_PROVIDER_BASE_URL || '').replace(/\/$/, '');
+  const model = process.env.AI_PROVIDER_MODEL;
+
+  if (!apiKey || !baseUrl || !model) {
     return {
       provider: 'local-fallback',
       reply: fallbackCoachReply({ message, concept, progress }),
     };
   }
 
-  const model = process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash';
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -271,12 +273,12 @@ async function callDeepSeek({ message, concept, progress }) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`DeepSeek request failed (${response.status}): ${errorText.slice(0, 500)}`);
+    throw new Error(`AI provider request failed (${response.status}): ${errorText.slice(0, 500)}`);
   }
 
   const data = await response.json();
   return {
-    provider: 'deepseek',
+    provider: 'ai-provider',
     model,
     reply: data.choices?.[0]?.message?.content || 'I could not generate a response.',
     usage: data.usage || null,
@@ -406,12 +408,12 @@ async function handleApi(req, res, url, origin) {
     const concept = body.concept || null;
 
     try {
-      const coach = await callDeepSeek({ message, concept, progress });
+      const coach = await callAiProvider({ message, concept, progress });
       sendJson(res, 200, coach, origin);
     } catch (error) {
       sendJson(res, 200, {
         provider: 'local-fallback',
-        warning: error.message,
+        warning: 'Live AI coaching is unavailable.',
         reply: fallbackCoachReply({ message, concept, progress }),
       }, origin);
     }

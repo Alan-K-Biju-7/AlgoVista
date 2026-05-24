@@ -120,8 +120,8 @@ function SectionRail({ activeSectionId, onSelect, progress }) {
 
 function ConceptCard({ concept, active, status, onSelect }) {
   return (
-    <button
-      type="button"
+    <Link
+      to={`/dsa-beginners/${concept.id}`}
       className={active ? 'beginner-concept is-active' : 'beginner-concept'}
       style={{ '--concept-color': concept.color }}
       onClick={() => onSelect(concept)}
@@ -134,7 +134,7 @@ function ConceptCard({ concept, active, status, onSelect }) {
       <span className={`beginner-concept__status beginner-concept__status--${status}`}>
         {statusMeta[status]?.label || 'Not started'}
       </span>
-    </button>
+    </Link>
   );
 }
 
@@ -213,6 +213,12 @@ function LearningCockpit({ concept, section, progressItem, onSave, isAuthenticat
         className="beginners-cockpit__coach"
       >
         Open AI coach for this concept
+      </Link>
+      <Link
+        to={`/dsa-beginners/${concept.id}`}
+        className="beginners-cockpit__lesson"
+      >
+        Open full lesson page
       </Link>
     </aside>
   );

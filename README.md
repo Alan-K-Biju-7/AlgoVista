@@ -14,7 +14,7 @@ AlgoVista combines four core parts of the DSA learning workflow into one unified
 - **Concepts** – Learn topics before implementation  
 - **Simulator** – Visualize algorithms step-by-step (AVL, Dijkstra, BST, Graphs, Sorting, etc.)  
 - **DSA for Beginners** – A complete foundations-to-advanced roadmap for structured learning  
-- **AI Coach** – Backend-powered coaching endpoint ready for DeepSeek through `DEEPSEEK_API_KEY`  
+- **AI Coach** – Backend-powered coaching endpoint with the provider key kept out of the frontend  
 - **Practice** – Solve curated problems with hints, tracing, and progress tracking  
 
 Designed to turn abstract algorithms into intuitive learning experiences.
@@ -30,7 +30,7 @@ Designed to turn abstract algorithms into intuitive learning experiences.
 - Built-in tools: Code Editor, Test Runner, Tracer, Progress Tracking  
 - Login/register flow with hashed passwords and bearer-token sessions  
 - File-backed backend storage for learner progress during local development  
-- DeepSeek-compatible AI coach endpoint with local fallback when no API key is configured  
+- OpenAI-compatible AI coach endpoint with local fallback when no API key is configured  
 
 ---
 
@@ -135,11 +135,12 @@ Runs the dedicated backend on [http://localhost:8787](http://localhost:8787).
 Create a backend environment file from `server/.env.example` and set:
 
 ```
-DEEPSEEK_API_KEY=your_key_here
-DEEPSEEK_MODEL=deepseek-v4-flash
+AI_PROVIDER_API_KEY=your_key_here
+AI_PROVIDER_BASE_URL=https://api.example.com
+AI_PROVIDER_MODEL=your_model_id_here
 ```
 
-Without a DeepSeek key, the AI coach returns a local fallback response so the app still works.
+Without an AI provider key, the AI coach returns a local fallback response so the app still works.
 
 ### `npm start`
 

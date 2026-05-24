@@ -236,6 +236,8 @@
   border: 1px solid var(--border-default);
   background: rgba(13, 18, 32, 0.7);
   text-align: left;
+  text-decoration: none;
+  color: inherit;
 }
 
 .beginner-concept:hover,
@@ -363,7 +365,8 @@
   background: rgba(10, 14, 26, 0.45);
 }
 
-.beginners-cockpit__coach {
+.beginners-cockpit__coach,
+.beginners-cockpit__lesson {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -376,6 +379,12 @@
   font-size: 0.82rem;
   font-weight: 800;
   text-align: center;
+}
+
+.beginners-cockpit__lesson {
+  border-color: rgba(0, 212, 170, 0.35);
+  color: var(--accent);
+  background: rgba(0, 212, 170, 0.08);
 }
 
 .beginner-visual {

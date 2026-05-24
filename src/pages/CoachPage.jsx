@@ -61,9 +61,7 @@ export default function CoachPage() {
         {
           role: 'assistant',
           content: response.reply,
-          provider: response.provider === 'deepseek'
-            ? `DeepSeek ${response.model || ''}`.trim()
-            : 'Local fallback',
+          provider: response.provider === 'ai-provider' ? 'AI Coach' : 'Offline tutor',
         },
       ]);
     } catch (error) {
@@ -95,7 +93,7 @@ export default function CoachPage() {
           <h1>DSA coach that knows your learning map.</h1>
           <p>
             Ask for intuition, dry runs, edge cases, complexity, or a proof. The frontend talks
-            only to the backend, so the DeepSeek key stays private.
+            only to the backend, so the AI key stays private.
           </p>
         </div>
         <AuthPanel compact />
