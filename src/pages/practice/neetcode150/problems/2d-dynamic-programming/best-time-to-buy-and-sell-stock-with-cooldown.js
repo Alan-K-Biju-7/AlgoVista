@@ -6,7 +6,7 @@ export default {
   timeO: 'O(n)',
   spaceO: 'O(n)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the maximum profit you can achieve with as many transactions as you like, with a one-day cooldown after each sale.',
   examples: [
