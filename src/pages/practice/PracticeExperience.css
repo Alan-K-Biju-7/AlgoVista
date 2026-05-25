@@ -184,6 +184,89 @@
   font-weight: 850;
 }
 
+.mission-queue {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.mission-queue button {
+  min-width: 0;
+  padding: 0.58rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+  border-radius: 8px;
+  background: rgba(13, 18, 32, 0.7);
+}
+
+.mission-queue span,
+.mission-queue i {
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.mission-queue b {
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 0.77rem;
+  line-height: 1.25;
+}
+
+.mission-toolbar {
+  margin-bottom: 0.85rem;
+  padding: 0.7rem;
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) repeat(4, minmax(120px, 0.45fr));
+  gap: 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.68);
+}
+
+.mission-search,
+.mission-select {
+  width: 100%;
+  min-height: 2.35rem;
+  min-width: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(10, 14, 26, 0.78);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.mission-search {
+  padding: 0 0.75rem;
+}
+
+.mission-select {
+  padding: 0 0.55rem;
+}
+
+.mission-empty {
+  margin-bottom: 0.85rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.78);
+}
+
+.mission-empty b {
+  color: var(--text-primary);
+}
+
+.mission-empty span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
 .problem-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -464,6 +547,159 @@
   margin-top: 0.55rem;
   padding-left: 0.7rem;
   border-left: 2px solid rgba(255, 107, 107, 0.55);
+}
+
+.learning-rail {
+  margin-bottom: 1rem;
+  padding: 0.55rem;
+  display: grid;
+  grid-template-columns: repeat(var(--rail-steps, 5), minmax(0, 1fr));
+  gap: 0.45rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.72);
+}
+
+.learning-rail div {
+  min-width: 0;
+  min-height: 2.4rem;
+  padding: 0.35rem 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(10, 14, 26, 0.58);
+  color: var(--text-muted);
+}
+
+.learning-rail span {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.learning-rail b {
+  min-width: 0;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.learning-rail .is-active,
+.learning-rail .is-complete {
+  background: rgba(13, 18, 32, 0.86);
+}
+
+.completion-panel {
+  margin-top: 0.85rem;
+  padding: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.78);
+}
+
+.completion-panel p {
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.completion-panel h3 {
+  margin-top: 0.2rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+.completion-panel > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.test-results {
+  margin-top: 1rem;
+}
+
+.test-results__header {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.test-results__header span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.test-results__header b {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.test-results__list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.test-result-card {
+  min-width: 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.test-result-card__top {
+  display: grid;
+  grid-template-columns: 1rem auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.test-result-card__top span {
+  font-size: 0.85rem;
+}
+
+.test-result-card__top b {
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.test-result-card__top code,
+.test-result-card__detail code {
+  color: var(--text-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.test-result-card__detail {
+  margin-top: 0.35rem;
+  padding-left: 1.5rem;
+  display: grid;
+  gap: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
 }
 
 .visual-lab {
@@ -1029,6 +1265,10 @@
     grid-template-columns: 1fr;
   }
 
+  .mission-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .story-scenes {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
@@ -1052,7 +1292,8 @@
 
   .mission-stat-grid,
   .mission-phase-map,
-  .story-scenes {
+  .story-scenes,
+  .mission-queue {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1072,8 +1313,20 @@
   .mission-stat-grid,
   .mission-phase-map,
   .story-scenes,
-  .problem-grid {
+  .problem-grid,
+  .mission-toolbar,
+  .mission-queue,
+  .learning-rail {
     grid-template-columns: 1fr;
+  }
+
+  .completion-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .completion-panel > div:last-child {
+    justify-content: stretch;
   }
 
   .visual-lab__progress {

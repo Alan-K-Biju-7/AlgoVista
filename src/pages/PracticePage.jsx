@@ -4,31 +4,20 @@ import TopicSidebar from './practice/TopicSidebar';
 import ProblemList from './practice/ProblemList';
 import ProblemDetail from './practice/ProblemDetail';
 import { usePracticeProgress } from './practice/usePracticeProgress';
+import {
+  getFocusQueue,
+  getPhaseSummaries,
+  getProgressSummary,
+  getRecommendedProblem,
+} from './practice/practicePlanner';
 import './practice/PracticeExperience.css';
 
-function getProgress(allProblems, getStatus) {
-  const all = Object.values(allProblems).flatMap((t) => t.problems);
-  const solved = all.filter((p) => getStatus(p.id) === 'solved').length;
-  const attempted = all.filter((p) => getStatus(p.id) === 'attempted').length;
-  const pct = all.length ? Math.round((solved / all.length) * 100) : 0;
-  return { all, solved, attempted, pct };
-}
-
 function MissionControl({ allProblems, topic, getStatus, onSelectProblem }) {
-  const { all, solved, attempted, pct } = getProgress(allProblems, getStatus);
-  const untouched = all.length - solved - attempted;
-  const nextProblem =
-    topic.problems.find((problem) => getStatus(problem.id) !== 'solved') ||
-    all.find((problem) => getStatus(problem.id) !== 'solved') ||
-    topic.problems[0];
+  const { all, solved, attempted, fresh, pct } = getProgressSummary(allProblems, getStatus);
+  const nextProblem = getRecommendedProblem({ allProblems, topic, getStatus });
   const topics = getTopicList();
-  const phases = Object.values(PHASE_META).map((phase) => {
-    const phaseProblems = topics
-      .filter((nextTopic) => nextTopic.phase === phase.id)
-      .flatMap((nextTopic) => nextTopic.problems);
-    const phaseSolved = phaseProblems.filter((problem) => getStatus(problem.id) === 'solved').length;
-    return { ...phase, solved: phaseSolved, total: phaseProblems.length };
-  });
+  const phases = getPhaseSummaries(PHASE_META, topics, getStatus);
+  const queue = getFocusQueue(topic, getStatus, 3);
 
   return (
     <section className="mission-control">
@@ -59,7 +48,7 @@ function MissionControl({ allProblems, topic, getStatus, onSelectProblem }) {
             <span>Attempted</span>
           </div>
           <div className="mission-stat">
-            <b>{untouched}</b>
+            <b>{fresh}</b>
             <span>Fresh</span>
           </div>
           <div className="mission-stat">
@@ -82,6 +71,21 @@ function MissionControl({ allProblems, topic, getStatus, onSelectProblem }) {
                 />
               </div>
             </div>
+          ))}
+        </div>
+
+        <div className="mission-queue">
+          {queue.map((problem) => (
+            <button
+              key={problem.id}
+              type="button"
+              onClick={() => onSelectProblem(problem)}
+              style={{ borderColor: `${topic.color}35` }}
+            >
+              <span>{getStatus(problem.id) === 'attempted' ? 'Resume' : 'Start'}</span>
+              <b>{problem.title}</b>
+              <i>{problem.difficulty}</i>
+            </button>
           ))}
         </div>
       </div>
@@ -136,6 +140,15 @@ export default function PracticePage() {
   } = usePracticeProgress();
 
   const topic = ALL_PROBLEMS[activeTopic] || ALL_PROBLEMS['arrays-hashing'];
+  const nextProblem = activeProblem
+    ? getRecommendedProblem({
+        allProblems: ALL_PROBLEMS,
+        topic,
+        getStatus,
+        currentProblemId: activeProblem.id,
+      })
+    : null;
+
   return (
     <div className="practice-shell">
       <TopicSidebar
@@ -157,6 +170,9 @@ export default function PracticePage() {
             onAttempted={markAttempted}
             isBookmarked={isBookmarked}
             toggleBookmark={toggleBookmark}
+            status={getStatus(activeProblem.id)}
+            nextProblem={nextProblem}
+            onNextProblem={nextProblem ? () => setActiveProblem(nextProblem) : null}
           />
         ) : (
           <>

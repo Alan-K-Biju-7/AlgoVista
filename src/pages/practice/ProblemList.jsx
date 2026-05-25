@@ -1,6 +1,8 @@
+import { useMemo, useState } from 'react';
 import EmptyState from './EmptyState';
 import { isNeetcode150 } from './neetcode150';
 import { TRACER_CONFIGS } from './tracer/configs';
+import { filterProblems } from './problemFilters';
 
 const difficultyColors = {
   Easy: '#00d4aa',
@@ -53,6 +55,25 @@ export default function ProblemList({
   isBookmarked = () => false,
   toggleBookmark,
 }) {
+  const [filters, setFilters] = useState({
+    query: '',
+    status: 'all',
+    difficulty: 'all',
+    capability: 'all',
+    sort: 'recommended',
+  });
+  const filteredProblems = useMemo(
+    () => filterProblems(
+      problems,
+      filters,
+      getStatus,
+      isBookmarked,
+      (problemId) => Boolean(TRACER_CONFIGS[problemId])
+    ),
+    [filters, getStatus, isBookmarked, problems]
+  );
+  const updateFilter = (key, value) => setFilters((prev) => ({ ...prev, [key]: value }));
+
   if (!problems.length) {
     return <EmptyState topicLabel={topic?.label || 'this selection'} />;
   }
@@ -69,12 +90,74 @@ export default function ProblemList({
           </h2>
         </div>
         <span className="mission-chip">
-          {problems.length} problems
+          {filteredProblems.length}/{problems.length} problems
         </span>
       </div>
 
+      <div className="mission-toolbar" style={{ borderColor: `${topic?.color || '#00d4aa'}30` }}>
+        <input
+          value={filters.query}
+          onChange={(event) => updateFilter('query', event.target.value)}
+          className="mission-search"
+          type="search"
+          placeholder="Search missions"
+          aria-label="Search missions"
+        />
+        <select
+          value={filters.status}
+          onChange={(event) => updateFilter('status', event.target.value)}
+          className="mission-select"
+          aria-label="Status filter"
+        >
+          <option value="all">All status</option>
+          <option value="unsolved">Fresh</option>
+          <option value="attempted">Attempted</option>
+          <option value="solved">Solved</option>
+          <option value="bookmarked">Bookmarked</option>
+        </select>
+        <select
+          value={filters.difficulty}
+          onChange={(event) => updateFilter('difficulty', event.target.value)}
+          className="mission-select"
+          aria-label="Difficulty filter"
+        >
+          <option value="all">All difficulty</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+        <select
+          value={filters.capability}
+          onChange={(event) => updateFilter('capability', event.target.value)}
+          className="mission-select"
+          aria-label="Learning mode filter"
+        >
+          <option value="all">All modes</option>
+          <option value="trace">Trace-ready</option>
+          <option value="visual">Visual-only</option>
+        </select>
+        <select
+          value={filters.sort}
+          onChange={(event) => updateFilter('sort', event.target.value)}
+          className="mission-select"
+          aria-label="Sort missions"
+        >
+          <option value="recommended">Recommended</option>
+          <option value="status">Status</option>
+          <option value="difficulty">Difficulty</option>
+          <option value="title">Title</option>
+        </select>
+      </div>
+
+      {!filteredProblems.length && (
+        <div className="mission-empty" style={{ borderColor: `${topic?.color || '#00d4aa'}35` }}>
+          <b>No matching missions</b>
+          <span>Clear a filter or switch topics.</span>
+        </div>
+      )}
+
       <div className="problem-grid">
-      {problems.map((p, index) => {
+      {filteredProblems.map((p, index) => {
         const status = getStatus(p.id);
         const statusColor =
           status === 'solved' ? '#00d4aa' : status === 'attempted' ? '#f5a623' : 'var(--text-muted)';
