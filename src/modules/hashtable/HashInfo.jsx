@@ -30,7 +30,7 @@ export default function HashInfo({ table }) {
           ].map((s) => (
             <div key={s.label} style={{ padding: '0.5rem 0.65rem', borderRadius: '0.45rem', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)' }}>
               <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.15rem', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: '700' }}>{s.label}</p>
-              <p style={{ fontSize: '1.15rem', fontWeight: '900', color: s.color, letterSpacing: '-0.03em' }}>{s.value}</p>
+              <p style={{ fontSize: '1.15rem', fontWeight: '900', color: s.color, letterSpacing: 0 }}>{s.value}</p>
             </div>
           ))}
         </div>

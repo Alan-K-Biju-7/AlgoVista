@@ -58,7 +58,7 @@ export default function HomePage() {
             fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)',
             fontWeight: '900',
             lineHeight: 1.08,
-            letterSpacing: '-0.035em',
+            letterSpacing: 0,
             marginBottom: '1.35rem',
             color: 'var(--text-primary)',
           }}>
@@ -131,7 +131,7 @@ export default function HomePage() {
           <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
             {stats.map((s) => (
               <div key={s.label}>
-                <div style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
+                <div style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: 0, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</div>
               </div>
             ))}
@@ -155,7 +155,7 @@ export default function HomePage() {
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = `${p.color}22`; e.currentTarget.style.boxShadow = 'none'; }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: p.color, letterSpacing: '-0.04em', fontVariantNumeric: 'tabular-nums' }}>{p.num}</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: p.color, letterSpacing: 0, fontVariantNumeric: 'tabular-nums' }}>{p.num}</span>
                 <span style={{ padding: '0.18rem 0.55rem', borderRadius: '999px', background: `${p.color}18`, border: `1px solid ${p.color}33`, fontSize: '0.65rem', fontWeight: '700', color: p.color, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Phase</span>
               </div>
               <p style={{ fontWeight: '700', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>{p.label}</p>
