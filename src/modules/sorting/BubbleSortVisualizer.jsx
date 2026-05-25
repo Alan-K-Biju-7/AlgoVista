@@ -113,6 +113,8 @@ function BubbleSortVisualizer() {
       intervalRef.current = null;
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    // The interval intentionally rebinds on pointer changes so the visualizer advances with current i/j state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, i, j, speed]);
 
   return (
