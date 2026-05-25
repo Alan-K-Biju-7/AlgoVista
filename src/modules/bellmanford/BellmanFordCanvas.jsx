@@ -203,9 +203,6 @@ function drawDirectedEdge(ctx, from, to, weight, options) {
   const endX = to.x - Math.cos(angle) * NODE_RADIUS;
   const endY = to.y - Math.sin(angle) * NODE_RADIUS;
 
-  const strokeStyle =
-    options.muted && options.glow === false ? options.mutedStroke : options.stroke;
-
   ctx.save();
   ctx.strokeStyle = options.muted && !options.glow ? options.mutedStroke : options.stroke;
   ctx.lineWidth = options.width;
@@ -258,7 +255,6 @@ function drawEdgeLabel(ctx, x1, y1, x2, y2, weight, color) {
   const text = String(weight ?? '');
   const metrics = ctx.measureText(text);
   const padX = 8;
-  const padY = 5;
   const w = metrics.width + padX * 2;
   const h = 24;
 
