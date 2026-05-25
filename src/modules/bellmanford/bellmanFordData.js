@@ -18,7 +18,7 @@ export const DEFAULT_EDGES = [
   { id: 'CE', from: 'C', to: 'E', weight: -2 },
   { id: 'DC', from: 'D', to: 'C', weight:  7 },
   { id: 'DE', from: 'D', to: 'E', weight:  2 },
-  { id: 'EA', from: 'E', to: 'A', weight: -3 },
+  { id: 'EA', from: 'E', to: 'A', weight:  3 },
 ];
 
 export const PRESET_GRAPHS = {
@@ -36,9 +36,8 @@ export const PRESET_GRAPHS = {
       { id: 'SA', from: 'S', to: 'A', weight:  1 },
       { id: 'AB', from: 'A', to: 'B', weight:  2 },
       { id: 'BC', from: 'B', to: 'C', weight: -6 },
-      { id: 'CD', from: 'C', to: 'D', weight:  3 },
+      { id: 'CD', from: 'C', to: 'D', weight:  2 },
       { id: 'DA', from: 'D', to: 'A', weight:  1 },
-      { id: 'CE', from: 'C', to: 'D', weight:  1 },
       { id: 'DS', from: 'D', to: 'S', weight:  5 },
     ],
   },
