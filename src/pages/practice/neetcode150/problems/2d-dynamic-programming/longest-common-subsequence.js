@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(m * n)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the length of the longest common subsequence between two strings.',
   examples: [
