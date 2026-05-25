@@ -1,15 +1,5 @@
 import { Link } from 'react-router-dom';
 
-function Badge({ label, color }) {
-  return (
-    <span style={{
-      display: 'inline-block', padding: '0.18rem 0.52rem',
-      borderRadius: '0.3rem', fontSize: '0.68rem', fontWeight: '700',
-      background: `${color}18`, border: `1px solid ${color}40`, color,
-    }}>{label}</span>
-  );
-}
-
 function ConceptCard({ num, icon, title, desc, complexities, to, accent }) {
   return (
     <div style={{
