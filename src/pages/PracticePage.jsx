@@ -149,8 +149,15 @@ export default function PracticePage() {
       })
     : null;
 
+  const selectProblem = (problem) => {
+    setActiveProblem(problem);
+    if (typeof window !== 'undefined') {
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+    }
+  };
+
   return (
-    <div className="practice-shell">
+    <div className={activeProblem ? 'practice-shell practice-shell--detail' : 'practice-shell'}>
       <TopicSidebar
         activeTopic={activeTopic}
         onSelect={(id) => {
@@ -172,7 +179,7 @@ export default function PracticePage() {
             toggleBookmark={toggleBookmark}
             status={getStatus(activeProblem.id)}
             nextProblem={nextProblem}
-            onNextProblem={nextProblem ? () => setActiveProblem(nextProblem) : null}
+            onNextProblem={nextProblem ? () => selectProblem(nextProblem) : null}
           />
         ) : (
           <>
@@ -180,12 +187,12 @@ export default function PracticePage() {
               allProblems={ALL_PROBLEMS}
               topic={topic}
               getStatus={getStatus}
-              onSelectProblem={setActiveProblem}
+              onSelectProblem={selectProblem}
             />
             <ProblemList
               topic={topic}
               problems={topic.problems}
-              onSelect={setActiveProblem}
+              onSelect={selectProblem}
               getStatus={getStatus}
               isBookmarked={isBookmarked}
               toggleBookmark={toggleBookmark}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { buildVisualSteps } from './visualStepBuilder';
 
 function compactSentence(text = '') {
@@ -275,9 +275,29 @@ function VisualCanvas({ visual, color }) {
 export default function ProblemVisualLab({ problem, topicColor }) {
   const steps = useMemo(() => buildVisualSteps(problem), [problem]);
   const [stepIndex, setStepIndex] = useState(0);
+  const [confirmedSteps, setConfirmedSteps] = useState(() => new Set());
   const step = steps[stepIndex];
   const pct = Math.round(((stepIndex + 1) / steps.length) * 100);
+  const masteryPct = Math.round((confirmedSteps.size / steps.length) * 100);
   const example = problem.examples?.[0];
+  const stepConfirmed = confirmedSteps.has(stepIndex);
+
+  useEffect(() => {
+    setStepIndex(0);
+    setConfirmedSteps(new Set());
+  }, [problem.id]);
+
+  const confirmStep = () => {
+    setConfirmedSteps((prev) => {
+      const next = new Set(prev);
+      next.add(stepIndex);
+      return next;
+    });
+  };
+
+  const moveToStep = (nextIndex) => {
+    setStepIndex(Math.max(0, Math.min(steps.length - 1, nextIndex)));
+  };
 
   return (
     <section className="visual-lab">
@@ -307,11 +327,19 @@ export default function ProblemVisualLab({ problem, topicColor }) {
           </div>
           <VisualCanvas visual={step.visual} color={topicColor} />
           <div className="visual-lab__controls">
-            <button type="button" onClick={() => setStepIndex(0)} disabled={stepIndex === 0}>Reset</button>
-            <button type="button" onClick={() => setStepIndex(Math.max(0, stepIndex - 1))} disabled={stepIndex === 0}>Previous</button>
+            <button type="button" onClick={() => moveToStep(0)} disabled={stepIndex === 0}>Reset</button>
+            <button type="button" onClick={() => moveToStep(stepIndex - 1)} disabled={stepIndex === 0}>Previous</button>
             <button
               type="button"
-              onClick={() => setStepIndex(Math.min(steps.length - 1, stepIndex + 1))}
+              onClick={confirmStep}
+              disabled={stepConfirmed}
+              style={stepConfirmed ? { borderColor: `${topicColor}55`, color: topicColor } : null}
+            >
+              {stepConfirmed ? 'Explained' : 'I Can Explain This'}
+            </button>
+            <button
+              type="button"
+              onClick={() => moveToStep(stepIndex + 1)}
               disabled={stepIndex === steps.length - 1}
               style={{ background: topicColor, borderColor: topicColor, color: '#031a14', fontWeight: 900 }}
             >
@@ -327,6 +355,18 @@ export default function ProblemVisualLab({ problem, topicColor }) {
             <i style={{ background: topicColor }} />
             <span>{step.focus}</span>
           </div>
+          <div className="visual-mastery" style={{ borderColor: `${topicColor}35` }}>
+            <div>
+              <p>Mastery check</p>
+              <b style={{ color: topicColor }}>{masteryPct}% locked</b>
+            </div>
+            <span>
+              Explain why this step keeps the {problem.pattern || 'pattern'} state truthful before moving to code.
+            </span>
+            <div>
+              <i style={{ width: `${masteryPct}%`, background: topicColor }} />
+            </div>
+          </div>
           <div className="visual-state">
             <p>Live state</p>
             {stateRows(step.visual.state)}
@@ -337,10 +377,10 @@ export default function ProblemVisualLab({ problem, topicColor }) {
                 key={`${item.title}-${index}`}
                 type="button"
                 className={index === stepIndex ? 'is-active' : ''}
-                onClick={() => setStepIndex(index)}
+                onClick={() => moveToStep(index)}
                 style={index === stepIndex ? { borderColor: topicColor, color: topicColor } : null}
               >
-                <span>{index + 1}</span>
+                <span>{confirmedSteps.has(index) ? '✓' : index + 1}</span>
                 {item.title}
               </button>
             ))}
