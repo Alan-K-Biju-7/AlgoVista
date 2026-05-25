@@ -1,6 +1,11 @@
 import { buildVisualSteps } from './visualStepBuilder';
 import twoSum from './neetcode150/problems/arrays-hashing/two-sum';
 import validAnagram from './neetcode150/problems/arrays-hashing/valid-anagram';
+import groupAnagrams from './neetcode150/problems/arrays-hashing/group-anagrams';
+import productExceptSelf from './neetcode150/problems/arrays-hashing/product-except-self';
+import stockProfit from './neetcode150/problems/sliding-window/best-time-to-buy-and-sell-stock';
+import longestSubstring from './neetcode150/problems/sliding-window/longest-substring-without-repeating-characters';
+import dailyTemperatures from './neetcode150/problems/stack/daily-temperatures';
 import reverseLinkedList from './neetcode150/problems/linked-list/reverse-linked-list';
 import numberOfIslands from './neetcode150/problems/graphs/number-of-islands';
 
@@ -77,6 +82,55 @@ describe('buildVisualSteps', () => {
         kind: 'matrix',
         mode: 'grid',
       })
+    );
+  });
+
+  test('builds concrete visual narratives for major interview patterns', () => {
+    expect(buildVisualSteps(groupAnagrams).map((step) => step.title)).toEqual(
+      expect.arrayContaining(['Create signature buckets', 'Place "eat" under "aet"', 'Return grouped buckets'])
+    );
+
+    expect(buildVisualSteps(productExceptSelf)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: 'Write prefix for index 0' }),
+        expect.objectContaining({ title: 'Fold suffix into index 3' }),
+        expect.objectContaining({ focus: expect.stringContaining('[24,12,8,6]') }),
+      ])
+    );
+
+    expect(buildVisualSteps(stockProfit)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: 'New cheapest buy: 1' }),
+        expect.objectContaining({ focus: expect.stringContaining('Return 5') }),
+      ])
+    );
+
+    expect(buildVisualSteps(longestSubstring)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: 'Duplicate "a" found' }),
+        expect.objectContaining({ focus: expect.stringContaining('Return 3') }),
+      ])
+    );
+
+    expect(buildVisualSteps(dailyTemperatures)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: '74 warms day 0' }),
+        expect.objectContaining({ focus: expect.stringContaining('[1,1,4,2,1,1,0,0]') }),
+      ])
+    );
+
+    expect(buildVisualSteps(reverseLinkedList)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: 'Save next after 1' }),
+        expect.objectContaining({ focus: expect.stringContaining('[5, 4, 3, 2, 1]') }),
+      ])
+    );
+
+    expect(buildVisualSteps(numberOfIslands)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ title: 'Island 1 starts at (0, 0)' }),
+        expect.objectContaining({ focus: expect.stringContaining('Return 1') }),
+      ])
     );
   });
 });

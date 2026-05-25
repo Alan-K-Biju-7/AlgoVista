@@ -52,6 +52,38 @@ function indexedRole(index, activeIndex, doneUntil) {
   return null;
 }
 
+function arrayVisual(values, activeIndex = -1, doneUntil = -1, state = [], extraRoles = {}) {
+  return {
+    kind: 'array',
+    items: values.map((value, index) => ({
+      value,
+      role: extraRoles[index] || indexedRole(index, activeIndex, doneUntil),
+    })),
+    state,
+  };
+}
+
+function matrixVisual(cells, active = null, done = new Set(), state = [], mode = 'grid') {
+  return {
+    kind: 'matrix',
+    mode,
+    cells: cells.map((row, rowIndex) =>
+      row.map((value, colIndex) => {
+        const key = `${rowIndex},${colIndex}`;
+        return {
+          value,
+          role: active?.[0] === rowIndex && active?.[1] === colIndex
+            ? 'active'
+            : done.has(key)
+              ? 'done'
+              : null,
+        };
+      })
+    ),
+    state,
+  };
+}
+
 function genericVisual(problem, activeIndex = 0, doneUntil = -1, state = []) {
   const viz = problem.viz || '';
   const items = listItems(problem, 10);
@@ -248,6 +280,47 @@ function twoSumSteps(problem) {
   return steps;
 }
 
+function groupAnagramsSteps(problem) {
+  const [strs = []] = safeInput(problem);
+  const groups = new Map();
+  const steps = [{
+    title: 'Create signature buckets',
+    narration: 'Every anagram group needs one canonical key.',
+    focus: 'Sort the letters in a word; anagrams collapse to the same key.',
+    visual: arrayVisual(strs, -1, -1, [['groups', '{}']]),
+  }];
+
+  strs.forEach((word, index) => {
+    const key = String(word).split('').sort().join('');
+    const nextGroup = [...(groups.get(key) || []), word];
+    groups.set(key, nextGroup);
+    steps.push({
+      title: `Place "${word}" under "${key}"`,
+      narration: `"${word}" becomes key "${key}", so it joins every earlier word with the same signature.`,
+      focus: `${nextGroup.join(', ')} now share the same sorted-letter fingerprint.`,
+      visual: arrayVisual(
+        strs,
+        index,
+        index - 1,
+        [
+          ['signature', key],
+          ['bucket', `[${nextGroup.join(', ')}]`],
+          ['groups', JSON.stringify(Object.fromEntries(groups))],
+        ]
+      ),
+    });
+  });
+
+  steps.push({
+    title: 'Return grouped buckets',
+    narration: 'The hash map values are the answer groups.',
+    focus: 'Order does not matter; each bucket contains words with one signature.',
+    visual: arrayVisual(strs, -1, strs.length, [['answer', formatValue([...groups.values()])]]),
+  });
+
+  return steps;
+}
+
 function containsDuplicateSteps(problem) {
   const [nums = []] = safeInput(problem);
   const seen = new Set();
@@ -283,6 +356,63 @@ function containsDuplicateSteps(problem) {
     focus: 'Return false.',
     visual: { kind: 'result', items: nums.map((value) => ({ value, role: 'done' })), state: [['answer', false]] },
   });
+  return steps;
+}
+
+function productExceptSelfSteps(problem) {
+  const [nums = []] = safeInput(problem);
+  const out = new Array(nums.length).fill(1);
+  const steps = [{
+    title: 'Initialize output with neutral products',
+    narration: 'Every position starts at 1 so prefix and suffix products can multiply into it.',
+    focus: 'No division is needed; each index receives everything on its left and everything on its right.',
+    visual: matrixVisual([nums, out], null, new Set(), [['left product', 1], ['right product', 1]], 'dp'),
+  }];
+
+  let left = 1;
+  for (let i = 0; i < nums.length; i++) {
+    out[i] = left;
+    steps.push({
+      title: `Write prefix for index ${i}`,
+      narration: `Before reading nums[${i}], the product of everything to its left is ${left}.`,
+      focus: `out[${i}] becomes ${left}; then left multiplies by ${nums[i]}.`,
+      visual: matrixVisual(
+        [nums, [...out]],
+        [1, i],
+        new Set(Array.from({ length: i }, (_, col) => `1,${col}`)),
+        [['left product', left], ['next left', left * nums[i]]],
+        'dp'
+      ),
+    });
+    left *= nums[i];
+  }
+
+  let right = 1;
+  for (let i = nums.length - 1; i >= 0; i--) {
+    const before = out[i];
+    out[i] *= right;
+    steps.push({
+      title: `Fold suffix into index ${i}`,
+      narration: `The product to the right is ${right}; multiply it into the stored prefix ${before}.`,
+      focus: `out[${i}] becomes ${out[i]}. Then right multiplies by ${nums[i]}.`,
+      visual: matrixVisual(
+        [nums, [...out]],
+        [1, i],
+        new Set(Array.from({ length: nums.length - i - 1 }, (_, offset) => `1,${i + 1 + offset}`)),
+        [['right product', right], ['answer so far', formatValue(out)]],
+        'dp'
+      ),
+    });
+    right *= nums[i];
+  }
+
+  steps.push({
+    title: 'All products assembled',
+    narration: 'Each output cell has all values except the number at that same index.',
+    focus: `Return ${formatValue(out)}.`,
+    visual: matrixVisual([nums, out], null, new Set(out.map((_, index) => `1,${index}`)), [['answer', formatValue(out)]], 'dp'),
+  });
+
   return steps;
 }
 
@@ -337,6 +467,191 @@ function validAnagramSteps(problem) {
   return steps;
 }
 
+function validPalindromeSteps(problem) {
+  const [raw = ''] = safeInput(problem);
+  const chars = String(raw).split('');
+  const isAlphaNum = (ch) => /[a-z0-9]/i.test(ch);
+  let left = 0;
+  let right = chars.length - 1;
+  const steps = [{
+    title: 'Place two mirror pointers',
+    narration: 'One pointer starts at the left edge and one at the right edge.',
+    focus: 'Only letters and digits count, and comparisons are lowercase.',
+    visual: arrayVisual(chars, left, -1, [['left', left], ['right', right]]),
+  }];
+
+  while (left < right && steps.length < 18) {
+    while (left < right && !isAlphaNum(chars[left])) {
+      steps.push({
+        title: `Skip left "${chars[left]}"`,
+        narration: `"${chars[left]}" is not alphanumeric, so it cannot affect palindrome symmetry.`,
+        focus: `Move left from ${left} to ${left + 1}.`,
+        visual: arrayVisual(chars, left, left - 1, [['left', left], ['right', right], ['skip', chars[left]]], { [right]: 'match' }),
+      });
+      left++;
+    }
+
+    while (left < right && !isAlphaNum(chars[right])) {
+      steps.push({
+        title: `Skip right "${chars[right]}"`,
+        narration: `"${chars[right]}" is not alphanumeric, so it cannot affect palindrome symmetry.`,
+        focus: `Move right from ${right} to ${right - 1}.`,
+        visual: arrayVisual(chars, right, left - 1, [['left', left], ['right', right], ['skip', chars[right]]], { [left]: 'match' }),
+      });
+      right--;
+    }
+
+    const same = chars[left]?.toLowerCase() === chars[right]?.toLowerCase();
+    steps.push({
+      title: same ? `Compare "${chars[left]}" and "${chars[right]}"` : 'Mirror mismatch',
+      narration: `Compare lowercase versions at indexes ${left} and ${right}.`,
+      focus: same ? 'They match, so shrink inward.' : 'They differ, so return false.',
+      visual: arrayVisual(
+        chars,
+        left,
+        left - 1,
+        [['left char', chars[left]], ['right char', chars[right]], ['same?', same ? 'yes' : 'no']],
+        { [right]: same ? 'match' : 'danger', [left]: same ? 'match' : 'danger' }
+      ),
+    });
+    if (!same) return steps;
+    left++;
+    right--;
+  }
+
+  steps.push({
+    title: 'Pointers crossed cleanly',
+    narration: 'Every mirrored character matched.',
+    focus: 'Return true.',
+    visual: arrayVisual(chars, -1, chars.length, [['answer', true]]),
+  });
+
+  return steps;
+}
+
+function stockProfitSteps(problem) {
+  const [prices = []] = safeInput(problem);
+  let minPrice = Infinity;
+  let minIndex = -1;
+  let best = 0;
+  let bestPair = null;
+  const steps = [{
+    title: 'Start with no buy day',
+    narration: 'Scan prices once while remembering the cheapest price so far.',
+    focus: 'At each day, selling today is only useful after the cheapest earlier buy.',
+    visual: arrayVisual(prices, 0, -1, [['min price', '∞'], ['best profit', 0]]),
+  }];
+
+  prices.forEach((price, index) => {
+    if (price < minPrice) {
+      minPrice = price;
+      minIndex = index;
+      steps.push({
+        title: `New cheapest buy: ${price}`,
+        narration: `Day ${index} is now the best buy candidate.`,
+        focus: 'A lower buy price improves every future sell calculation.',
+        visual: arrayVisual(prices, index, index - 1, [['buy day', index], ['min price', minPrice], ['best profit', best]]),
+      });
+      return;
+    }
+
+    const profit = price - minPrice;
+    if (profit > best) {
+      best = profit;
+      bestPair = [minIndex, index];
+    }
+    steps.push({
+      title: `Try selling at day ${index}`,
+      narration: `Sell price ${price} minus cheapest buy ${minPrice} gives profit ${profit}.`,
+      focus: profit === best ? `Best profit is now ${best}.` : `Best remains ${best}.`,
+      visual: arrayVisual(
+        prices,
+        index,
+        index - 1,
+        [['buy day', minIndex], ['sell day', index], ['profit today', profit], ['best', best]],
+        { [minIndex]: 'match', ...(bestPair ? { [bestPair[0]]: 'match', [bestPair[1]]: 'match' } : {}) }
+      ),
+    });
+  });
+
+  steps.push({
+    title: 'Return maximum profit',
+    narration: 'The best buy-sell pair seen during the scan is final.',
+    focus: `Return ${best}.`,
+    visual: arrayVisual(prices, -1, prices.length, [['best pair', bestPair ? `[${bestPair.join(', ')}]` : 'none'], ['answer', best]]),
+  });
+
+  return steps;
+}
+
+function longestSubstringSteps(problem) {
+  const [s = ''] = safeInput(problem);
+  const chars = String(s).split('');
+  const seen = new Set();
+  let left = 0;
+  let best = 0;
+  const steps = [{
+    title: 'Open an empty unique window',
+    narration: 'The window stores characters with no duplicates.',
+    focus: 'Expand right one character at a time; shrink left only when needed.',
+    visual: arrayVisual(chars, -1, -1, [['window', ''], ['best', 0]]),
+  }];
+
+  for (let right = 0; right < chars.length && steps.length < 18; right++) {
+    while (seen.has(chars[right])) {
+      steps.push({
+        title: `Duplicate "${chars[right]}" found`,
+        narration: `"${chars[right]}" already lives inside the window.`,
+        focus: `Remove "${chars[left]}" at left index ${left}, then move left forward.`,
+        visual: arrayVisual(
+          chars,
+          right,
+          left - 1,
+          [['left', left], ['right', right], ['window', chars.slice(left, right).join('')], ['best', best]],
+          { [left]: 'danger' }
+        ),
+      });
+      seen.delete(chars[left]);
+      left++;
+    }
+
+    seen.add(chars[right]);
+    best = Math.max(best, right - left + 1);
+    const windowStart = left;
+    const windowEnd = right;
+    const windowLength = windowEnd - windowStart + 1;
+    const windowRoles = Object.fromEntries(
+      Array.from({ length: windowLength }, (_, offset) => [windowStart + offset, 'match'])
+    );
+    steps.push({
+      title: `Extend to "${chars[right]}"`,
+      narration: `The window [${windowStart}, ${windowEnd}] has unique characters.`,
+      focus: `Window length is ${windowLength}; best is ${best}.`,
+      visual: arrayVisual(
+        chars,
+        windowEnd,
+        windowStart - 1,
+        [
+          ['left', windowStart],
+          ['right', windowEnd],
+          ['window', chars.slice(windowStart, windowEnd + 1).join('')],
+          ['best', best],
+        ],
+        windowRoles
+      ),
+    });
+  }
+
+  steps.push({
+    title: 'Return the best unique length',
+    narration: 'Every valid window has been considered once.',
+    focus: `Return ${best}.`,
+    visual: arrayVisual(chars, -1, chars.length, [['answer', best]]),
+  });
+
+  return steps;
+}
+
 function binarySearchSteps(problem) {
   const [nums = [], target = 0] = safeInput(problem);
   let left = 0;
@@ -386,6 +701,67 @@ function binarySearchSteps(problem) {
   return steps;
 }
 
+function reverseLinkedListSteps(problem) {
+  const [values = []] = safeInput(problem);
+  let prev = [];
+  let remaining = [...values];
+  const steps = [{
+    title: 'Set prev to null and curr to head',
+    narration: 'Reverse one pointer at a time while preserving the next node.',
+    focus: 'The reversed prefix lives behind prev; the untouched suffix starts at curr.',
+    visual: {
+      kind: 'linked-list',
+      nodes: values.map((value, index) => ({ value, role: index === 0 ? 'active' : null })),
+      state: [['prev', 'null'], ['curr', values[0] ?? 'null']],
+    },
+  }];
+
+  while (remaining.length && steps.length < 12) {
+    const curr = remaining.shift();
+    const next = remaining[0] ?? 'null';
+    steps.push({
+      title: `Save next after ${curr}`,
+      narration: `Before rewiring ${curr}, keep a reference to ${next}.`,
+      focus: 'This prevents losing the rest of the list.',
+      visual: {
+        kind: 'linked-list',
+        nodes: [...prev.slice().reverse(), curr, ...remaining].map((value, index) => ({
+          value,
+          role: value === curr ? 'active' : index < prev.length ? 'done' : null,
+        })),
+        state: [['prev', prev[0] ?? 'null'], ['curr', curr], ['next', next]],
+      },
+    });
+    prev.unshift(curr);
+    steps.push({
+      title: `Point ${curr} backward`,
+      narration: `${curr}.next now points to the reversed prefix.`,
+      focus: `Move prev to ${curr} and curr to ${next}.`,
+      visual: {
+        kind: 'linked-list',
+        nodes: [...prev, ...remaining].map((value, index) => ({
+          value,
+          role: value === curr ? 'match' : index < prev.length ? 'done' : null,
+        })),
+        state: [['reversed prefix', `[${prev.join(', ')}]`], ['next curr', next]],
+      },
+    });
+  }
+
+  steps.push({
+    title: 'prev is the new head',
+    narration: 'Every pointer has been reversed.',
+    focus: `Return [${prev.join(', ')}].`,
+    visual: {
+      kind: 'linked-list',
+      nodes: prev.map((value) => ({ value, role: 'done' })),
+      state: [['answer', `[${prev.join(', ')}]`]],
+    },
+  });
+
+  return steps;
+}
+
 function stackParenthesesSteps(problem) {
   const [input = ''] = safeInput(problem);
   const pairs = { ')': '(', ']': '[', '}': '{' };
@@ -430,11 +806,136 @@ function stackParenthesesSteps(problem) {
   return steps;
 }
 
+function dailyTemperaturesSteps(problem) {
+  const [temperatures = []] = safeInput(problem);
+  const waits = new Array(temperatures.length).fill(0);
+  const stack = [];
+  const steps = [{
+    title: 'Keep unresolved days on a stack',
+    narration: 'The stack stores indexes whose warmer future day has not been found yet.',
+    focus: 'Temperatures on the stack stay decreasing from bottom to top.',
+    visual: { kind: 'stack', items: temperatures.map((value) => ({ value })), stack: [], state: [['answer', formatValue(waits)]] },
+  }];
+
+  for (let i = 0; i < temperatures.length && steps.length < 18; i++) {
+    while (stack.length && temperatures[i] > temperatures[stack[stack.length - 1]]) {
+      const prev = stack.pop();
+      waits[prev] = i - prev;
+      steps.push({
+        title: `${temperatures[i]} warms day ${prev}`,
+        narration: `Current day ${i} is warmer than unresolved day ${prev}.`,
+        focus: `answer[${prev}] = ${i} - ${prev} = ${waits[prev]}.`,
+        visual: {
+          kind: 'stack',
+          items: temperatures.map((value, index) => ({
+            value,
+            role: index === i ? 'active' : index === prev ? 'match' : index < i ? 'done' : null,
+          })),
+          stack: [...stack],
+          state: [['resolved day', prev], ['wait', waits[prev]], ['answer', formatValue(waits)]],
+        },
+      });
+    }
+    stack.push(i);
+    steps.push({
+      title: `Push day ${i}`,
+      narration: `Day ${i} remains unresolved until a warmer temperature appears.`,
+      focus: `Stack now holds indexes [${stack.join(', ')}].`,
+      visual: {
+        kind: 'stack',
+        items: temperatures.map((value, index) => ({
+          value,
+          role: index === i ? 'active' : index < i ? 'done' : null,
+        })),
+        stack: stack.map((index) => `${index}:${temperatures[index]}`),
+        state: [['stack', `[${stack.join(', ')}]`], ['answer', formatValue(waits)]],
+      },
+    });
+  }
+
+  steps.push({
+    title: 'Unresolved days stay zero',
+    narration: 'Any index still on the stack has no warmer future day.',
+    focus: `Return ${formatValue(waits)}.`,
+    visual: { kind: 'stack', items: temperatures.map((value) => ({ value, role: 'done' })), stack: stack.map((index) => `${index}:${temperatures[index]}`), state: [['answer', formatValue(waits)]] },
+  });
+
+  return steps;
+}
+
+function numberOfIslandsSteps(problem) {
+  const [rawGrid = []] = safeInput(problem);
+  const grid = rawGrid.map((row) => row.map(String));
+  const rows = grid.length;
+  const cols = grid[0]?.length || 0;
+  const visited = new Set();
+  let islands = 0;
+  const steps = [{
+    title: 'Scan the grid for unvisited land',
+    narration: 'Every unvisited 1 begins a new connected component.',
+    focus: 'Water and already visited land do not start new islands.',
+    visual: matrixVisual(grid, null, visited, [['islands', islands]]),
+  }];
+
+  const neighbors = (r, c) => [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]]
+    .filter(([nr, nc]) => nr >= 0 && nc >= 0 && nr < rows && nc < cols);
+
+  for (let r = 0; r < rows && steps.length < 18; r++) {
+    for (let c = 0; c < cols && steps.length < 18; c++) {
+      const key = `${r},${c}`;
+      if (grid[r][c] !== '1' || visited.has(key)) continue;
+      islands++;
+      steps.push({
+        title: `Island ${islands} starts at (${r}, ${c})`,
+        narration: 'This land cell was never visited, so it starts a fresh flood fill.',
+        focus: 'Count the island once, then mark every connected land cell.',
+        visual: matrixVisual(grid, [r, c], visited, [['islands', islands], ['start', `(${r}, ${c})`]]),
+      });
+
+      const queue = [[r, c]];
+      visited.add(key);
+      while (queue.length && steps.length < 18) {
+        const [cr, cc] = queue.shift();
+        for (const [nr, nc] of neighbors(cr, cc)) {
+          const nextKey = `${nr},${nc}`;
+          if (grid[nr][nc] === '1' && !visited.has(nextKey)) {
+            visited.add(nextKey);
+            queue.push([nr, nc]);
+          }
+        }
+        steps.push({
+          title: `Flood fill from (${cr}, ${cc})`,
+          narration: 'Mark connected land so it cannot be counted again.',
+          focus: queue.length ? `Next frontier: ${queue.map(([qr, qc]) => `(${qr},${qc})`).join(' ')}` : 'This island is fully marked.',
+          visual: matrixVisual(grid, [cr, cc], visited, [['islands', islands], ['frontier', queue.length || 'empty']]),
+        });
+      }
+    }
+  }
+
+  steps.push({
+    title: 'All components counted',
+    narration: 'The scan has visited every land cell.',
+    focus: `Return ${islands}.`,
+    visual: matrixVisual(grid, null, visited, [['answer', islands]]),
+  });
+
+  return steps;
+}
+
 export function buildVisualSteps(problem) {
   if (problem.id === 'two-sum') return twoSumSteps(problem);
+  if (problem.id === 'group-anagrams') return groupAnagramsSteps(problem);
   if (problem.id === 'contains-duplicate') return containsDuplicateSteps(problem);
+  if (problem.id === 'product-except-self') return productExceptSelfSteps(problem);
   if (problem.id === 'valid-anagram') return validAnagramSteps(problem);
+  if (problem.id === 'valid-palindrome') return validPalindromeSteps(problem);
+  if (problem.id === 'best-time-to-buy-and-sell-stock') return stockProfitSteps(problem);
+  if (problem.id === 'longest-substring-without-repeating-characters') return longestSubstringSteps(problem);
   if (problem.id === 'binary-search') return binarySearchSteps(problem);
+  if (problem.id === 'reverse-linked-list') return reverseLinkedListSteps(problem);
   if (problem.id === 'valid-parentheses') return stackParenthesesSteps(problem);
+  if (problem.id === 'daily-temperatures') return dailyTemperaturesSteps(problem);
+  if (problem.id === 'number-of-islands') return numberOfIslandsSteps(problem);
   return genericSteps(problem);
 }
