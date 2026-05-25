@@ -43,8 +43,6 @@ export default function DijkstraVisualizer() {
     ? reconstructPath(prev, startNode, endNode)
     : [];
 
-  const adjList = buildWeightedAdj(nodes, edges);
-
   const generateSteps = () => {
     const adj = buildWeightedAdj(nodes, edges);
     return generateDijkstraSteps(adj, nodes, startNode);
@@ -98,10 +96,17 @@ export default function DijkstraVisualizer() {
     if (isDone && endNode) {
       const path = reconstructPath(prev, startNode, endNode);
       if (path.length > 1) {
-        pushHistory('path', `Shortest ${startNode}→${endNode}: [${path.join('→')}] cost=${dist[endNode]}`);
+        setHistory((history) => [
+          {
+            id: Date.now() + Math.random(),
+            type: 'path',
+            text: `Shortest ${startNode}→${endNode}: [${path.join('→')}] cost=${dist[endNode]}`,
+          },
+          ...history.slice(0, 19),
+        ]);
       }
     }
-  }, [isDone, endNode]);
+  }, [dist, endNode, isDone, prev, startNode]);
 
   const handleReset = () => {
     clearTimeout(timerRef.current);

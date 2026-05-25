@@ -6,7 +6,7 @@ export default {
   timeO: 'O(amount * coins.length)',
   spaceO: 'O(amount)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the number of distinct combinations that make up the target amount.',
   examples: [

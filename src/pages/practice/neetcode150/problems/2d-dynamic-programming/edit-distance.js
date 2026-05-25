@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(m * n)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the minimum number of operations required to convert word1 into word2.',
   examples: [

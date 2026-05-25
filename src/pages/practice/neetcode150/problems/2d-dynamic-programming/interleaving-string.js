@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(m * n)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return true if s3 is formed by interleaving s1 and s2 while preserving the order of characters in each string.',
   examples: [

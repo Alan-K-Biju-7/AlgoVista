@@ -6,7 +6,7 @@ export default {
   timeO: 'O(n * sum(nums))',
   spaceO: 'O(n * sum(nums))',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the number of different expressions that evaluate to the target by placing + or - before each number.',
   examples: [

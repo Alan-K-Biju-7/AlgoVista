@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(n)',
   viz: 'grid-dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the number of unique paths from the top-left to the bottom-right of the grid.',
   examples: [

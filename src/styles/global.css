@@ -177,3 +177,64 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
 .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; }
+
+.auth-panel {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: rgba(17, 24, 39, 0.82);
+}
+
+.auth-panel--compact {
+  align-items: center;
+}
+
+.auth-panel__header,
+.auth-panel--compact {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.auth-panel__label {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.auth-panel__name {
+  color: var(--text-primary);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.auth-panel__email,
+.auth-panel__message {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.auth-panel__toggle {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+
+.auth-panel__toggle button {
+  border: 0;
+  padding: 0.32rem 0.62rem;
+  background: transparent;
+}
+
+.auth-panel__toggle button.is-active {
+  color: #031a14;
+  background: var(--accent);
+}

@@ -15,14 +15,14 @@ export default {
   ],
   testCases: [
     {
-      input: [
+      input: [[
         ['set', 'foo', 'bar', 1],
         ['get', 'foo', 1],
         ['get', 'foo', 3],
         ['set', 'foo', 'bar2', 4],
         ['get', 'foo', 4],
         ['get', 'foo', 5]
-      ],
+      ]],
       expected: ['bar', 'bar', 'bar2', 'bar2']
     }
   ],

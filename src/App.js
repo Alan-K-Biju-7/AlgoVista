@@ -1,24 +1,33 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layout/MainLayout';
+import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import ConceptsPage from './pages/ConceptsPage';
 import SimulatorPage from './pages/SimulatorPage';
 import AboutPage from './pages/AboutPage';
 import PracticePage from './pages/PracticePage';
+import DSABeginnersPage from './pages/DSABeginnersPage';
+import ConceptLessonPage from './pages/ConceptLessonPage';
+import CoachPage from './pages/CoachPage';
 import './styles/global.css';
 
 function App() {
   return (
     <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/"          element={<HomePage />} />
-          <Route path="/concepts"  element={<ConceptsPage />} />
-          <Route path="/simulator" element={<SimulatorPage />} />
-          <Route path="/about"     element={<AboutPage />} />
+      <AuthProvider>
+        <MainLayout>
+          <Routes>
+            <Route path="/"              element={<HomePage />} />
+            <Route path="/dsa-beginners" element={<DSABeginnersPage />} />
+            <Route path="/dsa-beginners/:conceptId" element={<ConceptLessonPage />} />
+            <Route path="/coach"         element={<CoachPage />} />
+            <Route path="/concepts"      element={<ConceptsPage />} />
+            <Route path="/simulator"     element={<SimulatorPage />} />
+            <Route path="/about"         element={<AboutPage />} />
             <Route path="/practice" element={<PracticePage />} />
-        </Routes>
-      </MainLayout>
+          </Routes>
+        </MainLayout>
+      </AuthProvider>
     </Router>
   );
 }

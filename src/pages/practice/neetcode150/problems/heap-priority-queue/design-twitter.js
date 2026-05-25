@@ -15,7 +15,7 @@ export default {
   ],
   testCases: [
     {
-      input: [
+      input: [[
         ['postTweet',1,10],
         ['postTweet',2,20],
         ['getNewsFeed',1],
@@ -25,7 +25,7 @@ export default {
         ['getNewsFeed',2],
         ['unfollow',1,2],
         ['getNewsFeed',1]
-      ],
+      ]],
       expected: [[10],[20],[20,10],[20],[10]]
     }
   ],

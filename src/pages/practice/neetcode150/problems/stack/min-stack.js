@@ -15,7 +15,7 @@ export default {
   ],
   testCases: [
     {
-      input: [['push', -2], ['push', 0], ['push', -3], ['getMin'], ['pop'], ['top'], ['getMin']],
+      input: [[['push', -2], ['push', 0], ['push', -3], ['getMin'], ['pop'], ['top'], ['getMin']]],
       expected: [-3, 0, -2]
     }
   ],

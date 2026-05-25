@@ -15,7 +15,7 @@ export default {
   ],
   testCases: [
     {
-      input: [['addWord','bad'],['addWord','dad'],['addWord','mad'],['search','pad'],['search','bad'],['search','.ad'],['search','b..']],
+      input: [[['addWord','bad'],['addWord','dad'],['addWord','mad'],['search','pad'],['search','bad'],['search','.ad'],['search','b..']]],
       expected: [false,true,true,true]
     }
   ],

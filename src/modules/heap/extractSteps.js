@@ -11,6 +11,14 @@ export function generateExtractSteps(heap) {
     message: `Extract minimum: ${minVal} at index 0 (root). This is always the smallest element in a min-heap.`,
   });
 
+  if (h.length === 1) {
+    steps.push({
+      heap: [], highlightIdx: [], swapPair: null, phase: 'done', extractedVal: minVal,
+      message: `Extract-min complete ✓  Removed: ${minVal}. New minimum: heap is empty.`,
+    });
+    return steps;
+  }
+
   // Move last element to root
   h[0] = h[h.length - 1];
   h = h.slice(0, h.length - 1);

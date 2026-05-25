@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const MONACO_VS = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs';
 
@@ -18,10 +18,12 @@ function setupMonacoWorkerProxy() {
 
 let monacoLoaded = false;
 let monacoLoading = false;
+let monacoFailed = false;
 const monacoCallbacks = [];
 
 function loadMonaco(cb) {
-  if (monacoLoaded) { cb(); return; }
+  if (monacoLoaded) { cb(true); return; }
+  if (monacoFailed) { cb(false); return; }
   monacoCallbacks.push(cb);
   if (monacoLoading) return;
   monacoLoading = true;
@@ -34,22 +36,38 @@ function loadMonaco(cb) {
     window.require.config({ paths: { vs: MONACO_VS } });
     window.require(['vs/editor/editor.main'], () => {
       monacoLoaded = true;
-      monacoCallbacks.forEach(fn => fn());
+      monacoCallbacks.forEach(fn => fn(true));
       monacoCallbacks.length = 0;
     });
   };
-  script.onerror = (e) => console.error('Monaco failed to load', e);
+  script.onerror = (e) => {
+    console.error('Monaco failed to load', e);
+    monacoFailed = true;
+    monacoLoading = false;
+    monacoCallbacks.forEach(fn => fn(false));
+    monacoCallbacks.length = 0;
+  };
   document.head.appendChild(script);
 }
 
 export default function CodeEditor({ value, onChange, language = 'javascript', height = '280px' }) {
   const containerRef = useRef(null);
   const editorRef    = useRef(null);
+  const [useFallback, setUseFallback] = useState(monacoFailed);
 
   useEffect(() => {
     if (!containerRef.current) return;
-    loadMonaco(() => {
-      if (!containerRef.current || editorRef.current) return;
+    const fallbackTimer = setTimeout(() => {
+      if (!editorRef.current && !monacoLoaded) setUseFallback(true);
+    }, 3000);
+
+    loadMonaco((ok) => {
+      clearTimeout(fallbackTimer);
+      if (!ok) {
+        setUseFallback(true);
+        return;
+      }
+      if (!containerRef.current || editorRef.current || useFallback) return;
       editorRef.current = window.monaco.editor.create(containerRef.current, {
         value,
         language,
@@ -66,15 +84,44 @@ export default function CodeEditor({ value, onChange, language = 'javascript', h
         onChange && onChange(editorRef.current.getValue());
       });
     });
-    return () => { editorRef.current?.dispose(); editorRef.current = null; };
+    return () => {
+      clearTimeout(fallbackTimer);
+      editorRef.current?.dispose();
+      editorRef.current = null;
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [useFallback]);
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.getValue() !== value) {
       editorRef.current.setValue(value);
     }
   }, [value]);
+
+  if (useFallback) {
+    return (
+      <textarea
+        value={value}
+        onChange={(event) => onChange?.(event.target.value)}
+        spellCheck={false}
+        aria-label={`${language} code editor`}
+        style={{
+          height,
+          width: '100%',
+          resize: 'vertical',
+          borderRadius: '0.5rem',
+          border: '1px solid var(--border-default)',
+          background: '#0b1020',
+          color: 'var(--text-primary)',
+          fontFamily: 'SF Mono, Fira Code, monospace',
+          fontSize: '0.82rem',
+          lineHeight: 1.6,
+          padding: '0.9rem',
+          tabSize: 2,
+        }}
+      />
+    );
+  }
 
   return (
     <div ref={containerRef} style={{

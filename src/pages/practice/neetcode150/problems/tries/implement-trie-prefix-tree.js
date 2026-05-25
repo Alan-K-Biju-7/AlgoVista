@@ -15,7 +15,7 @@ export default {
   ],
   testCases: [
     {
-      input: [['insert','apple'],['search','apple'],['search','app'],['startsWith','app'],['insert','app'],['search','app']],
+      input: [[['insert','apple'],['search','apple'],['search','app'],['startsWith','app'],['insert','app'],['search','app']]],
       expected: [true,false,true,true]
     }
   ],

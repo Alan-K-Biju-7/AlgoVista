@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(m * n)',
   viz: 'grid-dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the length of the longest strictly increasing path in the matrix.',
   examples: [

@@ -4,11 +4,22 @@ export function generateMergeSortSteps(initialArr) {
 
   steps.push({
     arr: [...arr], phase: 'init',
-    activeRange: [0, arr.length - 1], mergeRange: null,
+    activeRange: arr.length ? [0, arr.length - 1] : null, mergeRange: null,
     leftPart: null, rightPart: null, merged: null,
     comparing: null, depth: 0,
     message: `Start merge sort on [${arr.join(', ')}]. Divide array in half recursively until single elements, then merge back in sorted order.`,
   });
+
+  if (arr.length === 0) {
+    steps.push({
+      arr: [], phase: 'done',
+      activeRange: null, mergeRange: null,
+      leftPart: null, rightPart: null, merged: null,
+      comparing: null, depth: 0,
+      message: 'Merge sort complete ✓  Sorted array: []. Total steps: 2.',
+    });
+    return steps;
+  }
 
   function recordSplit(a, lo, hi, depth) {
     if (lo >= hi) {
@@ -103,7 +114,7 @@ export function generateMergeSortSteps(initialArr) {
 
   steps.push({
     arr: [...arr], phase: 'done',
-    activeRange: [0, arr.length - 1], mergeRange: null,
+    activeRange: arr.length ? [0, arr.length - 1] : null, mergeRange: null,
     leftPart: null, rightPart: null, merged: null,
     comparing: null, depth: 0,
     message: `Merge sort complete ✓  Sorted array: [${arr.join(', ')}]. Total steps: ${steps.length + 1}.`,
