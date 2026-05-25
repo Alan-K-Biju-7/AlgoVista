@@ -6,7 +6,7 @@ export default {
   timeO: 'O(m * n)',
   spaceO: 'O(m * n)',
   viz: 'dp',
-  concept: 'dynamic-programming',
+  concept: '2d-dynamic-programming',
   description:
     'Return the number of distinct subsequences of s that equal t.',
   examples: [
