@@ -28,17 +28,14 @@ export default {
   const res = [];
   const subset = [];
 
-  function dfs(i) {
-    if (i === nums.length) {
-      res.push(subset.slice());
-      return;
+  function dfs(start) {
+    res.push(subset.slice());
+
+    for (let i = start; i < nums.length; i++) {
+      subset.push(nums[i]);
+      dfs(i + 1);
+      subset.pop();
     }
-
-    subset.push(nums[i]);
-    dfs(i + 1);
-    subset.pop();
-
-    dfs(i + 1);
   }
 
   dfs(0);
