@@ -53,6 +53,83 @@ function SectionLabel({ children }) {
   );
 }
 
+function LearningRail({ tab, topicColor, hasTracer, solved }) {
+  const steps = hasTracer
+    ? [
+        ['story', 'Story'],
+        ['visual', 'Visual'],
+        ['editor', 'Code'],
+        ['trace', 'Trace'],
+        ['solution', 'Review'],
+      ]
+    : [
+        ['story', 'Story'],
+        ['visual', 'Visual'],
+        ['editor', 'Code'],
+        ['solution', 'Review'],
+      ];
+
+  return (
+    <div className="learning-rail" style={{ borderColor: `${topicColor}34`, '--rail-steps': steps.length }}>
+      {steps.map(([id, label], index) => {
+        const active = tab === id;
+        const complete = solved || steps.findIndex(([stepId]) => stepId === tab) > index;
+        return (
+          <div
+            key={`${id}-${label}`}
+            className={active ? 'is-active' : complete ? 'is-complete' : ''}
+            style={active || complete ? { borderColor: `${topicColor}65`, color: topicColor } : null}
+          >
+            <span>{index + 1}</span>
+            <b>{label}</b>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CompletionPanel({ allPass, topicColor, nextProblem, onNextProblem, onReviewVisual }) {
+  if (!allPass) return null;
+
+  return (
+    <div className="completion-panel" style={{ borderColor: `${topicColor}45` }}>
+      <div>
+        <p style={{ color: topicColor }}>Mission cleared</p>
+        <h3>Tests are green. Lock the mental model before moving on.</h3>
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={onReviewVisual}
+          style={{
+            background: `${topicColor}16`,
+            borderColor: `${topicColor}55`,
+            color: topicColor,
+            fontWeight: 850,
+          }}
+        >
+          Review Visual
+        </button>
+        {nextProblem && (
+          <button
+            type="button"
+            onClick={onNextProblem}
+            style={{
+              background: topicColor,
+              borderColor: topicColor,
+              color: '#031a14',
+              fontWeight: 900,
+            }}
+          >
+            Next: {nextProblem.title}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MiniVisual({ type, color }) {
   const accent = color || '#00d4aa';
   const cellStyle = {
@@ -304,6 +381,9 @@ function EditorWorkspace({
   results,
   topicColor,
   tracerConfig,
+  allPass,
+  nextProblem,
+  onNextProblem,
 }) {
   return (
     <div>
@@ -349,7 +429,7 @@ function EditorWorkspace({
             fontWeight: 800,
           }}
         >
-          {tracerConfig ? 'Trace Execution' : 'Open Visual Model'}
+          {tracerConfig ? 'Trace Execution' : 'Open In-page Visual'}
         </button>
         <button
           type="button"
@@ -370,6 +450,13 @@ function EditorWorkspace({
         </button>
       </div>
       <TestResults results={results} />
+      <CompletionPanel
+        allPass={allPass}
+        topicColor={topicColor}
+        nextProblem={nextProblem}
+        onNextProblem={onNextProblem}
+        onReviewVisual={() => setTab('visual')}
+      />
     </div>
   );
 }
@@ -382,6 +469,9 @@ export default function ProblemDetail({
   onAttempted,
   isBookmarked,
   toggleBookmark,
+  status = 'unsolved',
+  nextProblem,
+  onNextProblem,
 }) {
   const [code, setCode] = useState(problem.solution || starterCode);
   const [results, setResults] = useState(null);
@@ -390,6 +480,7 @@ export default function ProblemDetail({
   const tracer = useTracerSteps();
   const tracerConfig = TRACER_CONFIGS[problem.id] || null;
   const bookmarked = isBookmarked ? isBookmarked(problem.id) : false;
+  const allPass = Boolean(results?.length && results.every((result) => result.passed));
 
   useEffect(() => {
     setCode(problem.solution || starterCode);
@@ -483,6 +574,13 @@ export default function ProblemDetail({
         </button>
       </div>
 
+      <LearningRail
+        tab={tab}
+        topicColor={topicColor}
+        hasTracer={Boolean(tracerConfig)}
+        solved={status === 'solved' || allPass}
+      />
+
       <div
         style={{
           display: 'flex',
@@ -545,6 +643,9 @@ export default function ProblemDetail({
             results={results}
             topicColor={topicColor}
             tracerConfig={tracerConfig}
+            allPass={allPass}
+            nextProblem={nextProblem}
+            onNextProblem={onNextProblem}
           />
         </div>
       )}
