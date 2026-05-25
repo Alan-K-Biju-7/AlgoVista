@@ -27,7 +27,32 @@ export default {
   solution: `function solve(values) {
   if (!values.length || values[0] == null) return 'N';
 
-  const serialized = values.map((v) => (v == null ? 'N' : String(v))).join(',');
-  return serialized;
+  const nodes = values.map((val) =>
+    val == null ? null : { val, left: null, right: null }
+  );
+
+  let childIndex = 1;
+  for (const node of nodes) {
+    if (!node) continue;
+    if (childIndex < nodes.length) node.left = nodes[childIndex++];
+    if (childIndex < nodes.length) node.right = nodes[childIndex++];
+  }
+
+  const out = [];
+  const queue = [nodes[0]];
+
+  while (queue.length) {
+    const node = queue.shift();
+    if (!node) {
+      out.push('N');
+      continue;
+    }
+
+    out.push(String(node.val));
+    queue.push(node.left);
+    queue.push(node.right);
+  }
+
+  return out.join(',');
 }`,
 };
