@@ -3,6 +3,7 @@
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?logo=javascript&logoColor=111)
 ![Tests](https://img.shields.io/badge/tests-53%20passing-00D4AA)
+![Live](https://img.shields.io/badge/live-GitHub%20Pages-2EA44F?logo=github)
 ![Deploy](https://img.shields.io/badge/deploy-GitHub%20Pages%20%7C%20Netlify%20%7C%20Vercel-4A9EFF)
 
 **AlgoVista is a visual Data Structures and Algorithms learning platform built to help learners move from intuition to implementation.**
