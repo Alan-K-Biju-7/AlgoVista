@@ -38,10 +38,6 @@ Most DSA projects are either static notes, a basic algorithm animation, or a sim
 
 ![Simulator workspace](docs/assets/simulator-workspace.svg)
 
-## Development Activity
-
-[![Alan K Biju GitHub activity graph](https://github-readme-activity-graph.vercel.app/graph?username=Alan-K-Biju-7&theme=github-compact&hide_border=true&area=true&custom_title=Alan%20K%20Biju%20GitHub%20Activity)](https://github.com/Alan-K-Biju-7)
-
 ## Core Features
 
 | Area | What It Does |
