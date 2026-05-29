@@ -1,219 +1,276 @@
 # AlgoVista
 
-AlgoVista is an interactive platform for learning Data Structures and Algorithms through visual simulation, concept-driven exploration, and guided coding practice.
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?logo=javascript&logoColor=111)
+![Tests](https://img.shields.io/badge/tests-53%20passing-00D4AA)
+![Deploy](https://img.shields.io/badge/deploy-GitHub%20Pages%20%7C%20Netlify%20%7C%20Vercel-4A9EFF)
 
-It helps learners understand how algorithms work internally — not just memorize solutions.
+**AlgoVista is a visual Data Structures and Algorithms learning platform built to help learners move from intuition to implementation.**
 
----
+It combines concept lessons, algorithm visualizers, a NeetCode 150 practice deck, guided story mode, code tracing, test execution, mastery analytics, and an optional AI coach backend.
 
-## What it does
+> Live demo: `https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/`  
+> Replace this after deployment with your GitHub Pages, Netlify, or Vercel URL.
 
-AlgoVista combines four core parts of the DSA learning workflow into one unified platform:
+![AlgoVista dashboard](docs/assets/algovista-dashboard.svg)
 
-- **Home** – Entry point for onboarding and navigation  
-- **Concepts** – Learn topics before implementation  
-- **Simulator** – Visualize algorithms step-by-step (AVL, Dijkstra, BST, Graphs, Sorting, etc.)  
-- **DSA for Beginners** – A complete foundations-to-advanced roadmap for structured learning  
-- **AI Coach** – Backend-powered coaching endpoint with the provider key kept out of the frontend  
-- **Practice** – Solve curated problems with hints, tracing, and progress tracking  
+## Why This Project Stands Out
 
-Designed to turn abstract algorithms into intuitive learning experiences.
+Most DSA projects are either static notes, a basic algorithm animation, or a simple problem list. AlgoVista is built as a complete learning product:
 
----
+- 18 interactive visual labs for arrays, stacks, queues, linked lists, trees, graphs, heaps, hashing, tries, sorting, and shortest paths.
+- 150 curated coding missions with examples, hints, solutions, and executable test cases.
+- Story Mode that explains the mental model before code.
+- Trace Mode for supported problems, with visual state snapshots.
+- Practice Command Center with mastery score, difficulty coverage, review queue, and a daily training plan.
+- Progress export/import/reset for portable local learning state.
+- DSA for Beginners roadmap with 100+ concepts.
+- Optional Node backend for auth, synced progress, and live AI provider support.
+- Static demo fallback so the deployed frontend still works in guest mode without backend setup.
 
-## Key Features
+## Screenshots
 
-- Interactive visualizers for core DSA concepts  
-- Clean separation of Concepts, Simulator, and Practice flows  
-- Topic-based problem organization (Arrays, Graphs, Trees, etc.)  
-- Detailed problem views with examples, hints, and solutions  
-- Built-in tools: Code Editor, Test Runner, Tracer, Progress Tracking  
-- Login/register flow with hashed passwords and bearer-token sessions  
-- File-backed backend storage for learner progress during local development  
-- OpenAI-compatible AI coach endpoint with local fallback when no API key is configured  
+### Practice Command Center
 
----
+![Practice command center](docs/assets/practice-command-center.svg)
+
+### Simulator Workspace
+
+![Simulator workspace](docs/assets/simulator-workspace.svg)
+
+## Core Features
+
+| Area | What It Does |
+| --- | --- |
+| DSA Path | Beginner-to-advanced concept roadmap with progress states |
+| Concepts | Fast topic reference with complexity and simulator links |
+| Simulator | Visual labs for data structures and algorithms |
+| Practice | NeetCode 150-style mission deck with filters, bookmarks, tests, traces, and story mode |
+| Command Center | Mastery analytics, review queue, training plan, and progress portability |
+| AI Coach | Backend-powered coach with a static offline tutor fallback |
+| Backend | Local Node API for auth, progress sync, and OpenAI-compatible coach providers |
 
 ## Tech Stack
 
-- React  
-- JavaScript  
-- CSS  
-- React Router  
-- Node.js backend using built-in HTTP, crypto, and filesystem modules  
+- React 19
+- React Router
+- JavaScript
+- CSS modules by feature area
+- Create React App build pipeline
+- Node.js backend using built-in `http`, `crypto`, and `fs`
+- Local storage for guest practice progress
+- File-backed backend storage for local authenticated progress
 
-Built with a modular, feature-based architecture for scalability.
+## Architecture
 
----
-
-## Project Structure
-
+```text
 src/
-├── modules/
-│   ├── avl/
-│   ├── bellmanford/
-│   ├── bst/
-│   ├── dijkstra/
-│   ├── graph/
-│   ├── hashtable/
-│   ├── heap/
-│   ├── linkedlist/
-│   ├── mergesort/
-│   ├── queue/
-│   ├── quicksort/
-│   ├── searching/
-│   ├── sorting/
-│   ├── stack/
-│   └── trie/
-├── pages/
-│   ├── HomePage.jsx
-│   ├── ConceptsPage.jsx
-│   ├── SimulatorPage.jsx
-│   ├── PracticePage.jsx
-│   ├── AboutPage.jsx
-│   └── practice/
-│       ├── allProblems.js
-│       ├── TopicSidebar.jsx
-│       ├── ProblemList.jsx
-│       ├── ProblemDetail.jsx
-│       ├── CodeEditor.jsx
-│       ├── HintSystem.jsx
-│       ├── EmptyState.jsx
-│       ├── TestResults.jsx
-│       ├── testRunner.js
-│       ├── usePracticeProgress.js
-│       ├── problems_array.js
-│       ├── problems_bsearch.js
-│       ├── problems_linkedlist.js
-│       ├── problems_stack.js
-│       ├── problems_trees.js
-│       └── tracer/
-
+  components/
+  context/
+  data/
+  layout/
+  modules/
+    array/
+    avl/
+    bellmanford/
+    bst/
+    dijkstra/
+    graph/
+    hashtable/
+    heap/
+    linkedlist/
+    mergesort/
+    quicksort/
+    sorting/
+    trie/
+  pages/
+    practice/
+      neetcode150/
+      tracer/
 server/
-└── index.js
-
----
-
-## Why AlgoVista
-
-Most DSA platforms focus either on theory or problem-solving.
-
-AlgoVista bridges the gap by combining:
-- Conceptual understanding  
-- Visual learning  
-- Hands-on practice  
-
-All in one system.
-
----
-
-## Current Focus
-
-- Expanding algorithm visualizers across modules  
-- Enhancing practice experience with better problem organization and tracking  
-
----
-
-## Vision
-
-To make DSA learning more visual, structured, and intuitive for students, interview candidates, and self-learners.
-
----
-
-## Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm run backend`
-
-Runs the dedicated backend on [http://localhost:8787](http://localhost:8787).
-
-Create a backend environment file from `server/.env.example` and set:
-
+  index.js
+docs/
+  assets/
 ```
+
+## Local Setup
+
+```bash
+npm install
+npm start
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+Optional backend:
+
+```bash
+npm run backend
+```
+
+Backend URL:
+
+```text
+http://127.0.0.1:8787
+```
+
+Optional AI provider:
+
+```bash
+cp server/.env.example server/.env
+```
+
+Then set:
+
+```env
 GROQ_API_KEY=your_key_here
 AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
 AI_PROVIDER_MODEL=llama-3.1-8b-instant
 ```
 
-Without an AI provider key, the AI coach returns a local fallback response so the app still works.
+Without provider keys, the backend returns a local fallback response. Without the backend, the deployed frontend still shows a static tutor fallback.
 
-### `npm start`
+## Testing
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm run test:ci
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Current verification:
 
-### `npm test`
+```text
+12 test suites passed
+53 tests passed
+Production build compiled successfully
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The test suite covers:
 
-### `npm run build`
+- Problem bank integrity
+- Reference solution execution
+- Practice filtering and sorting
+- Story mode generation
+- Visual step generation
+- Trace engine behavior
+- Practice progress persistence and import/export
+- Route-level app flows
+- API client error handling
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Production Build
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm run build:spa
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This creates:
 
-### `npm run eject`
+```text
+build/
+  index.html
+  404.html
+  static/
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The `404.html` copy supports direct visits to client-side routes on static hosts.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Free Deployment Options
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Option 1: GitHub Pages
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This repo includes `.github/workflows/deploy.yml`.
 
-## Learn More
+Steps:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Push the project to GitHub.
+2. Go to repository `Settings -> Pages`.
+3. Set source to `GitHub Actions`.
+4. Push to `main`.
+5. Your site will be available at:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```text
+https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/
+```
 
-### Code Splitting
+For this project, if the repository is named `AlgoVista`, the URL will be:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```text
+https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/
+```
 
-### Analyzing the Bundle Size
+### Option 2: Netlify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This repo includes `netlify.toml`.
 
-### Making a Progressive Web App
+Recommended settings:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```text
+Build command: npm run build:spa
+Publish directory: build
+```
 
-### Advanced Configuration
+Netlify gives a free subdomain like:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```text
+https://your-site-name.netlify.app
+```
 
-### Deployment
+### Option 3: Vercel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+This repo includes `vercel.json`.
 
-### `npm run build` fails to minify
+Recommended settings:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```text
+Build command: npm run build:spa
+Output directory: build
+```
 
+Vercel gives a free subdomain like:
 
----
+```text
+https://your-project.vercel.app
+```
 
-## Status
+## Resume Bullets
 
- Demo coming soon  
+You can use these directly:
+
+- Built **AlgoVista**, a full-stack visual DSA learning platform with 18 interactive algorithm visualizers, a 150-problem practice deck, code tracing, test execution, and mastery analytics.
+- Implemented a React-based learning workflow with Story Mode, visual state labs, practice filters, bookmarks, review queues, daily training plans, and local progress portability.
+- Designed a Node.js backend with hashed-password auth, bearer-token sessions, file-backed progress sync, and an OpenAI-compatible AI coach endpoint with offline fallback.
+- Added CI-ready tests covering problem-bank integrity, reference solution execution, tracer behavior, planner logic, route-level UI flows, API error handling, and local persistence.
+- Prepared production deployment for GitHub Pages, Netlify, and Vercel with SPA route fallback and static-demo resilience.
+
+## Repository Highlights
+
+- `src/pages/PracticePage.jsx` - practice command center and mission workflow
+- `src/pages/practice/practicePlanner.js` - recommendation, review queue, and training plan logic
+- `src/pages/practice/testRunner.js` - in-browser JavaScript test runner for problem solutions
+- `src/pages/practice/tracer/` - execution tracing and visualization utilities
+- `src/modules/` - interactive DSA visualizers
+- `server/index.js` - local backend for auth, progress, static hosting, and AI coaching
+- `.github/workflows/deploy.yml` - GitHub Pages CI/CD
+- `netlify.toml` and `vercel.json` - free static deployment config
+
+## Project Status
+
+AlgoVista is portfolio-ready as a static deployed demo and local full-stack app.
+
+Remaining production upgrades for a commercial-grade version:
+
+- Hosted persistent database
+- Hosted backend service
+- Sandboxed multi-language execution
+- Real user analytics
+- Playwright screenshot regression
+- Accessibility audit automation
 
 ---
 
 <p align="center">
-  <b>AlgoVista — Master DSA by watching it happen</b>
+  <b>AlgoVista - Master DSA by watching it happen.</b>
 </p>

@@ -476,6 +476,7 @@ export default function ProblemDetail({
   const [code, setCode] = useState(problem.solution || starterCode);
   const [results, setResults] = useState(null);
   const [tab, setTab] = useState('story');
+  const [traceErrors, setTraceErrors] = useState([]);
   const [traceWarnings, setTraceWarnings] = useState([]);
   const tracer = useTracerSteps();
   const tracerConfig = TRACER_CONFIGS[problem.id] || null;
@@ -485,6 +486,7 @@ export default function ProblemDetail({
   useEffect(() => {
     setCode(problem.solution || starterCode);
     setResults(null);
+    setTraceErrors([]);
     setTraceWarnings([]);
     setTab('story');
   }, [problem.id, problem.solution]);
@@ -497,9 +499,11 @@ export default function ProblemDetail({
     }
 
     const { valid, errors, warnings } = validateCodeForTracer(code, tracerConfig);
+    setTraceErrors([]);
     setTraceWarnings(warnings);
     if (!valid) {
-      alert(errors.join('\n'));
+      setTraceErrors(errors);
+      setTab('trace');
       return;
     }
 
@@ -686,6 +690,22 @@ export default function ProblemDetail({
             </div>
           </div>
           <div>
+            {traceErrors.length > 0 && (
+              <div
+                style={{
+                  marginBottom: '0.75rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '0.45rem',
+                  background: '#ff6b6b12',
+                  border: '1px solid #ff6b6b45',
+                  fontSize: '0.78rem',
+                  color: '#ff9f9f',
+                  lineHeight: 1.6,
+                }}
+              >
+                {traceErrors.join(' / ')}
+              </div>
+            )}
             {traceWarnings.length > 0 && (
               <div
                 style={{

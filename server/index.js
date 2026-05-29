@@ -12,6 +12,7 @@ loadEnv(path.join(ROOT_DIR, '.env'));
 loadEnv(path.join(__dirname, '.env'));
 
 const PORT = Number(process.env.PORT || 8787);
+const HOST = process.env.HOST || '127.0.0.1';
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 24 * 30;
 const PASSWORD_ITERATIONS = 120000;
 const PASSWORD_KEY_LENGTH = 64;
@@ -475,6 +476,6 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`AlgoVista backend running on http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`AlgoVista backend running on http://${HOST}:${PORT}`);
 });

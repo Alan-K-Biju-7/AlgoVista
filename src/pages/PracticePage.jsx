@@ -6,11 +6,142 @@ import ProblemDetail from './practice/ProblemDetail';
 import { usePracticeProgress } from './practice/usePracticeProgress';
 import {
   getFocusQueue,
+  getDailyTrainingPlan,
+  getDifficultySummaries,
+  getMasterySignal,
   getPhaseSummaries,
   getProgressSummary,
   getRecommendedProblem,
+  getReviewQueue,
 } from './practice/practicePlanner';
 import './practice/PracticeExperience.css';
+
+function PracticeCommandCenter({
+  allProblems,
+  getStatus,
+  isBookmarked,
+  onSelectProblem,
+  exportSnapshot,
+  importSnapshot,
+  resetPracticeData,
+}) {
+  const [snapshotText, setSnapshotText] = useState('');
+  const [transferMessage, setTransferMessage] = useState('');
+  const mastery = getMasterySignal(allProblems, getStatus);
+  const difficultySummaries = getDifficultySummaries(allProblems, getStatus);
+  const reviewQueue = getReviewQueue(allProblems, getStatus, isBookmarked, 5);
+  const dailyPlan = getDailyTrainingPlan(allProblems, getStatus, isBookmarked);
+
+  const handleExport = () => {
+    setSnapshotText(JSON.stringify(exportSnapshot(), null, 2));
+    setTransferMessage('Snapshot ready.');
+  };
+
+  const handleImport = () => {
+    try {
+      importSnapshot(snapshotText);
+      setTransferMessage('Snapshot imported.');
+    } catch (error) {
+      setTransferMessage(`Import failed: ${error.message}`);
+    }
+  };
+
+  const handleReset = () => {
+    resetPracticeData();
+    setSnapshotText('');
+    setTransferMessage('Local practice progress reset.');
+  };
+
+  return (
+    <section className="practice-command-center" aria-label="Practice command center">
+      <div className="practice-command-center__summary">
+        <div>
+          <p className="mission-kicker" style={{ color: '#00d4aa' }}>Mastery Signal</p>
+          <h2>{mastery.score}% - {mastery.label}</h2>
+          <span>{mastery.nextMilestone}</span>
+        </div>
+        <div className="practice-command-center__dial" aria-label={`${mastery.score}% mastery`}>
+          <b>{mastery.score}</b>
+          <span>/100</span>
+        </div>
+      </div>
+
+      <div className="practice-command-center__grid">
+        <article className="practice-command-card">
+          <p className="mission-kicker">Difficulty Coverage</p>
+          <div className="practice-difficulty-stack">
+            {difficultySummaries.map((item) => (
+              <div key={item.difficulty} className="practice-difficulty-row">
+                <div>
+                  <b>{item.difficulty}</b>
+                  <span>{item.solved}/{item.total} solved - {item.attempted} active</span>
+                </div>
+                <div className="practice-sidebar-progress" aria-hidden="true">
+                  <span style={{ width: `${item.pct}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="practice-command-card">
+          <p className="mission-kicker">Review Queue</p>
+          <div className="practice-review-list">
+            {reviewQueue.map((problem) => (
+              <button key={problem.id} type="button" onClick={() => onSelectProblem(problem)}>
+                <span>{getStatus(problem.id) === 'attempted' ? 'Resume' : isBookmarked(problem.id) ? 'Bookmark' : 'Review'}</span>
+                <b>{problem.title}</b>
+                <i>{problem.difficulty}</i>
+              </button>
+            ))}
+          </div>
+        </article>
+
+        <article className="practice-command-card practice-command-card--wide">
+          <div className="practice-card-head">
+            <div>
+              <p className="mission-kicker">Today's Training Plan</p>
+              <h3>One focused session, no decision fatigue.</h3>
+            </div>
+          </div>
+          <div className="practice-plan-grid">
+            {dailyPlan.map((item) => (
+              <button key={item.id} type="button" onClick={() => onSelectProblem(item.problem)}>
+                <span>{item.duration}</span>
+                <b>{item.label}</b>
+                <strong>{item.problem.title}</strong>
+                <i>{item.reason}</i>
+              </button>
+            ))}
+          </div>
+        </article>
+
+        <article className="practice-command-card practice-command-card--wide">
+          <div className="practice-card-head">
+            <div>
+              <p className="mission-kicker">Progress Portability</p>
+              <h3>Back up or move your local practice state.</h3>
+            </div>
+            <div className="practice-transfer-actions">
+              <button type="button" onClick={handleExport}>Export</button>
+              <button type="button" onClick={handleImport} disabled={!snapshotText.trim()}>Import</button>
+              <button type="button" onClick={handleReset}>Reset</button>
+            </div>
+          </div>
+          <textarea
+            className="practice-snapshot-box"
+            value={snapshotText}
+            onChange={(event) => setSnapshotText(event.target.value)}
+            rows="5"
+            aria-label="Practice progress snapshot"
+            placeholder="Export creates a JSON snapshot here. Paste one here to import."
+          />
+          {transferMessage && <p className="practice-transfer-message">{transferMessage}</p>}
+        </article>
+      </div>
+    </section>
+  );
+}
 
 function MissionControl({ allProblems, topic, getStatus, onSelectProblem }) {
   const { all, solved, attempted, fresh, pct } = getProgressSummary(allProblems, getStatus);
@@ -137,6 +268,9 @@ export default function PracticePage() {
     getStatus,
     toggleBookmark,
     isBookmarked,
+    exportSnapshot,
+    importSnapshot,
+    resetPracticeData,
   } = usePracticeProgress();
 
   const topic = ALL_PROBLEMS[activeTopic] || ALL_PROBLEMS['arrays-hashing'];
@@ -188,6 +322,15 @@ export default function PracticePage() {
               topic={topic}
               getStatus={getStatus}
               onSelectProblem={selectProblem}
+            />
+            <PracticeCommandCenter
+              allProblems={ALL_PROBLEMS}
+              getStatus={getStatus}
+              isBookmarked={isBookmarked}
+              onSelectProblem={selectProblem}
+              exportSnapshot={exportSnapshot}
+              importSnapshot={importSnapshot}
+              resetPracticeData={resetPracticeData}
             />
             <ProblemList
               topic={topic}

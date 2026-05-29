@@ -15,6 +15,24 @@ const starterPrompts = [
   'Show time and space complexity.',
 ];
 
+function localCoachReply(message, concept) {
+  return [
+    `Let's reason about ${concept.title}.`,
+    '',
+    `Question: ${message}`,
+    '',
+    `Mental model: ${concept.focus}`,
+    '',
+    'Study loop:',
+    '1. State the invariant in one sentence.',
+    '2. Dry run the smallest useful input.',
+    '3. Name every pointer, index, or state value.',
+    '4. Finish with time and space complexity.',
+    '',
+    'This static-demo tutor is active because the backend is not connected. The full backend can add live AI, login, and synced progress.',
+  ].join('\n');
+}
+
 function ChatBubble({ message }) {
   return (
     <div className={`coach-bubble coach-bubble--${message.role}`}>
@@ -69,8 +87,8 @@ export default function CoachPage() {
         ...prev,
         {
           role: 'assistant',
-          content: `The backend is not reachable yet. Start it with npm run backend, then ask again.\n\n${error.message}`,
-          provider: 'Offline',
+          content: localCoachReply(cleanMessage, concept),
+          provider: 'Static tutor',
         },
       ]);
     } finally {

@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './SimulatorPage.css';
 
 import ArrayVisualizer from '../modules/array/ArrayVisualizer';
@@ -1342,10 +1343,12 @@ const workspaceTabs = ['overview', 'problem', 'editor', 'visualize'];
 const languages = ['javascript', 'python', 'cpp'];
 
 export default function SimulatorPage() {
+  const { hash } = useLocation();
   const [activeId, setActiveId] = useState('array');
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editorLanguage, setEditorLanguage] = useState('javascript');
+  const [editorNotice, setEditorNotice] = useState(null);
   const [splitRatio, setSplitRatio] = useState(34);
   const [isDraggingSplit, setIsDraggingSplit] = useState(false);
   const [sessionState, setSessionState] = useState({
@@ -1368,6 +1371,24 @@ export default function SimulatorPage() {
     '// Code template unavailable for this topic yet.';
 
   const clampSplit = (value) => Math.max(24, Math.min(52, value));
+
+  useEffect(() => {
+    const hashId = decodeURIComponent((hash || '').replace(/^#/, ''));
+    if (!hashId || hashId === activeId) return;
+    if (!sections.some((section) => section.id === hashId)) return;
+
+    setActiveId(hashId);
+    setActiveTab('overview');
+    setSidebarOpen(false);
+    setSplitRatio(34);
+    setEditorNotice(null);
+    setSessionState({
+      visitedProblem: false,
+      openedEditor: false,
+      viewedVisualizer: false,
+      sourceAction: 'Opened from deep link',
+    });
+  }, [activeId, hash]);
 
   const updateSplitFromClientX = (clientX) => {
     const el = splitContainerRef.current;
@@ -1406,6 +1427,7 @@ export default function SimulatorPage() {
 
   const openTab = (tab, reason) => {
     setActiveTab(tab);
+    if (tab !== 'editor') setEditorNotice(null);
     setSessionState((prev) => ({
       ...prev,
       visitedProblem: prev.visitedProblem || tab === 'problem',
@@ -1419,6 +1441,7 @@ export default function SimulatorPage() {
     setActiveId(id);
     setActiveTab('overview');
     setSidebarOpen(false);
+    setEditorNotice(null);
     setSplitRatio(34);
     setSessionState({
       visitedProblem: false,
@@ -1594,10 +1617,29 @@ export default function SimulatorPage() {
               </div>
 
               <div className="simulator-editor-actions">
-                <button type="button" className="simulator-action-btn simulator-action-btn--ghost">
+                <button
+                  type="button"
+                  className="simulator-action-btn simulator-action-btn--ghost"
+                  onClick={() => {
+                    setEditorLanguage('javascript');
+                    setEditorNotice({
+                      title: 'Template reset',
+                      body: `Restored the JavaScript starter for ${activeSection.label}.`,
+                    });
+                  }}
+                >
                   Reset
                 </button>
-                <button type="button" className="simulator-action-btn simulator-action-btn--ghost">
+                <button
+                  type="button"
+                  className="simulator-action-btn simulator-action-btn--ghost"
+                  onClick={() => {
+                    setEditorNotice({
+                      title: 'Why this works',
+                      body: `${activeSection.coachTip} Start with: ${activeSection.starterPlan.join(' -> ')}.`,
+                    });
+                  }}
+                >
                   Explain
                 </button>
                 <button
@@ -1613,6 +1655,17 @@ export default function SimulatorPage() {
                 </button>
               </div>
             </div>
+
+            {editorNotice && (
+              <div
+                className="simulator-editor-notice"
+                aria-live="polite"
+                style={{ borderColor: `${activeSection.color}35` }}
+              >
+                <b style={{ color: activeSection.color }}>{editorNotice.title}</b>
+                <span>{editorNotice.body}</span>
+              </div>
+            )}
 
             <div className="simulator-editor-window">
               <div className="simulator-editor-window__gutter">

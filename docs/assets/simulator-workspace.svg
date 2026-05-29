@@ -1,0 +1,57 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" rx="28" fill="#0A0E1A"/>
+  <rect x="42" y="40" width="1196" height="640" rx="22" fill="#0D1220" stroke="#1E293B"/>
+  <rect x="70" y="72" width="230" height="576" rx="16" fill="#111827" stroke="#1E293B"/>
+  <text x="94" y="114" fill="#F0F6FF" font-family="Inter, Arial" font-size="22" font-weight="900">Simulator</text>
+  <g font-family="Inter, Arial" font-size="15" font-weight="800">
+    <rect x="94" y="154" width="182" height="38" rx="9" fill="#121A2A" stroke="#1E293B"/>
+    <text x="114" y="179" fill="#8B9CC8">Array</text>
+    <rect x="94" y="204" width="182" height="38" rx="9" fill="#121A2A" stroke="#1E293B"/>
+    <text x="114" y="229" fill="#8B9CC8">Stack</text>
+    <rect x="94" y="254" width="182" height="38" rx="9" fill="#121A2A" stroke="#1E293B"/>
+    <text x="114" y="279" fill="#8B9CC8">Graph</text>
+    <rect x="94" y="304" width="182" height="38" rx="9" fill="#F5A623" fill-opacity="0.12" stroke="#F5A623" stroke-opacity="0.45"/>
+    <text x="114" y="329" fill="#F5A623">Dijkstra</text>
+    <rect x="94" y="354" width="182" height="38" rx="9" fill="#121A2A" stroke="#1E293B"/>
+    <text x="114" y="379" fill="#8B9CC8">Bellman-Ford</text>
+  </g>
+  <rect x="330" y="72" width="858" height="126" rx="16" fill="#111827" stroke="#1E293B"/>
+  <text x="362" y="118" fill="#F5A623" font-family="Inter, Arial" font-size="15" font-weight="900">P4 ADVANCED ALGORITHMS</text>
+  <text x="362" y="164" fill="#F0F6FF" font-family="Inter, Arial" font-size="42" font-weight="900">Dijkstra's Shortest Path</text>
+  <rect x="330" y="224" width="858" height="60" rx="14" fill="#111827" stroke="#1E293B"/>
+  <g font-family="Inter, Arial" font-size="15" font-weight="900">
+    <rect x="362" y="238" width="112" height="32" rx="8" fill="#121A2A" stroke="#1E293B"/>
+    <text x="390" y="259" fill="#8B9CC8">Problem</text>
+    <rect x="492" y="238" width="112" height="32" rx="8" fill="#121A2A" stroke="#1E293B"/>
+    <text x="525" y="259" fill="#8B9CC8">Editor</text>
+    <rect x="622" y="238" width="132" height="32" rx="8" fill="#F5A623" fill-opacity="0.12" stroke="#F5A623" stroke-opacity="0.45"/>
+    <text x="654" y="259" fill="#F5A623">Visualize</text>
+  </g>
+  <rect x="330" y="310" width="280" height="306" rx="16" fill="#111827" stroke="#1E293B"/>
+  <text x="362" y="350" fill="#F0F6FF" font-family="Inter, Arial" font-size="22" font-weight="900">Practice Focus</text>
+  <text x="362" y="386" fill="#8B9CC8" font-family="Inter, Arial" font-size="16">Find the shortest path from source to all nodes.</text>
+  <rect x="362" y="428" width="206" height="38" rx="9" fill="#0D1220" stroke="#1E293B"/>
+  <text x="384" y="453" fill="#F5A623" font-family="Inter, Arial" font-size="15" font-weight="900">Initialize distances</text>
+  <rect x="362" y="480" width="206" height="38" rx="9" fill="#0D1220" stroke="#1E293B"/>
+  <text x="384" y="505" fill="#F5A623" font-family="Inter, Arial" font-size="15" font-weight="900">Pop smallest node</text>
+  <rect x="362" y="532" width="206" height="38" rx="9" fill="#0D1220" stroke="#1E293B"/>
+  <text x="384" y="557" fill="#F5A623" font-family="Inter, Arial" font-size="15" font-weight="900">Relax edges</text>
+  <rect x="636" y="310" width="552" height="306" rx="16" fill="#111827" stroke="#1E293B"/>
+  <text x="668" y="350" fill="#F0F6FF" font-family="Inter, Arial" font-size="22" font-weight="900">Live Graph State</text>
+  <g stroke="#2D3F5C" stroke-width="4">
+    <line x1="770" y1="432" x2="900" y2="388"/>
+    <line x1="900" y1="388" x2="1028" y2="446"/>
+    <line x1="770" y1="432" x2="876" y2="524"/>
+    <line x1="876" y1="524" x2="1028" y2="446"/>
+  </g>
+  <g font-family="Inter, Arial" font-size="20" font-weight="900">
+    <circle cx="770" cy="432" r="34" fill="#00D4AA" fill-opacity="0.16" stroke="#00D4AA" stroke-width="3"/>
+    <text x="762" y="439" fill="#00D4AA">A</text>
+    <circle cx="900" cy="388" r="34" fill="#F5A623" fill-opacity="0.16" stroke="#F5A623" stroke-width="3"/>
+    <text x="892" y="395" fill="#F5A623">B</text>
+    <circle cx="1028" cy="446" r="34" fill="#4A9EFF" fill-opacity="0.16" stroke="#4A9EFF" stroke-width="3"/>
+    <text x="1020" y="453" fill="#4A9EFF">C</text>
+    <circle cx="876" cy="524" r="34" fill="#8B7CF8" fill-opacity="0.16" stroke="#8B7CF8" stroke-width="3"/>
+    <text x="868" y="531" fill="#8B7CF8">D</text>
+  </g>
+</svg>

@@ -41,6 +41,13 @@ export function AuthProvider({ children }) {
         setAuthError('');
       } catch (error) {
         if (!active) return;
+        if (error.status === 401) {
+          setToken('');
+          setUser(null);
+          setProgress({});
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+        }
         setAuthError(error.message);
       } finally {
         if (active) setLoading(false);

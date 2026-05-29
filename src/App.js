@@ -9,11 +9,14 @@ import PracticePage from './pages/PracticePage';
 import DSABeginnersPage from './pages/DSABeginnersPage';
 import ConceptLessonPage from './pages/ConceptLessonPage';
 import CoachPage from './pages/CoachPage';
+import NotFoundPage from './pages/NotFoundPage';
 import './styles/global.css';
+
+const routerBasename = process.env.REACT_APP_ROUTER_BASENAME || '';
 
 function App() {
   return (
-    <Router>
+    <Router basename={routerBasename}>
       <AuthProvider>
         <MainLayout>
           <Routes>
@@ -25,6 +28,7 @@ function App() {
             <Route path="/simulator"     element={<SimulatorPage />} />
             <Route path="/about"         element={<AboutPage />} />
             <Route path="/practice" element={<PracticePage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </MainLayout>
       </AuthProvider>

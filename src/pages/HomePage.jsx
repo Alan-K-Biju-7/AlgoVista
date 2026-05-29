@@ -1,18 +1,19 @@
 import { Link } from 'react-router-dom';
 import { DSA_BEGINNER_TOTAL } from '../data/dsaBeginnersCurriculum';
+import { NEETCODE150 } from './practice/neetcode150';
 
 const stats = [
   { value: String(DSA_BEGINNER_TOTAL), label: 'Beginner Concepts' },
-  { value: '19',  label: 'Modules' },
-  { value: '4',   label: 'Data Structures' },
-  { value: '1',   label: 'AI Coach' },
+  { value: '18', label: 'Visual Labs' },
+  { value: String(NEETCODE150.length), label: 'Practice Missions' },
+  { value: '1', label: 'AI Coach' },
 ];
 
 const phases = [
   { num: '01', label: 'Linear DS',    desc: 'Arrays, Linked Lists, Stacks & Queues',  color: '#00d4aa' },
   { num: '02', label: 'Trees, Graphs & ADT',  desc: 'BST, AVL, Graph, Heap, Hash, Trie', color: '#4a9eff' },
   { num: '03', label: 'Algorithms',   desc: 'Binary Search, Bubble, Insertion, Selection Sort', color: '#8b7cf8' },
-  { num: '04', label: 'Coming soon',  desc: 'Graphs, Heaps, Hash Tables, Merge Sort', color: '#4a5a7a' },
+  { num: '04', label: 'Advanced Algorithms', desc: 'Merge Sort, Quick Sort, Dijkstra, Bellman-Ford', color: '#f5a623' },
 ];
 
 const topics = [
@@ -31,9 +32,12 @@ const topics = [
   { icon: '↕', label: 'Bubble Sort',    phase: 'P3', desc: 'Adjacent swaps, pass counter.' },
   { icon: '⤓', label: 'Insertion Sort', phase: 'P3', desc: 'Key element, shift counter.' },
   { icon: '↓', label: 'Selection Sort', phase: 'P3', desc: 'Min tracker, n−1 swaps.' },
+  { icon: '⇄', label: 'Merge Sort',     phase: 'P4', desc: 'Recursive split tree, stable merge, guaranteed n log n.' },
+  { icon: '⚡', label: 'Quick Sort',     phase: 'P4', desc: 'Pivot partitioning, in-place recursion, boundary tracking.' },
+  { icon: '⇌', label: 'Bellman-Ford',   phase: 'P4', desc: 'Negative-edge shortest paths with relaxation rounds.' },
 ];
 
-const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#4a5a7a' };
+const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#f5a623' };
 
 export default function HomePage() {
   return (

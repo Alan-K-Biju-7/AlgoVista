@@ -216,6 +216,211 @@
   line-height: 1.25;
 }
 
+.practice-command-center {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.practice-command-center__summary,
+.practice-command-card {
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.78);
+}
+
+.practice-command-center__summary {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.practice-command-center__summary h2 {
+  margin-top: 0.22rem;
+  font-size: 1.25rem;
+  letter-spacing: 0;
+}
+
+.practice-command-center__summary span {
+  display: block;
+  margin-top: 0.24rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.practice-command-center__dial {
+  width: 5.2rem;
+  height: 5.2rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  border: 1px solid rgba(0, 212, 170, 0.35);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(0, 212, 170, 0.16), transparent 68%),
+    rgba(10, 14, 26, 0.72);
+}
+
+.practice-command-center__dial b {
+  color: var(--accent);
+  font-size: 1.45rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.practice-command-center__dial span {
+  margin: 0.14rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.practice-command-center__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.practice-command-card {
+  min-width: 0;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.practice-command-card--wide {
+  grid-column: 1 / -1;
+}
+
+.practice-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.practice-card-head h3 {
+  margin-top: 0.18rem;
+  font-size: 0.96rem;
+  letter-spacing: 0;
+}
+
+.practice-difficulty-stack,
+.practice-review-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.practice-difficulty-row {
+  padding: 0.62rem;
+  display: grid;
+  gap: 0.48rem;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(10, 14, 26, 0.58);
+}
+
+.practice-difficulty-row > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.practice-difficulty-row b {
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.practice-difficulty-row span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.practice-review-list button,
+.practice-plan-grid button {
+  width: 100%;
+  min-width: 0;
+  border-radius: 8px;
+  text-align: left;
+  white-space: normal;
+  background: rgba(10, 14, 26, 0.58);
+}
+
+.practice-review-list button {
+  padding: 0.62rem;
+  display: grid;
+  grid-template-columns: 4.8rem minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.practice-review-list span,
+.practice-review-list i,
+.practice-plan-grid span,
+.practice-plan-grid i {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.practice-review-list b,
+.practice-plan-grid strong {
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.practice-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.practice-plan-grid button {
+  min-height: 8.8rem;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+}
+
+.practice-plan-grid b {
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.practice-plan-grid i {
+  line-height: 1.45;
+}
+
+.practice-transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+}
+
+.practice-snapshot-box {
+  min-height: 7rem;
+  resize: vertical;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.76rem;
+}
+
+.practice-transfer-message {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
 .mission-toolbar {
   margin-bottom: 0.85rem;
   padding: 0.7rem;
@@ -1345,7 +1550,9 @@
   .mission-stat-grid,
   .mission-phase-map,
   .story-scenes,
-  .mission-queue {
+  .mission-queue,
+  .practice-command-center__grid,
+  .practice-plan-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1365,10 +1572,28 @@
   .mission-stat-grid,
   .mission-phase-map,
   .story-scenes,
-  .problem-grid,
-  .mission-toolbar,
-  .mission-queue,
-  .learning-rail {
+    .problem-grid,
+    .mission-toolbar,
+    .mission-queue,
+    .learning-rail,
+    .practice-command-center__grid,
+    .practice-plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .practice-command-center__summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .practice-command-center__dial {
+    width: 100%;
+    height: auto;
+    min-height: 4.5rem;
+    border-radius: 8px;
+  }
+
+  .practice-review-list button {
     grid-template-columns: 1fr;
   }
 

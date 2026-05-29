@@ -118,8 +118,9 @@ const concepts = [
 
 const groups = [
   { phase: 'P1', label: 'Phase 01 — Linear Data Structures', color: G, ids: ['01','02','03','04'] },
-  { phase: 'P2', label: 'Phase 02 — Trees, Graphs & Advanced DS', color: B, ids: ['05','06','11','12','13','14','15'] },
+  { phase: 'P2', label: 'Phase 02 — Trees, Graphs & Advanced DS', color: B, ids: ['05','06','11','12','13','14'] },
   { phase: 'P3', label: 'Phase 03 — Algorithms',             color: P, ids: ['07','08','09','10'] },
+  { phase: 'P4', label: 'Phase 04 — Advanced Algorithms',     color: Y, ids: ['15','16','17','18'] },
 ];
 
 export default function ConceptsPage() {

@@ -1,0 +1,41 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" rx="28" fill="#0A0E1A"/>
+  <rect x="32" y="32" width="1216" height="656" rx="22" fill="#0D1220" stroke="#1E293B"/>
+  <rect x="64" y="64" width="1152" height="72" rx="14" fill="#111827" stroke="#1E293B"/>
+  <rect x="88" y="84" width="36" height="36" rx="9" fill="#00D4AA"/>
+  <text x="139" y="108" fill="#F0F6FF" font-family="Inter, Arial" font-size="24" font-weight="800">AlgoVista</text>
+  <text x="1020" y="108" fill="#8B9CC8" font-family="Inter, Arial" font-size="16" font-weight="700">DSA Path  Practice  Simulator</text>
+  <text x="82" y="204" fill="#00D4AA" font-family="Inter, Arial" font-size="15" font-weight="900">VISUAL DSA LAB</text>
+  <text x="82" y="264" fill="#F0F6FF" font-family="Inter, Arial" font-size="56" font-weight="900">Master DSA by</text>
+  <text x="82" y="326" fill="#00D4AA" font-family="Inter, Arial" font-size="56" font-weight="900">watching it happen</text>
+  <text x="82" y="374" fill="#8B9CC8" font-family="Inter, Arial" font-size="20">Visual simulation, guided practice, code tracing, and progress analytics in one platform.</text>
+  <rect x="82" y="430" width="158" height="48" rx="10" fill="#00D4AA"/>
+  <text x="112" y="461" fill="#031A14" font-family="Inter, Arial" font-size="16" font-weight="900">Start DSA Path</text>
+  <rect x="256" y="430" width="140" height="48" rx="10" fill="#121A2A" stroke="#2D3F5C"/>
+  <text x="293" y="461" fill="#F0F6FF" font-family="Inter, Arial" font-size="16" font-weight="800">Practice</text>
+  <rect x="86" y="540" width="150" height="86" rx="12" fill="#111827" stroke="#1E293B"/>
+  <text x="111" y="579" fill="#00D4AA" font-family="Inter, Arial" font-size="30" font-weight="900">112+</text>
+  <text x="111" y="606" fill="#8B9CC8" font-family="Inter, Arial" font-size="14" font-weight="800">Concepts</text>
+  <rect x="256" y="540" width="150" height="86" rx="12" fill="#111827" stroke="#1E293B"/>
+  <text x="282" y="579" fill="#4A9EFF" font-family="Inter, Arial" font-size="30" font-weight="900">150</text>
+  <text x="282" y="606" fill="#8B9CC8" font-family="Inter, Arial" font-size="14" font-weight="800">Missions</text>
+  <rect x="426" y="540" width="150" height="86" rx="12" fill="#111827" stroke="#1E293B"/>
+  <text x="452" y="579" fill="#F5A623" font-family="Inter, Arial" font-size="30" font-weight="900">18</text>
+  <text x="452" y="606" fill="#8B9CC8" font-family="Inter, Arial" font-size="14" font-weight="800">Visual Labs</text>
+  <rect x="735" y="180" width="408" height="392" rx="18" fill="#111827" stroke="#1E293B"/>
+  <text x="765" y="224" fill="#F0F6FF" font-family="Inter, Arial" font-size="22" font-weight="900">Learning Command Center</text>
+  <rect x="765" y="250" width="348" height="10" rx="5" fill="#1A2235"/>
+  <rect x="765" y="250" width="224" height="10" rx="5" fill="#00D4AA"/>
+  <rect x="765" y="300" width="148" height="96" rx="12" fill="#0D1220" stroke="#1E293B"/>
+  <text x="790" y="338" fill="#00D4AA" font-family="Inter, Arial" font-size="28" font-weight="900">92</text>
+  <text x="790" y="366" fill="#8B9CC8" font-family="Inter, Arial" font-size="14">Mastery score</text>
+  <rect x="933" y="300" width="180" height="96" rx="12" fill="#0D1220" stroke="#1E293B"/>
+  <text x="958" y="338" fill="#4A9EFF" font-family="Inter, Arial" font-size="28" font-weight="900">Trace</text>
+  <text x="958" y="366" fill="#8B9CC8" font-family="Inter, Arial" font-size="14">Visual debugging</text>
+  <rect x="765" y="420" width="348" height="42" rx="10" fill="#0D1220" stroke="#1E293B"/>
+  <circle cx="792" cy="441" r="7" fill="#00D4AA"/>
+  <text x="812" y="447" fill="#F0F6FF" font-family="Inter, Arial" font-size="15" font-weight="800">Arrays and Hashing</text>
+  <rect x="765" y="478" width="348" height="42" rx="10" fill="#0D1220" stroke="#1E293B"/>
+  <circle cx="792" cy="499" r="7" fill="#8B7CF8"/>
+  <text x="812" y="505" fill="#F0F6FF" font-family="Inter, Arial" font-size="15" font-weight="800">Binary Search</text>
+</svg>

@@ -12,10 +12,20 @@ export async function apiRequest(path, options = {}) {
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
+  let data = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { error: text };
+    }
+  }
 
   if (!response.ok) {
-    throw new Error(data.error || 'Request failed.');
+    const error = new Error(data.error || `Request failed with status ${response.status}.`);
+    error.status = response.status;
+    error.payload = data;
+    throw error;
   }
 
   return data;

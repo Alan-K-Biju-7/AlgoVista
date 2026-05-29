@@ -24,6 +24,24 @@ function persistObject(key, value) {
   }
 }
 
+function sanitizeStatusMap(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return Object.entries(value).reduce((acc, [problemId, status]) => {
+    if (['unsolved', 'attempted', 'solved'].includes(status)) {
+      acc[problemId] = status;
+    }
+    return acc;
+  }, {});
+}
+
+function sanitizeBooleanMap(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return Object.entries(value).reduce((acc, [problemId, flag]) => {
+    if (flag) acc[problemId] = true;
+    return acc;
+  }, {});
+}
+
 export function usePracticeProgress() {
   const [progress, setProgress] = useState(() => readStoredObject(PROGRESS_STORAGE_KEY));
   const [bookmarks, setBookmarks] = useState(() => readStoredObject(BOOKMARKS_STORAGE_KEY));
@@ -64,6 +82,27 @@ export function usePracticeProgress() {
 
   const isBookmarked = (problemId) => Boolean(bookmarks[problemId]);
 
+  const exportSnapshot = () => ({
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    progress,
+    bookmarks,
+  });
+
+  const importSnapshot = (snapshot) => {
+    const parsed = typeof snapshot === 'string' ? JSON.parse(snapshot) : snapshot;
+    const nextProgress = sanitizeStatusMap(parsed?.progress);
+    const nextBookmarks = sanitizeBooleanMap(parsed?.bookmarks);
+    setProgress(nextProgress);
+    setBookmarks(nextBookmarks);
+    return { progress: nextProgress, bookmarks: nextBookmarks };
+  };
+
+  const resetPracticeData = () => {
+    setProgress({});
+    setBookmarks({});
+  };
+
   return {
     markSolved,
     markAttempted,
@@ -71,5 +110,8 @@ export function usePracticeProgress() {
     getStats,
     toggleBookmark,
     isBookmarked,
+    exportSnapshot,
+    importSnapshot,
+    resetPracticeData,
   };
 }
