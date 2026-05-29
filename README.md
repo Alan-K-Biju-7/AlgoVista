@@ -9,8 +9,7 @@
 
 It combines concept lessons, algorithm visualizers, a NeetCode 150 practice deck, guided story mode, code tracing, test execution, mastery analytics, and an optional AI coach backend.
 
-> Live demo: `https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/`  
-> Replace this after deployment with your GitHub Pages, Netlify, or Vercel URL.
+> Live demo: `https://Alan-K-Biju-7.github.io/AlgoVista/`
 
 ![AlgoVista dashboard](docs/assets/algovista-dashboard.svg)
 
@@ -188,17 +187,17 @@ Steps:
 1. Push the project to GitHub.
 2. Go to repository `Settings -> Pages`.
 3. Set source to `GitHub Actions`.
-4. Push to `main`.
+4. Push to `main` or `collabearte`.
 5. Your site will be available at:
 
 ```text
-https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/
+https://Alan-K-Biju-7.github.io/AlgoVista/
 ```
 
 For this project, if the repository is named `AlgoVista`, the URL will be:
 
 ```text
-https://YOUR_GITHUB_USERNAME.github.io/AlgoVista/
+https://Alan-K-Biju-7.github.io/AlgoVista/
 ```
 
 ### Option 2: Netlify
