@@ -5,6 +5,7 @@ import {
   BOOKMARKS_STORAGE_KEY,
   PROGRESS_STORAGE_KEY,
 } from './practice/usePracticeProgress';
+import twoSum from './practice/neetcode150/problems/arrays-hashing/two-sum';
 
 jest.mock('./practice/CodeEditor', () => function MockCodeEditor({ value, onChange, language = 'javascript' }) {
   return (
@@ -50,6 +51,11 @@ describe('PracticePage learning workflow', () => {
     expect(screen.getByText('Story Mode')).toBeInTheDocument();
 
     userEvent.click(screen.getByRole('button', { name: 'Editor' }));
+    const editor = screen.getByLabelText(/javascript code editor/i);
+    expect(editor.value).toContain('function solve(nums, target)');
+    expect(editor.value).not.toContain('new Map');
+
+    fireEvent.change(editor, { target: { value: twoSum.solution } });
     userEvent.click(screen.getByRole('button', { name: 'Run Tests' }));
 
     expect(await screen.findByText('3/3 passed')).toBeInTheDocument();

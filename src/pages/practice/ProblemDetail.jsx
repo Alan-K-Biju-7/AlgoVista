@@ -13,9 +13,18 @@ import ProblemVisualLab from './ProblemVisualLab';
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
-const starterCode = `function solve() {
+const defaultStarterCode = `function solve() {
   // Write your solution here
 }`;
+
+function buildStarterCode(solution = '') {
+  const solveMatch = solution.match(/function\s+solve\s*\(([^)]*)\)/);
+  const params = solveMatch ? solveMatch[1].trim() : '';
+
+  return `function solve(${params}) {
+  // Write your solution here
+}`;
+}
 
 function Badge({ children, color }) {
   return (
@@ -433,10 +442,7 @@ function EditorWorkspace({
         </button>
         <button
           type="button"
-          onClick={() => {
-            setCode(problem.solution || starterCode);
-            setTab('solution');
-          }}
+          onClick={() => setTab('solution')}
           style={{
             padding: '0.55rem 1.05rem',
             borderRadius: '0.45rem',
@@ -473,7 +479,7 @@ export default function ProblemDetail({
   nextProblem,
   onNextProblem,
 }) {
-  const [code, setCode] = useState(problem.solution || starterCode);
+  const [code, setCode] = useState(() => buildStarterCode(problem.solution));
   const [results, setResults] = useState(null);
   const [tab, setTab] = useState('story');
   const [traceErrors, setTraceErrors] = useState([]);
@@ -484,7 +490,7 @@ export default function ProblemDetail({
   const allPass = Boolean(results?.length && results.every((result) => result.passed));
 
   useEffect(() => {
-    setCode(problem.solution || starterCode);
+    setCode(buildStarterCode(problem.solution));
     setResults(null);
     setTraceErrors([]);
     setTraceWarnings([]);
@@ -750,7 +756,7 @@ export default function ProblemDetail({
                 fontFamily: 'monospace',
               }}
             >
-              {problem.solution || starterCode}
+              {problem.solution || defaultStarterCode}
             </pre>
           </div>
           <div
