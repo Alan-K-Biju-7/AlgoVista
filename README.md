@@ -279,19 +279,6 @@ The `404.html` copy supports direct visits to client-side routes on static hosts
 - `.github/workflows/deploy.yml` - GitHub Pages CI/CD
 - `netlify.toml` and `vercel.json` - free static deployment config
 
-## Project Status
-
-AlgoVista is portfolio-ready as a static deployed demo and local full-stack app.
-
-Remaining production upgrades for a commercial-grade version:
-
-- Hosted persistent database
-- Hosted backend service
-- Sandboxed multi-language execution
-- Real user analytics
-- Playwright screenshot regression
-- Accessibility audit automation
-
 ---
 
 <p align="center">
