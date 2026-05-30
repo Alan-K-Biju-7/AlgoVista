@@ -28,15 +28,99 @@ Most DSA projects are either static notes, a basic algorithm animation, or a sim
 - Optional Node backend for auth, synced progress, and live AI provider support.
 - Static demo fallback so the deployed frontend still works in guest mode without backend setup.
 
-## Screenshots
+## Platform Walkthrough
+
+### Home Page
+
+The landing page introduces AlgoVista's visual-first approach to DSA learning, combining concept learning, practice missions, AI coaching, and interactive simulators into a single platform.
+
+![AlgoVista Home Page](docs/assets/home-page.jpg)
+
+---
+
+### DSA Learning Path
+
+A structured beginner-to-advanced roadmap containing 126+ concepts organized by topic. Learners can track mastery, confidence, and progress while moving through foundations, arrays, linked lists, trees, graphs, dynamic programming, and more.
+
+![DSA Learning Path](docs/assets/dsa-path.jpg)
+
+---
 
 ### Practice Command Center
 
-![Practice command center](docs/assets/practice-command-center.svg)
+The practice hub is inspired by structured interview preparation systems. It includes curated NeetCode-style missions, mastery analytics, review queues, difficulty coverage, and recommended next problems.
 
-### Simulator Workspace
+![Practice Dashboard](docs/assets/practice-dashboard.jpg)
+
+**Highlights**
+
+- 150 curated coding missions
+- Story-mode learning workflow
+- Review queue generation
+- Mastery tracking
+- Progress analytics
+- Personalized recommendations
+
+---
+
+### AI Coach
+
+The integrated AI Coach acts as a personalized DSA mentor. Learners can ask for intuition, dry runs, edge cases, complexity analysis, implementation guidance, and concept explanations.
+
+![AI Coach](docs/assets/ai-coach.jpg)
+
+**Capabilities**
+
+- Beginner-friendly explanations
+- Step-by-step dry runs
+- Complexity breakdowns
+- Edge case analysis
+- Interview-style guidance
+- Backend-powered AI integration
+
+---
+
+### Interactive Simulator Workspace
+
+The simulator provides visual execution for core data structures and algorithms. Users can insert, delete, search, traverse, and observe algorithm behavior in real time.
 
 ![Simulator workspace](docs/assets/simulator-workspace.svg)
+
+**Available Visual Labs**
+
+- Arrays
+- Linked Lists
+- Stacks
+- Queues
+- Binary Search Trees
+- AVL Trees
+- Heaps
+- Hash Tables
+- Tries
+- Graph Algorithms
+- Sorting Algorithms
+
+---
+
+### Concept Explorer
+
+The concept explorer allows learners to browse concepts, track understanding levels, write learning notes, launch simulations, and open AI-assisted explanations directly from each lesson.
+
+![Concept Explorer](docs/assets/concept-explorer.jpg)
+
+---
+
+### Complete Learning Flow
+
+AlgoVista combines four major learning pillars:
+
+1. **Learn** → Concept Roadmap
+2. **Understand** → AI Coach
+3. **Visualize** → Interactive Simulators
+4. **Practice** → NeetCode-Style Missions
+
+This creates a complete path from first exposure to interview-level problem solving.
+
 
 ## Core Features
 
