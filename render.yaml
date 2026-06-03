@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: algovista-backend
+    env: node
+    buildCommand: npm ci --legacy-peer-deps
+    startCommand: npm run backend
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: AI_PROVIDER_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: AI_PROVIDER_MODEL
+        value: llama-3.1-8b-instant
+      - key: GROQ_API_KEY
+        sync: false

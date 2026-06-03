@@ -2,7 +2,7 @@
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?logo=javascript&logoColor=111)
-![Tests](https://img.shields.io/badge/tests-53%20passing-00D4AA)
+![Tests](https://img.shields.io/badge/tests-55%20passing-00D4AA)
 [![Live](https://img.shields.io/badge/live-GitHub%20Pages-2EA44F?logo=github)](https://Alan-K-Biju-7.github.io/AlgoVista/)
 ![Deploy](https://img.shields.io/badge/deploy-GitHub%20Pages%20%7C%20Netlify%20%7C%20Vercel-4A9EFF)
 
@@ -211,12 +211,36 @@ cp server/.env.example server/.env
 Then set:
 
 ```env
+HOST=127.0.0.1
 GROQ_API_KEY=your_key_here
 AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
 AI_PROVIDER_MODEL=llama-3.1-8b-instant
 ```
 
 Without provider keys, the backend returns a local fallback response. Without the backend, the deployed frontend still shows a static tutor fallback.
+
+## Live Backend Setup
+
+GitHub Pages can host the React frontend, but it cannot run the Node backend. To make the live demo support login, synced progress, and AI coaching, deploy `server/index.js` on a Node host and keep the AI key only in that host's environment variables.
+
+Required backend environment:
+
+```env
+HOST=0.0.0.0
+GROQ_API_KEY=your_rotated_server_side_key
+AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
+AI_PROVIDER_MODEL=llama-3.1-8b-instant
+```
+
+After the backend is live, add this GitHub Actions repository variable:
+
+```text
+REACT_APP_API_BASE_URL=https://your-backend-url.example.com
+```
+
+Then rerun the GitHub Pages workflow. The frontend build will call that backend for auth, progress sync, and AI coaching.
+
+Never commit API keys into the React app, README, or GitHub Pages build. Browser code is public.
 
 ## Testing
 
@@ -228,7 +252,7 @@ Current verification:
 
 ```text
 12 test suites passed
-53 tests passed
+55 tests passed
 Production build compiled successfully
 ```
 
@@ -277,6 +301,7 @@ The `404.html` copy supports direct visits to client-side routes on static hosts
 - `src/modules/` - interactive DSA visualizers
 - `server/index.js` - local backend for auth, progress, static hosting, and AI coaching
 - `.github/workflows/deploy.yml` - GitHub Pages CI/CD
+- `render.yaml` - Node backend deployment template
 - `netlify.toml` and `vercel.json` - free static deployment config
 
 ---
