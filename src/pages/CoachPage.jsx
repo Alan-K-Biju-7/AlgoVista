@@ -16,10 +16,28 @@ const starterPrompts = [
 ];
 
 function localCoachReply(message, concept) {
+  const question = extractCoachQuestion(message);
+  const lowerQuestion = question.toLowerCase();
+  const directAnswer = (() => {
+    if (/\bwhat\s+is\s+an?\s+algorithm\b|\balgorithm\b/.test(lowerQuestion)) {
+      return 'An algorithm is a clear, finite sequence of steps for solving a problem. Example: to find the largest number in [3, 8, 2], scan once, keep the biggest value seen so far, and return 8.';
+    }
+
+    if (/\bdata\s+structure\b/.test(lowerQuestion)) {
+      return 'A data structure is a way to organize data so operations like lookup, insert, delete, and traversal are efficient. Arrays, stacks, queues, hash maps, trees, and graphs are common examples.';
+    }
+
+    if (/\btime\s+complexity\b|\bbig\s*o\b/.test(lowerQuestion)) {
+      return 'Time complexity describes how running time grows as input size grows. O(n) means one pass over n items; O(log n) usually means the search space shrinks each step.';
+    }
+
+    return `The key idea for ${concept.title}: ${concept.focus}`;
+  })();
+
   return [
-    `Let's reason about ${concept.title}.`,
+    directAnswer,
     '',
-    `Question: ${message}`,
+    `Question: ${question}`,
     '',
     `Mental model: ${concept.focus}`,
     '',
@@ -29,15 +47,34 @@ function localCoachReply(message, concept) {
     '3. Name every pointer, index, or state value.',
     '4. Finish with time and space complexity.',
     '',
-    'This static-demo tutor is active because the backend is not connected. The full backend can add live AI, login, and synced progress.',
+    'Static safety answer shown because live coaching was unavailable or returned an unusable reply.',
   ].join('\n');
 }
 
 function cleanCoachText(text) {
   return String(text || '')
     .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*\*/g, '')
     .replace(/^\s*#{1,6}\s+/gm, '')
     .trim();
+}
+
+function extractCoachQuestion(message) {
+  const text = cleanCoachText(message);
+  const explicitQuestion = text.match(/^Answer this exact DSA question directly:\s*(.+)$/m);
+  return explicitQuestion ? explicitQuestion[1].trim() : text;
+}
+
+function isFollowUpCoachRequest(message) {
+  const text = String(message || '').trim().toLowerCase();
+
+  return [
+    /^now\s+answer\s+my\s+question[.!?]*$/,
+    /^answer\s+(my\s+)?(question|previous question|last question)[.!?]*$/,
+    /^please\s+answer\s+(my\s+)?(question|previous question|last question)[.!?]*$/,
+    /^(explain|answer|solve|show|do)\s+(it|that|this|the previous one|the last one)[.!?]*$/,
+    /^what\s+about\s+(it|that|this)[?!.]*$/,
+  ].some((pattern) => pattern.test(text));
 }
 
 function buildCoachHistory(messages) {
@@ -49,6 +86,40 @@ function buildCoachHistory(messages) {
     }))
     .filter((message) => message.content)
     .slice(-8);
+}
+
+function buildCoachRequestMessage(message, history) {
+  if (!history.length || !isFollowUpCoachRequest(message)) return message;
+
+  const previousUserQuestion = [...history].reverse().find((item) => item.role === 'user')?.content;
+  if (!previousUserQuestion) return message;
+
+  return [
+    `Answer this exact DSA question directly: ${previousUserQuestion}`,
+    `Learner follow-up: ${message}`,
+    'Do not introduce yourself, say welcome, or switch to a different example.',
+  ].join('\n');
+}
+
+function isUnhelpfulCoachReply(reply, requestedMessage) {
+  const text = cleanCoachText(reply).toLowerCase();
+  if (!text) return true;
+  const question = extractCoachQuestion(requestedMessage).toLowerCase();
+
+  const genericFailure = [
+    'i could not generate a response',
+    'welcome to algovista',
+    'welcome to the foundations',
+    "i'm algovista coach",
+    'i am algovista coach',
+  ].some((snippet) => text.includes(snippet));
+
+  if (genericFailure) return true;
+  if (/\balgorithm\b/.test(question) && !/\balgorithm\b/.test(text)) return true;
+  if (/\bdata\s+structure\b/.test(question) && !/\bdata\s+structure\b/.test(text)) return true;
+  if (/\btime\s+complexity\b|\bbig\s*o\b/.test(question) && !/\bcomplexity\b|\bo\(/.test(text)) return true;
+
+  return false;
 }
 
 function ChatBubble({ message }) {
@@ -89,16 +160,23 @@ export default function CoachPage() {
     setInput('');
     setBusy(true);
     const history = buildCoachHistory(messages);
+    const coachMessage = buildCoachRequestMessage(cleanMessage, history);
     setMessages((prev) => [...prev, { role: 'user', content: cleanMessage }]);
 
     try {
-      const response = await askCoach({ message: cleanMessage, concept, history });
+      const response = await askCoach({
+        message: coachMessage,
+        concept,
+        history,
+      });
+      const coachReply = cleanCoachText(response.reply);
+      const hasLiveAnswer = !isUnhelpfulCoachReply(coachReply, coachMessage);
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: cleanCoachText(response.reply),
-          provider: response.provider === 'ai-provider' ? 'AI Coach' : 'Offline tutor',
+          content: hasLiveAnswer ? coachReply : localCoachReply(coachMessage, concept),
+          provider: hasLiveAnswer && response.provider === 'ai-provider' ? 'AI Coach' : 'Static tutor',
         },
       ]);
     } catch (error) {
@@ -106,7 +184,7 @@ export default function CoachPage() {
         ...prev,
         {
           role: 'assistant',
-          content: localCoachReply(cleanMessage, concept),
+          content: localCoachReply(coachMessage, concept),
           provider: 'Static tutor',
         },
       ]);

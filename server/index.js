@@ -18,6 +18,7 @@ const PASSWORD_ITERATIONS = 120000;
 const PASSWORD_KEY_LENGTH = 64;
 const PASSWORD_DIGEST = 'sha512';
 const PROGRESS_STATUSES = new Set(['not-started', 'learning', 'confident', 'mastered']);
+const COACH_REVISION = 'direct-history-v2';
 
 function loadEnv(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -193,17 +194,67 @@ function progressSummary(progress) {
   return counts;
 }
 
-function fallbackCoachReply({ message, concept, progress }) {
+function latestUserQuestion(history) {
+  return [...normalizeCoachHistory(history)].reverse().find((item) => item.role === 'user')?.content || '';
+}
+
+function isFollowUpCoachRequest(message) {
+  const text = String(message || '').trim().toLowerCase();
+  if (!text) return false;
+
+  return [
+    /^now\s+answer\s+my\s+question[.!?]*$/,
+    /^answer\s+(my\s+)?(question|previous question|last question)[.!?]*$/,
+    /^please\s+answer\s+(my\s+)?(question|previous question|last question)[.!?]*$/,
+    /^(explain|answer|solve|show|do)\s+(it|that|this|the previous one|the last one)[.!?]*$/,
+    /^what\s+about\s+(it|that|this)[?!.]*$/,
+  ].some((pattern) => pattern.test(text));
+}
+
+function resolvedCoachQuestion(message, history) {
+  const cleanMessage = String(message || '').trim();
+  if (!isFollowUpCoachRequest(cleanMessage)) return cleanMessage;
+
+  const previousQuestion = latestUserQuestion(history);
+  return previousQuestion || cleanMessage;
+}
+
+function directFallbackAnswer(question, concept) {
+  const conceptTitle = concept && concept.title ? concept.title : 'this DSA topic';
+  const conceptFocus = concept && concept.focus ? concept.focus : 'identify the input, output, state changes, and stopping condition';
+  const lowerQuestion = String(question || '').toLowerCase();
+
+  if (/\bwhat\s+is\s+an?\s+algorithm\b|\balgorithm\b/.test(lowerQuestion)) {
+    return 'An algorithm is a clear, finite sequence of steps for solving a problem. Example: to find the largest number in [3, 8, 2], scan left to right, keep the biggest value seen so far, and return 8.';
+  }
+
+  if (/\bdata\s+structure\b/.test(lowerQuestion)) {
+    return 'A data structure is a way to organize data so operations like lookup, insert, delete, or traversal are efficient. Arrays, stacks, queues, hash maps, trees, and graphs are common examples.';
+  }
+
+  if (/\btime\s+complexity\b|\bbig\s*o\b/.test(lowerQuestion)) {
+    return 'Time complexity describes how the running time grows as the input size grows. O(n) means one pass over n items, while O(log n) usually means the search space is repeatedly cut down.';
+  }
+
+  if (/\bspace\s+complexity\b/.test(lowerQuestion)) {
+    return 'Space complexity describes how much extra memory an algorithm uses as the input grows. A few variables are O(1); an extra array of n items is O(n).';
+  }
+
+  return `For ${conceptTitle}, the useful starting point is: ${conceptFocus}. Turn the question into inputs, outputs, the state you track, and the exact rule that changes that state.`;
+}
+
+function fallbackCoachReply({ message, concept, progress, history }) {
+  const question = resolvedCoachQuestion(message, history);
   const conceptTitle = concept && concept.title ? concept.title : 'this DSA topic';
   const summary = progressSummary(progress);
   const needsPractice = summary.learning + summary['not-started'];
 
   return [
-    `Let's make ${conceptTitle} feel concrete.`,
+    directFallbackAnswer(question, concept),
     '',
-    `Your question: ${message}`,
+    `Question: ${question}`,
     '',
-    'A strong way to learn it:',
+    `Learning path for ${conceptTitle}:`,
     `1. State the invariant in one sentence for ${conceptTitle}.`,
     '2. Run a tiny example by hand and name every variable or pointer.',
     '3. Write the simplest correct version before optimizing.',
@@ -234,16 +285,19 @@ function buildCoachMessages({ message, concept, progress, history }) {
   const conceptTitle = concept && concept.title ? concept.title : 'general DSA';
   const conceptSection = concept && concept.sectionTitle ? concept.sectionTitle : 'DSA for Beginners';
   const cleanHistory = normalizeCoachHistory(history);
+  const questionToAnswer = resolvedCoachQuestion(message, cleanHistory);
 
   return [
     {
       role: 'system',
       content: [
         'You are AlgoVista Coach, an expert DSA tutor for beginners.',
-        'Answer the learner question directly first, then add a short example or mental model.',
-        'If the learner says something like "now answer my question", infer the question from the recent chat history.',
-        'Keep replies concise: 4 to 8 short lines unless the learner asks for depth.',
-        'Use plain text only. Do not use markdown bold markers, headings, tables, or decorative intros.',
+        'Never introduce yourself, never say welcome, and never start with motivational filler.',
+        'The learner already asked a question. First sentence must answer that exact question directly.',
+        'If the learner says something like "now answer my question", use the resolved question supplied in the final user message.',
+        'If the question is "What is an algorithm?", define algorithm first and give one tiny example.',
+        'Keep replies concise: 4 to 7 short lines unless the learner asks for depth.',
+        'Use plain text only. Do not use markdown bold markers, headings, tables, decorative intros, or code blocks unless code is requested.',
         'Include time and space complexity only when it naturally applies.',
       ].join(' '),
     },
@@ -258,7 +312,11 @@ function buildCoachMessages({ message, concept, progress, history }) {
     ...cleanHistory,
     {
       role: 'user',
-      content: message,
+      content: [
+        `Current learner message: ${message}`,
+        `Question to answer now: ${questionToAnswer}`,
+        'Answer the question to answer now directly. Do not answer a different example.',
+      ].join('\n'),
     },
   ];
 }
@@ -273,7 +331,8 @@ async function callAiProvider({ message, concept, progress, history }) {
   if (!apiKey || !baseUrl || !model) {
     return {
       provider: 'local-fallback',
-      reply: fallbackCoachReply({ message, concept, progress }),
+      reply: fallbackCoachReply({ message, concept, progress, history }),
+      coachRevision: COACH_REVISION,
     };
   }
 
@@ -286,8 +345,8 @@ async function callAiProvider({ message, concept, progress, history }) {
     body: JSON.stringify({
       model,
       messages: buildCoachMessages({ message, concept, progress, history }),
-      temperature: 0.25,
-      max_tokens: 520,
+      temperature: 0.1,
+      max_tokens: 480,
       stream: false,
     }),
   });
@@ -302,6 +361,7 @@ async function callAiProvider({ message, concept, progress, history }) {
     provider: 'ai-provider',
     model,
     reply: data.choices?.[0]?.message?.content || 'I could not generate a response.',
+    coachRevision: COACH_REVISION,
     usage: data.usage || null,
   };
 }
@@ -310,7 +370,12 @@ async function handleApi(req, res, url, origin) {
   const db = readDb();
 
   if (req.method === 'GET' && url.pathname === '/api/health') {
-    sendJson(res, 200, { ok: true, service: 'algovista-backend' }, origin);
+    sendJson(res, 200, {
+      ok: true,
+      service: 'algovista-backend',
+      coachRevision: COACH_REVISION,
+      commit: process.env.RENDER_GIT_COMMIT || null,
+    }, origin);
     return;
   }
 
@@ -436,7 +501,8 @@ async function handleApi(req, res, url, origin) {
       sendJson(res, 200, {
         provider: 'local-fallback',
         warning: 'Live AI coaching is unavailable.',
-        reply: fallbackCoachReply({ message, concept, progress }),
+        reply: fallbackCoachReply({ message, concept, progress, history }),
+        coachRevision: COACH_REVISION,
       }, origin);
     }
     return;
