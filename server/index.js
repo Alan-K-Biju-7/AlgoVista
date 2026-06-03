@@ -244,9 +244,11 @@ function buildCoachMessages({ message, concept, progress }) {
 }
 
 async function callAiProvider({ message, concept, progress }) {
-  const apiKey = process.env.GROQ_API_KEY || process.env.AI_PROVIDER_API_KEY;
-  const baseUrl = String(process.env.AI_PROVIDER_BASE_URL || 'https://api.groq.com/openai/v1').replace(/\/$/, '');
-  const model = process.env.AI_PROVIDER_MODEL || 'llama-3.1-8b-instant';
+  const apiKey = process.env.GEMINI_API_KEY || process.env.AI_PROVIDER_API_KEY || process.env.GROQ_API_KEY;
+  const baseUrl = String(
+    process.env.AI_PROVIDER_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai'
+  ).replace(/\/$/, '');
+  const model = process.env.AI_PROVIDER_MODEL || 'gemini-3.5-flash';
 
   if (!apiKey || !baseUrl || !model) {
     return {

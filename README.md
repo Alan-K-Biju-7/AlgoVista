@@ -212,9 +212,9 @@ Then set:
 
 ```env
 HOST=127.0.0.1
-GROQ_API_KEY=your_key_here
-AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
-AI_PROVIDER_MODEL=llama-3.1-8b-instant
+GEMINI_API_KEY=your_key_here
+AI_PROVIDER_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+AI_PROVIDER_MODEL=gemini-3.5-flash
 ```
 
 Without provider keys, the backend returns a local fallback response. Without the backend, the deployed frontend still shows a static tutor fallback.
@@ -227,9 +227,9 @@ Required backend environment:
 
 ```env
 HOST=0.0.0.0
-GROQ_API_KEY=your_rotated_server_side_key
-AI_PROVIDER_BASE_URL=https://api.groq.com/openai/v1
-AI_PROVIDER_MODEL=llama-3.1-8b-instant
+GEMINI_API_KEY=your_rotated_server_side_key
+AI_PROVIDER_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+AI_PROVIDER_MODEL=gemini-3.5-flash
 ```
 
 After the backend is live, add this GitHub Actions repository variable:

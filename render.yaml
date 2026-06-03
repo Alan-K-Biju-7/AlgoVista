@@ -8,8 +8,8 @@ services:
       - key: HOST
         value: 0.0.0.0
       - key: AI_PROVIDER_BASE_URL
-        value: https://api.groq.com/openai/v1
+        value: https://generativelanguage.googleapis.com/v1beta/openai
       - key: AI_PROVIDER_MODEL
-        value: llama-3.1-8b-instant
-      - key: GROQ_API_KEY
+        value: gemini-3.5-flash
+      - key: GEMINI_API_KEY
         sync: false
