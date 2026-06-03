@@ -87,6 +87,38 @@ describe('runTests', () => {
     expect(results[0].passed).toBe(true);
   });
 
+  test('allows learner comments and fenced JavaScript snippets', () => {
+    const results = runTests(
+      `\`\`\`javascript
+# learner note
+function solve(nums) {
+  // another note
+  return nums.length;
+}
+\`\`\``,
+      [{ input: [[1, 2, 3]], expected: 3 }]
+    );
+
+    expect(results[0]).toEqual(expect.objectContaining({ passed: true }));
+  });
+
+  test('returns a clear message for pasted Python-style solutions', () => {
+    const results = runTests(
+      `class Codec:
+  def serialize(self, root):
+    return ""`,
+      [{ input: [[]], expected: 'N' }]
+    );
+
+    expect(results[0]).toEqual(
+      expect.objectContaining({
+        passed: false,
+        kind: 'unsupported-language',
+        error: expect.stringContaining('Python-style code was detected'),
+      })
+    );
+  });
+
   test('returns useful failures for syntax, missing function, and runtime errors', () => {
     expect(runTests('function solve(', [{ input: [], expected: null }])[0]).toEqual(
       expect.objectContaining({ passed: false, error: expect.stringContaining('Syntax error') })

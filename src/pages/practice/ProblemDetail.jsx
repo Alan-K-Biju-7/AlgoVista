@@ -396,21 +396,21 @@ function EditorWorkspace({
 }) {
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '0.75rem',
-          marginBottom: '0.65rem',
-        }}
-      >
+      <div className="editor-workspace-top">
         <SectionLabel>Your Solution Editor</SectionLabel>
-        <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>
-          Export a function named <span className="mono">solve</span>
-        </span>
+        <div className="editor-workspace-pills" aria-label="Editor runtime">
+          <span>JavaScript</span>
+          <span>function solve(...)</span>
+        </div>
       </div>
-      <CodeEditor value={code} onChange={setCode} height="430px" />
+      <CodeEditor
+        value={code}
+        onChange={setCode}
+        height="470px"
+        minHeight={320}
+        maxHeight={900}
+        storageKey={`algovista:practice-editor:${problem.id}`}
+      />
       <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
         <button
           type="button"
@@ -674,7 +674,14 @@ export default function ProblemDetail({
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '1.35rem' }}>
           <div>
             <SectionLabel>Traceable Code</SectionLabel>
-            <CodeEditor value={code} onChange={setCode} height="340px" />
+            <CodeEditor
+              value={code}
+              onChange={setCode}
+              height="360px"
+              minHeight={280}
+              maxHeight={760}
+              storageKey={`algovista:trace-editor:${problem.id}`}
+            />
             <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.7rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
