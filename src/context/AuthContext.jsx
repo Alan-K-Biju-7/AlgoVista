@@ -114,11 +114,11 @@ export function AuthProvider({ children }) {
     return data.progress || {};
   };
 
-  const askCoach = async ({ message, concept }) => {
+  const askCoach = async ({ message, concept, history = [] }) => {
     return apiRequest('/api/coach', {
       method: 'POST',
       headers: authHeader(token),
-      body: JSON.stringify({ message, concept, progress }),
+      body: JSON.stringify({ message, concept, progress, history }),
     });
   };
 

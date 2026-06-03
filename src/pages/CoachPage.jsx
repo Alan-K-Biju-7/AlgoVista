@@ -33,10 +33,28 @@ function localCoachReply(message, concept) {
   ].join('\n');
 }
 
+function cleanCoachText(text) {
+  return String(text || '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/^\s*#{1,6}\s+/gm, '')
+    .trim();
+}
+
+function buildCoachHistory(messages) {
+  return messages
+    .filter((message) => ['user', 'assistant'].includes(message.role))
+    .map((message) => ({
+      role: message.role,
+      content: cleanCoachText(message.content),
+    }))
+    .filter((message) => message.content)
+    .slice(-8);
+}
+
 function ChatBubble({ message }) {
   return (
     <div className={`coach-bubble coach-bubble--${message.role}`}>
-      <p>{message.content}</p>
+      <p>{cleanCoachText(message.content)}</p>
       {message.provider && <span>{message.provider}</span>}
     </div>
   );
@@ -70,15 +88,16 @@ export default function CoachPage() {
 
     setInput('');
     setBusy(true);
+    const history = buildCoachHistory(messages);
     setMessages((prev) => [...prev, { role: 'user', content: cleanMessage }]);
 
     try {
-      const response = await askCoach({ message: cleanMessage, concept });
+      const response = await askCoach({ message: cleanMessage, concept, history });
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: response.reply,
+          content: cleanCoachText(response.reply),
           provider: response.provider === 'ai-provider' ? 'AI Coach' : 'Offline tutor',
         },
       ]);

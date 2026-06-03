@@ -217,33 +217,53 @@ function fallbackCoachReply({ message, concept, progress }) {
   ].join('\n');
 }
 
-function buildCoachMessages({ message, concept, progress }) {
+function normalizeCoachHistory(history) {
+  if (!Array.isArray(history)) return [];
+
+  return history
+    .filter((item) => item && ['user', 'assistant'].includes(item.role))
+    .map((item) => ({
+      role: item.role,
+      content: String(item.content || '').trim().slice(0, 1200),
+    }))
+    .filter((item) => item.content)
+    .slice(-8);
+}
+
+function buildCoachMessages({ message, concept, progress, history }) {
   const conceptTitle = concept && concept.title ? concept.title : 'general DSA';
   const conceptSection = concept && concept.sectionTitle ? concept.sectionTitle : 'DSA for Beginners';
+  const cleanHistory = normalizeCoachHistory(history);
 
   return [
     {
       role: 'system',
       content: [
         'You are AlgoVista Coach, an expert DSA tutor for beginners.',
-        'Teach with short examples, visual mental models, invariants, edge cases, and complexity.',
-        'Do not solve everything immediately if the learner asks for help. Guide first, then provide code only when useful.',
-        'Keep answers structured and encouraging, but avoid fluff.',
+        'Answer the learner question directly first, then add a short example or mental model.',
+        'If the learner says something like "now answer my question", infer the question from the recent chat history.',
+        'Keep replies concise: 4 to 8 short lines unless the learner asks for depth.',
+        'Use plain text only. Do not use markdown bold markers, headings, tables, or decorative intros.',
+        'Include time and space complexity only when it naturally applies.',
       ].join(' '),
     },
     {
       role: 'user',
-      content: JSON.stringify({
-        learnerQuestion: message,
-        activeConcept: conceptTitle,
-        section: conceptSection,
-        progressSummary: progressSummary(progress),
-      }),
+      content: [
+        `Learning context: ${conceptSection} / ${conceptTitle}.`,
+        `Progress summary: ${JSON.stringify(progressSummary(progress))}.`,
+        'Use this only as background. The next user message is the question to answer.',
+      ].join('\n'),
+    },
+    ...cleanHistory,
+    {
+      role: 'user',
+      content: message,
     },
   ];
 }
 
-async function callAiProvider({ message, concept, progress }) {
+async function callAiProvider({ message, concept, progress, history }) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.AI_PROVIDER_API_KEY || process.env.GROQ_API_KEY;
   const baseUrl = String(
     process.env.AI_PROVIDER_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai'
@@ -265,9 +285,9 @@ async function callAiProvider({ message, concept, progress }) {
     },
     body: JSON.stringify({
       model,
-      messages: buildCoachMessages({ message, concept, progress }),
-      temperature: 0.35,
-      max_tokens: 700,
+      messages: buildCoachMessages({ message, concept, progress, history }),
+      temperature: 0.25,
+      max_tokens: 520,
       stream: false,
     }),
   });
@@ -407,9 +427,10 @@ async function handleApi(req, res, url, origin) {
     const user = getAuthenticatedUser(req, db);
     const progress = user ? db.progress[user.id] || {} : body.progress || {};
     const concept = body.concept || null;
+    const history = Array.isArray(body.history) ? body.history : [];
 
     try {
-      const coach = await callAiProvider({ message, concept, progress });
+      const coach = await callAiProvider({ message, concept, progress, history });
       sendJson(res, 200, coach, origin);
     } catch (error) {
       sendJson(res, 200, {
