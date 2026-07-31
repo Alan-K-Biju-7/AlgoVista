@@ -1,5 +1,7 @@
-import { Link, useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import AuthPanel from '../components/AuthPanel';
+import VisualConceptStudio from '../components/learning';
 import { useAuth } from '../context/AuthContext';
 import {
   DSA_BEGINNER_CONCEPTS,
@@ -7,6 +9,7 @@ import {
   getBeginnerSectionById,
 } from '../data/dsaBeginnersCurriculum';
 import { getConceptLesson } from '../data/conceptLessonContent';
+import { buildLessonSimulation } from './lessonSimulation';
 import './ConceptLessonPage.css';
 
 const statusMeta = {
@@ -16,443 +19,192 @@ const statusMeta = {
   mastered: { label: 'Mastered', confidence: 100 },
 };
 
+const visualValues = {
+  complexity: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'],
+  'array-memory': [12, 18, 25, 31, 44],
+  'array-traversal': [4, 1, 7, 3, 9, 2],
+  'array-shift': [3, 6, 'gap', 9, 12],
+  'linear-search': [8, 4, 9, 2, 6],
+  'binary-search': [2, 5, 8, 12, 16, 23, 31],
+  'ternary-search': [1, 4, 9, 12, 8, 3, 2],
+  'two-pointers': [1, 2, 4, 6, 9],
+  'prefix-sum': [0, 2, 6, 7, 14],
+  'sliding-window': [2, 1, 5, 1, 3, 2],
+  kadane: [-2, 3, -1, 5, -6],
+  'matrix-boundaries': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+  'sorted-matrix-search': [1, 4, 7, 11, 2, 5, 8, 12, 3, 6, 9, 16, 10, 13, 14, 20],
+};
+
+const kindModels = {
+  foundation: ['Define', 'Example', 'Connect', 'Explain'],
+  array: ['Index', 'Value', 'State', 'Answer'],
+  string: ['Character', 'Window', 'Pattern', 'Match'],
+  recursion: ['Choice', 'Smaller call', 'Base case', 'Return'],
+  'linked-list': ['Head', 'Current', 'Next', 'Tail'],
+  stack: ['Bottom', 'Pending work', 'Top', 'Output'],
+  queue: ['Front', 'Waiting work', 'Back', 'Output'],
+  hashing: ['Key', 'Hash', 'Bucket', 'Value'],
+  sorting: ['Input', 'Compare', 'Reorder', 'Sorted'],
+  tree: ['Root', 'Branch', 'Leaf', 'Result'],
+  graph: ['Source', 'Frontier', 'Visited', 'Result'],
+  greedy: ['Candidates', 'Safe choice', 'Proof', 'Answer'],
+  dp: ['State', 'Base case', 'Transition', 'Answer'],
+  bits: ['Value', 'Mask', 'Operator', 'Result'],
+  divide: ['Problem', 'Split', 'Solve', 'Combine'],
+};
+
+function modelItemsFor(lesson) {
+  const values = visualValues[lesson.visual] || kindModels[lesson.kind] || kindModels.foundation;
+  return values.map((value, index) => ({
+    id: String(index),
+    value: String(value),
+    label: `State ${index + 1}`,
+  }));
+}
+
 function getNeighborConcept(concept, offset) {
   const index = DSA_BEGINNER_CONCEPTS.findIndex((item) => item.id === concept.id);
   if (index === -1) return null;
   return DSA_BEGINNER_CONCEPTS[index + offset] || null;
 }
 
-const arrayVisualTypes = new Set([
-  'array-memory',
-  'array-traversal',
-  'array-shift',
-  'linear-search',
-  'binary-search',
-  'ternary-search',
-  'two-pointers',
-  'prefix-sum',
-  'sliding-window',
-  'kadane',
-  'matrix-boundaries',
-  'sorted-matrix-search',
-]);
+function getRelatedSimulatorId(concept) {
+  const title = concept.title.toLowerCase();
+  const exactMatches = [
+    [['bellman-ford'], 'bellmanford'],
+    [['dijkstra'], 'dijkstra'],
+    [['quick sort'], 'quicksort'],
+    [['merge sort'], 'mergesort'],
+    [['bubble sort'], 'bubble'],
+    [['insertion sort'], 'insertion'],
+    [['selection sort'], 'selection'],
+    [['binary search'], 'bsearch'],
+    [['avl'], 'avl'],
+    [['trie'], 'trie'],
+    [['heap', 'priority queue'], 'heap'],
+    [['binary search tree', 'bst'], 'bst'],
+  ];
+  const exact = exactMatches.find(([terms]) => terms.some((term) => title.includes(term)));
+  if (exact) return exact[1];
 
-function ArrayPatternVisual({ visual }) {
-  if (visual === 'array-memory') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-address-row">
-          {[0, 1, 2, 3, 4].map((index) => (
-            <span key={index}>addr + {index}</span>
-          ))}
-        </div>
-        <div className="array-cell-row">
-          {[12, 18, 25, 31, 44].map((value, index) => (
-            <span key={value} className={index === 2 ? 'is-active' : ''}>
-              <b>{value}</b>
-              <small>i={index}</small>
-            </span>
-          ))}
-        </div>
-        <p>Direct lookup: base address + index gives the slot immediately.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'array-traversal') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[4, 1, 7, 3, 9, 2].map((value, index) => (
-            <span key={`${value}-${index}`} className={index < 3 ? 'is-done' : index === 3 ? 'is-active' : ''}>
-              <b>{value}</b>
-              <small>{index < 3 ? 'seen' : index === 3 ? 'i' : 'wait'}</small>
-            </span>
-          ))}
-        </div>
-        <div className="array-state-strip">
-          <span>invariant: left side processed</span>
-          <span>current = nums[i]</span>
-          <span>answer updates once per index</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (visual === 'array-shift') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row array-cell-row--shift">
-          {[3, 6, 'gap', 9, 12].map((value, index) => (
-            <span key={`${value}-${index}`} className={value === 'gap' ? 'is-gap' : index > 2 ? 'is-moving' : ''}>
-              <b>{value}</b>
-              <small>{value === 'gap' ? 'insert' : index > 2 ? 'shift ->' : `i=${index}`}</small>
-            </span>
-          ))}
-        </div>
-        <p>Open the gap from right to left so existing values are not overwritten.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'linear-search') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[8, 4, 9, 2, 6].map((value, index) => (
-            <span key={value} className={index < 2 ? 'is-cut' : index === 2 ? 'is-active' : ''}>
-              <b>{value}</b>
-              <small>{index < 2 ? 'no' : index === 2 ? 'match' : 'unchecked'}</small>
-            </span>
-          ))}
-        </div>
-        <div className="array-state-strip">
-          <span>target = 9</span>
-          <span>checked indexes: 0..2</span>
-          <span>return first matching index</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (visual === 'binary-search') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[2, 5, 8, 12, 16, 23, 31].map((value, index) => (
-            <span key={value} className={index < 3 ? 'is-cut' : index === 4 ? 'is-active' : index === 3 || index === 6 ? 'is-bound' : ''}>
-              <b>{value}</b>
-              <small>{index === 3 ? 'L' : index === 4 ? 'M' : index === 6 ? 'R' : index < 3 ? 'discard' : ''}</small>
-            </span>
-          ))}
-        </div>
-        <p>If target is larger than mid, every smaller slot is proven impossible.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'ternary-search') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[1, 4, 9, 12, 8, 3, 2].map((value, index) => (
-            <span key={`${value}-${index}`} className={index === 2 || index === 4 ? 'is-active' : index < 2 ? 'is-cut' : ''}>
-              <b>{value}</b>
-              <small>{index === 2 ? 'm1' : index === 4 ? 'm2' : ''}</small>
-            </span>
-          ))}
-        </div>
-        <p>Compare two midpoints to decide which third cannot hold the optimum.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'two-pointers') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[1, 2, 4, 6, 9].map((value, index) => (
-            <span key={value} className={index === 0 || index === 4 ? 'is-active' : ''}>
-              <b>{value}</b>
-              <small>{index === 0 ? 'left' : index === 4 ? 'right' : ''}</small>
-            </span>
-          ))}
-        </div>
-        <div className="array-state-strip">
-          <span>sum = 10</span>
-          <span>target = 10</span>
-          <span>move one pointer only when the rule proves it</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (visual === 'prefix-sum') {
-    return (
-      <div className="viz-prefix-board">
-        <div>
-          <strong>nums</strong>
-          {[2, 4, 1, 7].map((value) => <span key={value}>{value}</span>)}
-        </div>
-        <div>
-          <strong>prefix</strong>
-          {[0, 2, 6, 7, 14].map((value) => <span key={value}>{value}</span>)}
-        </div>
-        <p>sum(1, 3) = prefix[4] - prefix[1] = 14 - 2 = 12</p>
-      </div>
-    );
-  }
-
-  if (visual === 'sliding-window') {
-    return (
-      <div className="viz-array-room">
-        <div className="array-cell-row">
-          {[2, 1, 5, 1, 3, 2].map((value, index) => (
-            <span key={`${value}-${index}`} className={index >= 2 && index <= 4 ? 'is-active' : ''}>
-              <b>{value}</b>
-              <small>{index === 2 ? 'L' : index === 4 ? 'R' : ''}</small>
-            </span>
-          ))}
-        </div>
-        <div className="array-state-strip">
-          <span>window sum = 9</span>
-          <span>remove left when shrinking</span>
-          <span>add right when expanding</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (visual === 'kadane') {
-    return (
-      <div className="viz-kadane-board">
-        {[
-          ['-2', 'drop'],
-          ['3', 'start'],
-          ['-1', 'extend'],
-          ['5', 'best=7'],
-          ['-6', 'keep best'],
-        ].map(([value, label], index) => (
-          <span key={`${value}-${index}`} className={label === 'best=7' ? 'is-active' : ''}>
-            <b>{value}</b>
-            <small>{label}</small>
-          </span>
-        ))}
-        <p>current = best subarray ending here; best = best anywhere so far.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'matrix-boundaries') {
-    return (
-      <div className="viz-matrix-lesson">
-        {Array.from({ length: 16 }).map((_, index) => (
-          <span key={index} className={index < 4 || [7, 11, 15, 14, 13, 12].includes(index) ? 'is-active' : ''}>
-            {index + 1}
-          </span>
-        ))}
-        <p>top, right, bottom, left boundaries shrink after each edge.</p>
-      </div>
-    );
-  }
-
-  if (visual === 'sorted-matrix-search') {
-    return (
-      <div className="viz-matrix-lesson viz-matrix-lesson--sorted">
-        {[1, 4, 7, 11, 2, 5, 8, 12, 3, 6, 9, 16, 10, 13, 14, 20].map((value, index) => (
-          <span key={`${value}-${index}`} className={[3, 7, 11, 10].includes(index) ? 'is-active' : index === 15 ? 'is-cut' : ''}>
-            {value}
-          </span>
-        ))}
-        <p>Start top-right: left is smaller, down is larger.</p>
-      </div>
-    );
-  }
-
-  return null;
+  return {
+    arrays: 'array',
+    'linked-list': 'linkedlist',
+    stack: 'stack',
+    queue: 'queue',
+    hashing: 'hashtable',
+    graphs: 'graph',
+  }[concept.sectionId] || null;
 }
 
-function VisualLab({ concept, lesson }) {
-  return (
-    <div className={`lesson-visual lesson-visual--${lesson.kind}`} style={{ '--lesson-color': concept.color }}>
-      <div className="lesson-visual__stage">
-        {arrayVisualTypes.has(lesson.visual) && (
-          <ArrayPatternVisual visual={lesson.visual} />
-        )}
-
-        {lesson.kind === 'complexity' && (
-          <div className="viz-complexity" aria-label="Complexity growth curves">
-            {[
-              ['O(1)', 22],
-              ['O(log n)', 36],
-              ['O(n)', 54],
-              ['O(n log n)', 72],
-              ['O(n^2)', 92],
-            ].map(([label, height]) => (
-              <span key={label} style={{ height: `${height}%` }}>
-                <b>{label}</b>
-              </span>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'search' && (
-          <div className="viz-search" aria-label="Search window">
-            {[2, 4, 7, 11, 18, 23, 31, 45].map((value, index) => (
-              <span key={value} className={index === 3 ? 'is-mid' : index < 2 || index > 5 ? 'is-cut' : ''}>
-                <b>{value}</b>
-                <small>{index === 2 ? 'L' : index === 3 ? 'M' : index === 5 ? 'R' : ''}</small>
-              </span>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'matrix' && (
-          <div className="viz-matrix" aria-label="Matrix traversal">
-            {Array.from({ length: 16 }).map((_, index) => (
-              <span key={index} className={index < 4 || [7, 11, 15, 14, 13, 12].includes(index) ? 'is-path' : ''}>
-                {index + 1}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'string' && (
-          <div className="viz-string" aria-label="String pattern scan">
-            {'ALGORITHM'.split('').map((letter, index) => (
-              <span key={`${letter}-${index}`} className={index >= 2 && index <= 5 ? 'is-window' : ''}>
-                {letter}
-              </span>
-            ))}
-            <em>pattern window</em>
-          </div>
-        )}
-
-        {lesson.kind === 'recursion' && (
-          <div className="viz-recursion" aria-label="Recursion tree">
-            <span className="node root">f(5)</span>
-            <span className="node left">f(4)</span>
-            <span className="node right">f(3)</span>
-            <span className="node leaf-a">f(2)</span>
-            <span className="node leaf-b">f(1)</span>
-            <span className="branch branch-a" />
-            <span className="branch branch-b" />
-            <span className="branch branch-c" />
-            <span className="branch branch-d" />
-          </div>
-        )}
-
-        {lesson.kind === 'linked-list' && (
-          <div className="viz-linked-list" aria-label="Linked list pointer chain">
-            {['head', '12', '24', '36', 'null'].map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'stack' && (
-          <div className="viz-stack" aria-label="Stack top-first structure">
-            {['return C', 'return B', 'return A', 'base'].map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-            <strong>top</strong>
-          </div>
-        )}
-
-        {lesson.kind === 'queue' && (
-          <div className="viz-queue" aria-label="Queue front and back">
-            <b>front</b>
-            {['A', 'B', 'C', 'D', 'E'].map((item) => (
-              <span key={item}>{item}</span>
-            ))}
-            <b>back</b>
-          </div>
-        )}
-
-        {lesson.kind === 'hashing' && (
-          <div className="viz-hash" aria-label="Hash buckets and chains">
-            {[0, 1, 2, 3].map((bucket) => (
-              <div key={bucket}>
-                <strong>{bucket}</strong>
-                <span>{bucket === 0 ? 'cat' : bucket === 1 ? '42 -> 18' : bucket === 2 ? 'sun' : 'empty'}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'sorting' && (
-          <div className="viz-sorting" aria-label="Sorting bars">
-            {[44, 18, 72, 29, 58, 33, 91].map((height, index) => (
-              <span key={`${height}-${index}`} style={{ height: `${height}%` }} className={index === 2 || index === 3 ? 'is-compare' : ''} />
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'tree' && (
-          <div className="viz-tree" aria-label="Tree structure">
-            <span className="node root">8</span>
-            <span className="node left">3</span>
-            <span className="node right">10</span>
-            <span className="node leaf-a">1</span>
-            <span className="node leaf-b">6</span>
-            <span className="branch branch-a" />
-            <span className="branch branch-b" />
-            <span className="branch branch-c" />
-            <span className="branch branch-d" />
-          </div>
-        )}
-
-        {lesson.kind === 'graph' && (
-          <div className="viz-graph" aria-label="Graph frontier">
-            {['A', 'B', 'C', 'D', 'E', 'F'].map((node, index) => (
-              <span key={node} className={`graph-dot graph-dot--${index}`}>{node}</span>
-            ))}
-            <i className="edge edge-a" />
-            <i className="edge edge-b" />
-            <i className="edge edge-c" />
-            <i className="edge edge-d" />
-          </div>
-        )}
-
-        {lesson.kind === 'greedy' && (
-          <div className="viz-greedy" aria-label="Greedy selected intervals">
-            {['A', 'B', 'C', 'D', 'E'].map((item, index) => (
-              <span key={item} className={index === 0 || index === 2 || index === 4 ? 'is-picked' : ''}>
-                {item}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'dp' && (
-          <div className="viz-dp" aria-label="Dynamic programming table">
-            {Array.from({ length: 30 }).map((_, index) => (
-              <span key={index} className={index % 6 === 0 || index > 20 || index === 14 ? 'is-known' : ''} />
-            ))}
-          </div>
-        )}
-
-        {lesson.kind === 'bits' && (
-          <div className="viz-bits" aria-label="Bit operation rows">
-            {['1101', '1010', '0111'].map((bits, index) => (
-              <span key={bits} className={index === 2 ? 'is-result' : ''}>
-                {bits.split('').map((bit, bitIndex) => <b key={bitIndex}>{bit}</b>)}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {['divide', 'foundation'].includes(lesson.kind) && (
-          <div className="viz-pipeline" aria-label="Concept learning pipeline">
-            {['Define', 'Trace', 'Prove', 'Code'].map((item, index) => (
-              <span key={item} className={index === 1 ? 'is-active' : ''}>{item}</span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="lesson-visual__caption">
-        <strong>{lesson.kind.replace('-', ' ')}</strong>
-        <span>{lesson.mentalModel}</span>
-      </div>
-    </div>
-  );
+function buildStudioConcept(concept, section, lesson) {
+  const frames = buildLessonSimulation(lesson);
+  return {
+    ...concept,
+    ...lesson,
+    section: section?.title || concept.sectionTitle,
+    objective: `Explain ${concept.title}, trace its changing state, justify its cost, and recognize it in an interview problem.`,
+    tags: [concept.sectionTitle, concept.level, 'Interview pattern'],
+    mentalModel: {
+      title: `${concept.title} mental model`,
+      kind: lesson.kind,
+      description: lesson.mentalModel,
+      items: modelItemsFor(lesson),
+      legend: ['Accent = current state', 'Faded = eliminated', 'Checked = completed work'],
+    },
+    simulation: {
+      title: 'See the state change',
+      description: 'Predict the next move, advance one step, then compare your reasoning with the invariant.',
+      steps: frames,
+    },
+    complexity: {
+      ...lesson.complexity,
+      summary: 'Tie every complexity claim to the work repeated and the extra state retained.',
+      tradeoffs: [{
+        choice: 'Clarity before optimization',
+        gain: 'A small, explicit state is easier to explain, test, and prove correct.',
+        cost: 'The first correct approach may not yet meet the final time or memory target.',
+        useWhen: 'Start here, then optimize only the repeated work you can identify.',
+      }],
+    },
+    misconceptions: lesson.traps.map((trap) => ({
+      myth: trap,
+      truth: 'Treat this as a failure mode. Restore the invariant and verify the smallest edge case before continuing.',
+    })),
+    interviewPrompts: [
+      {
+        question: `What clue tells you to consider ${concept.title}?`,
+        followUp: 'Name one similar-looking problem where this pattern would be wrong.',
+        strongAnswer: [lesson.pattern, 'The assumptions the pattern requires'],
+      },
+      {
+        question: 'What remains true after every step?',
+        followUp: 'Use that invariant to explain why discarded states cannot contain the answer.',
+        strongAnswer: [frames[0]?.invariant || lesson.mentalModel, 'The update rule and stopping condition'],
+      },
+      {
+        question: 'How would you test and defend this solution?',
+        strongAnswer: ['Time and space complexity', 'The smallest input', 'A boundary case', 'A hostile or duplicate-heavy input'],
+      },
+    ],
+    retrievalCheck: {
+      questions: [
+        {
+          id: 'explain',
+          prompt: `Explain ${concept.title} from memory.`,
+          criteria: lesson.checkpoints,
+        },
+        {
+          id: 'transfer',
+          prompt: lesson.practice,
+          criteria: [
+            'Name the state before tracing.',
+            'Show each update instead of jumping to the answer.',
+            'Finish by checking the invariant and complexity.',
+          ],
+        },
+      ],
+    },
+  };
 }
 
 function LessonProgress({ concept, progressItem, onSave, isAuthenticated }) {
+  const currentStatus = progressItem?.status || 'not-started';
+  const currentMeta = statusMeta[currentStatus] || statusMeta['not-started'];
+  const [saveState, setSaveState] = useState({ status: 'idle', message: '' });
+
   const save = async (status) => {
-    await onSave({
-      conceptId: concept.id,
-      status,
-      confidence: statusMeta[status].confidence,
-      notes: progressItem?.notes || '',
-    });
+    setSaveState({ status: 'saving', message: 'Saving progress…' });
+    try {
+      await onSave({
+        conceptId: concept.id,
+        status,
+        confidence: statusMeta[status].confidence,
+        notes: progressItem?.notes || '',
+      });
+      setSaveState({ status: 'saved', message: `${statusMeta[status].label} saved to your account.` });
+    } catch {
+      setSaveState({
+        status: 'error',
+        message: 'Progress could not be saved. Check your connection and try again.',
+      });
+    }
   };
 
   return (
     <div className="lesson-progress">
       <p className="section-label">Progress</p>
-      <strong>{statusMeta[progressItem?.status || 'not-started'].label}</strong>
+      <strong>{currentMeta.label}</strong>
+      <div
+        className="lesson-progress__meter"
+        role="progressbar"
+        aria-label="Concept confidence"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={currentMeta.confidence}
+      >
+        <span style={{ width: `${currentMeta.confidence}%` }} />
+      </div>
       <div className="lesson-progress__actions">
         {['learning', 'confident', 'mastered'].map((status) => (
           <button
@@ -460,13 +212,22 @@ function LessonProgress({ concept, progressItem, onSave, isAuthenticated }) {
             type="button"
             className={status === 'mastered' ? 'btn-primary' : 'btn-ghost'}
             onClick={() => save(status)}
-            disabled={!isAuthenticated}
+            disabled={!isAuthenticated || saveState.status === 'saving'}
+            aria-pressed={progressItem?.status === status}
           >
             {statusMeta[status].label}
           </button>
         ))}
       </div>
-      {!isAuthenticated && <span>Log in to save this lesson.</span>}
+      {!isAuthenticated && <span>Sign in to save this lesson to your account.</span>}
+      {isAuthenticated && saveState.message && (
+        <span
+          role={saveState.status === 'error' ? 'alert' : 'status'}
+          aria-live="polite"
+        >
+          {saveState.message}
+        </span>
+      )}
     </div>
   );
 }
@@ -474,18 +235,28 @@ function LessonProgress({ concept, progressItem, onSave, isAuthenticated }) {
 export default function ConceptLessonPage() {
   const { conceptId } = useParams();
   const { progress, updateConceptProgress, isAuthenticated } = useAuth();
-  const concept = getBeginnerConceptById(conceptId) || DSA_BEGINNER_CONCEPTS[0];
+  const requestedConcept = getBeginnerConceptById(conceptId);
+  const concept = requestedConcept || DSA_BEGINNER_CONCEPTS[0];
   const section = getBeginnerSectionById(concept.sectionId);
-  const lesson = getConceptLesson(concept);
+  const lesson = useMemo(() => getConceptLesson(concept), [concept]);
   const progressItem = progress[concept.id] || {};
   const previous = getNeighborConcept(concept, -1);
   const next = getNeighborConcept(concept, 1);
+  const relatedSimulatorId = getRelatedSimulatorId(concept);
+  const studioConcept = useMemo(
+    () => buildStudioConcept(concept, section, lesson),
+    [concept, lesson, section]
+  );
+
+  if (!requestedConcept) {
+    return <Navigate replace to="/dsa-beginners" />;
+  }
 
   return (
     <div className="lesson-page" style={{ '--lesson-color': concept.color }}>
       <section className="lesson-hero">
         <div>
-          <Link to="/dsa-beginners" className="lesson-back">Back to DSA Path</Link>
+          <Link to="/dsa-beginners" className="lesson-back"><span aria-hidden="true">←</span> Back to DSA Path</Link>
           <p className="section-label">{section?.title || concept.sectionTitle}</p>
           <h1>{concept.title}</h1>
           <p>{lesson.headline}</p>
@@ -494,86 +265,25 @@ export default function ConceptLessonPage() {
             <span>{concept.milestone}</span>
             <span>{concept.level}</span>
           </div>
+          <div className="lesson-hero__outcomes" aria-label="Lesson outcomes">
+            <strong>Learn it four ways</strong>
+            <ul>
+              <li>understand the model</li>
+              <li>trace every state change</li>
+              <li>reason about cost and traps</li>
+              <li>retrieve it without notes</li>
+            </ul>
+          </div>
         </div>
-        <AuthPanel compact />
+        <div id="lesson-account">
+          <AuthPanel compact purpose="Sign in to save mastery and unlock concept coaching." />
+        </div>
       </section>
 
-      <section className="lesson-layout">
-        <main className="lesson-main">
-          <VisualLab concept={concept} lesson={lesson} />
-
-          <div className="lesson-grid">
-            <article className="lesson-card lesson-card--wide">
-              <p className="section-label">Explanation</p>
-              <h2>Core idea</h2>
-              <p>{lesson.coreIdea}</p>
-              <p>{lesson.mentalModel}</p>
-            </article>
-
-            {concept.sectionId === 'arrays' && (
-              <>
-                <article className="lesson-card lesson-card--wide lesson-card--accent">
-                  <p className="section-label">Intuition</p>
-                  <h2>Why this pattern works</h2>
-                  <p>{lesson.intuition}</p>
-                  <p><strong>When to use it:</strong> {lesson.pattern}</p>
-                </article>
-
-                <article className="lesson-card">
-                  <p className="section-label">Dry run</p>
-                  <h2>Walkthrough</h2>
-                  <ol>
-                    {lesson.dryRun.map((step) => <li key={step}>{step}</li>)}
-                  </ol>
-                </article>
-
-                <article className="lesson-card">
-                  <p className="section-label">Complexity</p>
-                  <h2>Cost model</h2>
-                  <div className="lesson-complexity">
-                    <span><b>Time</b>{lesson.complexity.time}</span>
-                    <span><b>Space</b>{lesson.complexity.space}</span>
-                  </div>
-                </article>
-
-                {lesson.template && (
-                  <article className="lesson-card lesson-card--wide">
-                    <p className="section-label">Template</p>
-                    <h2>Code shape</h2>
-                    <pre><code>{lesson.template}</code></pre>
-                  </article>
-                )}
-              </>
-            )}
-
-            <article className="lesson-card">
-              <p className="section-label">Trace it</p>
-              <h2>How to reason</h2>
-              <ol>
-                {lesson.reasoningSteps.map((step) => <li key={step}>{step}</li>)}
-              </ol>
-            </article>
-
-            <article className="lesson-card">
-              <p className="section-label">Avoid this</p>
-              <h2>Common traps</h2>
-              <ul>
-                {lesson.traps.map((trap) => <li key={trap}>{trap}</li>)}
-              </ul>
-            </article>
-
-            <article className="lesson-card lesson-card--wide">
-              <p className="section-label">Practice</p>
-              <h2>Do this now</h2>
-              <p>{lesson.practice}</p>
-              <div className="lesson-checkpoints">
-                {lesson.checkpoints.map((checkpoint) => (
-                  <span key={checkpoint}>{checkpoint}</span>
-                ))}
-              </div>
-            </article>
-          </div>
-        </main>
+      <section className="lesson-layout lesson-layout--studio">
+        <section className="lesson-main" aria-label={`${concept.title} visual lesson`}>
+          <VisualConceptStudio concept={studioConcept} accentColor={concept.color} />
+        </section>
 
         <aside className="lesson-side">
           <LessonProgress
@@ -584,17 +294,39 @@ export default function ConceptLessonPage() {
           />
 
           <div className="lesson-coach">
-            <p className="section-label">AI Coach</p>
-            <h2>Ask about this concept</h2>
-            <p>Open the coach with this lesson already selected.</p>
-            <Link to={`/coach?concept=${encodeURIComponent(concept.id)}`} className="btn-primary">
-              Open coach
-            </Link>
+            <p className="section-label">Personal tutor</p>
+            {isAuthenticated ? (
+              <>
+                <h2>Ask about this concept</h2>
+                <p>Your tutor opens with this lesson and your learning profile already selected.</p>
+                <Link to={`/coach?concept=${encodeURIComponent(concept.id)}`} className="btn-primary">
+                  Open personal tutor
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className="lesson-coach__lock">Sign-in required</span>
+                <h2>Coaching stays personal</h2>
+                <p>Sign in above to unlock concept-aware tutoring and private progress history.</p>
+                <Link to={`/coach?concept=${encodeURIComponent(concept.id)}`} className="btn-ghost">
+                  Sign in to use tutor
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div className="lesson-transfer">
+            <p className="section-label">Transfer the skill</p>
+            <h2>Turn understanding into recall</h2>
+            {relatedSimulatorId && (
+              <Link to={`/simulator#${relatedSimulatorId}`}>Open related simulator <span aria-hidden="true">→</span></Link>
+            )}
+            <Link to="/practice">Choose an interview problem <span aria-hidden="true">→</span></Link>
           </div>
 
           <div className="lesson-next">
-            {previous && <Link to={`/dsa-beginners/${previous.id}`}>Previous: {previous.title}</Link>}
-            {next && <Link to={`/dsa-beginners/${next.id}`}>Next: {next.title}</Link>}
+            {previous && <Link to={`/dsa-beginners/${previous.id}`}><small>Previous lesson</small>{previous.title}</Link>}
+            {next && <Link to={`/dsa-beginners/${next.id}`}><small>Next lesson</small>{next.title}</Link>}
           </div>
         </aside>
       </section>
