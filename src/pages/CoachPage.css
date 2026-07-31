@@ -25,6 +25,58 @@
   color: var(--text-secondary);
 }
 
+.coach-session {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(0, 212, 170, 0.24);
+  border-radius: 12px;
+  background: rgba(0, 212, 170, 0.06);
+}
+
+.coach-session > span {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #031a14;
+  background: var(--accent);
+  font-weight: 900;
+}
+
+.coach-session b { color: var(--text-primary); }
+.coach-session p { color: var(--text-muted); font-size: 0.75rem; }
+
+.coach-disclosure {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  gap: 0.7rem;
+  align-items: start;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(74, 158, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(74, 158, 255, 0.05);
+}
+
+.coach-disclosure > span {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #d7e8ff;
+  background: rgba(74, 158, 255, 0.2);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.coach-disclosure p { font-size: 0.75rem; }
+.coach-disclosure b { display: block; color: var(--text-primary); }
+
 .coach-shell {
   display: grid;
   grid-template-columns: 330px minmax(0, 1fr);

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import AuthPanel from '../components/AuthPanel';
 import { useAuth } from '../context/AuthContext';
 import {
   DSA_BEGINNER_CONCEPTS,
@@ -14,42 +13,6 @@ const starterPrompts = [
   'Quiz me with one question.',
   'Show time and space complexity.',
 ];
-
-function localCoachReply(message, concept) {
-  const question = extractCoachQuestion(message);
-  const lowerQuestion = question.toLowerCase();
-  const directAnswer = (() => {
-    if (/\bwhat\s+is\s+an?\s+algorithm\b|\balgorithm\b/.test(lowerQuestion)) {
-      return 'An algorithm is a clear, finite sequence of steps for solving a problem. Example: to find the largest number in [3, 8, 2], scan once, keep the biggest value seen so far, and return 8.';
-    }
-
-    if (/\bdata\s+structure\b/.test(lowerQuestion)) {
-      return 'A data structure is a way to organize data so operations like lookup, insert, delete, and traversal are efficient. Arrays, stacks, queues, hash maps, trees, and graphs are common examples.';
-    }
-
-    if (/\btime\s+complexity\b|\bbig\s*o\b/.test(lowerQuestion)) {
-      return 'Time complexity describes how running time grows as input size grows. O(n) means one pass over n items; O(log n) usually means the search space shrinks each step.';
-    }
-
-    return `The key idea for ${concept.title}: ${concept.focus}`;
-  })();
-
-  return [
-    directAnswer,
-    '',
-    `Question: ${question}`,
-    '',
-    `Mental model: ${concept.focus}`,
-    '',
-    'Study loop:',
-    '1. State the invariant in one sentence.',
-    '2. Dry run the smallest useful input.',
-    '3. Name every pointer, index, or state value.',
-    '4. Finish with time and space complexity.',
-    '',
-    'Static safety answer shown because live coaching was unavailable or returned an unusable reply.',
-  ].join('\n');
-}
 
 function cleanCoachText(text) {
   return String(text || '')
@@ -79,7 +42,9 @@ function isFollowUpCoachRequest(message) {
 
 function buildCoachHistory(messages) {
   return messages
-    .filter((message) => ['user', 'assistant'].includes(message.role))
+    // Only learner-authored turns leave the browser. Provider responses are not
+    // retained or echoed into a later request without explicit product consent.
+    .filter((message) => message.role === 'user')
     .map((message) => ({
       role: message.role,
       content: cleanCoachText(message.content),
@@ -134,7 +99,7 @@ function ChatBubble({ message }) {
 export default function CoachPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryConceptId = searchParams.get('concept') || DSA_BEGINNER_CONCEPTS[0].id;
-  const { askCoach, isAuthenticated, progress } = useAuth();
+  const { askCoach, isAuthenticated, progress, user } = useAuth();
   const [conceptId, setConceptId] = useState(queryConceptId);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -155,7 +120,7 @@ export default function CoachPage() {
 
   const sendMessage = async (messageText) => {
     const cleanMessage = messageText.trim();
-    if (!cleanMessage || busy) return;
+    if (!isAuthenticated || !cleanMessage || busy) return;
 
     setInput('');
     setBusy(true);
@@ -175,8 +140,12 @@ export default function CoachPage() {
         ...prev,
         {
           role: 'assistant',
-          content: hasLiveAnswer ? coachReply : localCoachReply(coachMessage, concept),
-          provider: hasLiveAnswer && response.provider === 'ai-provider' ? 'AI Coach' : 'Static tutor',
+          content: hasLiveAnswer
+            ? coachReply
+            : 'I could not produce a reliable answer for that request. Rephrase it with the exact input or step you want to inspect.',
+          provider: hasLiveAnswer && response.provider === 'ai-provider'
+            ? 'AI-generated coaching'
+            : 'Built-in guide · not AI',
         },
       ]);
     } catch (error) {
@@ -184,8 +153,10 @@ export default function CoachPage() {
         ...prev,
         {
           role: 'assistant',
-          content: localCoachReply(coachMessage, concept),
-          provider: 'Static tutor',
+          content: error.status === 401
+            ? 'Your secure session expired. Sign in again before continuing this coaching session.'
+            : 'The coaching service is temporarily unavailable. Your question was not saved; please retry in a moment.',
+          provider: 'Not sent',
         },
       ]);
     } finally {
@@ -204,15 +175,23 @@ export default function CoachPage() {
     <div className="coach-page">
       <section className="coach-header">
         <div>
-          <span className="badge-teal">AI Coaching</span>
+          <span className="badge-teal">Signed-in AI coaching</span>
           <h1>DSA coach that knows your learning map.</h1>
           <p>
-            Ask for intuition, dry runs, edge cases, complexity, or a proof. The frontend talks
-            only to the backend, so the AI key stays private.
+            Ask for intuition, dry runs, edge cases, complexity, or a proof. Coaching is tied to
+            your secure learner session, and provider credentials never reach the browser.
           </p>
         </div>
-        <AuthPanel compact />
+        <div className="coach-session" aria-label="Active coaching session">
+          <span aria-hidden="true">✓</span>
+          <div><b>Private session active</b><p>Learning as {user?.name || 'signed-in learner'}</p></div>
+        </div>
       </section>
+
+      <aside className="coach-disclosure" role="note">
+        <span aria-hidden="true">i</span>
+        <p><b>Clear answer provenance</b>AI-generated coaching is labeled. Unavailable or rejected answers are never replaced with content presented as live AI.</p>
+      </aside>
 
       <section className="coach-shell">
         <aside className="coach-sidebar">
@@ -238,7 +217,7 @@ export default function CoachPage() {
             <div className="coach-concept-panel__meta">
               <span>{concept.milestone}</span>
               <span>{conceptProgress}</span>
-              <span>{isAuthenticated ? 'Synced' : 'Guest'}</span>
+              <span>{isAuthenticated ? 'Synced' : 'Session required'}</span>
             </div>
           </div>
 
@@ -249,7 +228,7 @@ export default function CoachPage() {
                 type="button"
                 className="btn-ghost"
                 onClick={() => sendMessage(prompt)}
-                disabled={busy}
+                disabled={busy || !isAuthenticated}
               >
                 {prompt}
               </button>
@@ -261,7 +240,7 @@ export default function CoachPage() {
           </Link>
         </aside>
 
-        <main className="coach-chat">
+        <section className="coach-chat" aria-label="AI coaching conversation">
           <div className="coach-chat__messages" aria-live="polite">
             {messages.map((message, index) => (
               <ChatBubble key={`${message.role}-${index}`} message={message} />
@@ -285,12 +264,18 @@ export default function CoachPage() {
               onChange={(event) => setInput(event.target.value)}
               placeholder={`Ask about ${concept.title}`}
               rows="3"
+              aria-label={`Ask the AI coach about ${concept.title}`}
+              disabled={!isAuthenticated}
             />
-            <button type="submit" className="btn-primary" disabled={busy || !input.trim()}>
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={!isAuthenticated || busy || !input.trim()}
+            >
               Send
             </button>
           </form>
-        </main>
+        </section>
       </section>
     </div>
   );
