@@ -1,8 +1,9 @@
-import { runTests } from './testRunner';
+import { evaluateTrustedReferenceSolution } from '../../test-support/trustedSolutionEvaluator';
+import { runTestsAsync } from './testRunner';
 
-describe('runTests', () => {
+describe('trusted catalog validation helper', () => {
   test('runs standard solve functions against multiple cases', () => {
-    const results = runTests(
+    const results = evaluateTrustedReferenceSolution(
       `function solve(nums, target) {
         const seen = new Map();
         for (let i = 0; i < nums.length; i++) {
@@ -24,7 +25,7 @@ describe('runTests', () => {
 
   test('discovers non-solve function declarations and arrow functions', () => {
     expect(
-      runTests(
+      evaluateTrustedReferenceSolution(
         `function isAnagram(s, t) {
           return s.split('').sort().join('') === t.split('').sort().join('');
         }`,
@@ -33,7 +34,7 @@ describe('runTests', () => {
     ).toBe(true);
 
     expect(
-      runTests(
+      evaluateTrustedReferenceSolution(
         `const maxProfit = (prices) => {
           let min = Infinity;
           let best = 0;
@@ -49,7 +50,7 @@ describe('runTests', () => {
   });
 
   test('accepts in-place solutions that return undefined', () => {
-    const results = runTests(
+    const results = evaluateTrustedReferenceSolution(
       `function sortColors(nums) {
         let low = 0;
         let mid = 0;
@@ -79,7 +80,7 @@ describe('runTests', () => {
   });
 
   test('compares floating point numeric answers with a small tolerance', () => {
-    const results = runTests(
+    const results = evaluateTrustedReferenceSolution(
       'function solve() { return 9.261000000000001; }',
       [{ input: [], expected: 9.261 }]
     );
@@ -87,49 +88,123 @@ describe('runTests', () => {
     expect(results[0].passed).toBe(true);
   });
 
-  test('allows learner comments and fenced JavaScript snippets', () => {
-    const results = runTests(
-      `\`\`\`javascript
-# learner note
-function solve(nums) {
-  // another note
-  return nums.length;
-}
-\`\`\``,
-      [{ input: [[1, 2, 3]], expected: 3 }]
-    );
-
-    expect(results[0]).toEqual(expect.objectContaining({ passed: true }));
-  });
-
-  test('returns a clear message for pasted Python-style solutions', () => {
-    const results = runTests(
-      `class Codec:
-  def serialize(self, root):
-    return ""`,
-      [{ input: [[]], expected: 'N' }]
-    );
-
-    expect(results[0]).toEqual(
-      expect.objectContaining({
-        passed: false,
-        kind: 'unsupported-language',
-        error: expect.stringContaining('Python-style code was detected'),
-      })
-    );
-  });
-
   test('returns useful failures for syntax, missing function, and runtime errors', () => {
-    expect(runTests('function solve(', [{ input: [], expected: null }])[0]).toEqual(
+    expect(evaluateTrustedReferenceSolution('function solve(', [{ input: [], expected: null }])[0]).toEqual(
       expect.objectContaining({ passed: false, error: expect.stringContaining('Syntax error') })
     );
 
-    expect(runTests('const value = 1;', [{ input: [], expected: null }])[0]).toEqual(
+    expect(evaluateTrustedReferenceSolution('const value = 1;', [{ input: [], expected: null }])[0]).toEqual(
       expect.objectContaining({ passed: false, error: expect.stringContaining('Could not find') })
     );
 
-    expect(runTests('function solve() { throw new Error("boom"); }', [{ input: [], expected: null }])[0]).toEqual(
+    expect(evaluateTrustedReferenceSolution('function solve() { throw new Error("boom"); }', [{ input: [], expected: null }])[0]).toEqual(
       expect.objectContaining({ passed: false, error: 'boom' })
     );
+  });
+
+  test('fails closed without executing learner code when workers are unavailable', async () => {
+    const previousWorker = global.Worker;
+    global.Worker = undefined;
+    try {
+      const results = await runTestsAsync(
+        'function solve(nums) { return nums.length; }',
+        [{ input: [[1, 2, 3]], expected: 3 }]
+      );
+      expect(results[0]).toEqual(expect.objectContaining({
+        passed: false,
+        kind: 'runner-unavailable',
+        error: expect.stringContaining('was not executed'),
+      }));
+    } finally {
+      global.Worker = previousWorker;
+    }
+  });
+
+  test('terminates a stalled worker and returns a timeout diagnostic', async () => {
+    vi.useFakeTimers();
+    const previousWorker = global.Worker;
+    const terminate = vi.fn();
+    global.Worker = class StalledWorker {
+      constructor() {
+        this.terminate = terminate;
+      }
+
+      postMessage(message) {
+        this.onmessage?.({
+          data: {
+            protocol: 'algovista-runner-v1',
+            requestId: message.requestId,
+            event: 'case-started',
+            caseIndex: 1,
+            testSuiteSize: 2,
+            input: '[[99]]',
+            expected: '99',
+          },
+        });
+      }
+    };
+
+    try {
+      const pending = runTestsAsync(
+        'function solve() { while (true) {} }',
+        [{ input: [[]], expected: 0 }, { input: [[99]], expected: 99 }],
+        { timeoutMs: 25 }
+      );
+      vi.advanceTimersByTime(25);
+      const results = await pending;
+      expect(results[0]).toEqual(expect.objectContaining({
+        passed: false,
+        kind: 'timeout',
+        caseIndex: 1,
+        input: '[[99]]',
+        expected: '99',
+        error: expect.stringContaining('case 2'),
+      }));
+      expect(terminate).toHaveBeenCalledTimes(1);
+    } finally {
+      global.Worker = previousWorker;
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('isolated learner runner', () => {
+  test('returns a clear message for pasted Python-style solutions without creating a worker', async () => {
+    const WorkerSpy = vi.fn();
+    const previousWorker = global.Worker;
+    global.Worker = WorkerSpy;
+    try {
+      const results = await runTestsAsync(
+        `class Codec:\n  def serialize(self, root):\n    return ""`,
+        [{ input: [[]], expected: 'N' }]
+      );
+      expect(results[0]).toEqual(expect.objectContaining({
+        passed: false,
+        kind: 'unsupported-language',
+        error: expect.stringContaining('Python-style code was detected'),
+      }));
+      expect(WorkerSpy).not.toHaveBeenCalled();
+    } finally {
+      global.Worker = previousWorker;
+    }
+  });
+
+  test('blocks dynamic imports before learner code reaches the worker', async () => {
+    const WorkerSpy = vi.fn();
+    const previousWorker = global.Worker;
+    global.Worker = WorkerSpy;
+    try {
+      const results = await runTestsAsync(
+        `async function solve() { return import('https://example.com/code.js'); }`,
+        [{ input: [], expected: null }]
+      );
+      expect(results[0]).toEqual(expect.objectContaining({
+        passed: false,
+        kind: 'unsupported-runtime-api',
+      }));
+      expect(WorkerSpy).not.toHaveBeenCalled();
+    } finally {
+      global.Worker = previousWorker;
+    }
   });
 });

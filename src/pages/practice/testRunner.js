@@ -1,47 +1,3 @@
-const KNOWN_FUNCTION_NAMES = [
-  'solve',
-  'twoSum',
-  'containsDuplicate',
-  'maxProfit',
-  'maxSubArray',
-  'productExceptSelf',
-  'isValid',
-  'dailyTemperatures',
-  'hasCycle',
-  'search',
-  'findMin',
-  'minEatingSpeed',
-  'findKthLargest',
-  'topKFrequent',
-  'canFinish',
-  'numIslands',
-  'sortColors',
-];
-
-function getCandidateFunctionNames(code) {
-  const names = new Set(KNOWN_FUNCTION_NAMES);
-  const identifier = '[A-Za-z_$][\\w$]*';
-  const patterns = [
-    new RegExp(`function\\s+(${identifier})\\s*\\(`, 'g'),
-    new RegExp(`(?:const|let|var)\\s+(${identifier})\\s*=\\s*function\\b`, 'g'),
-    new RegExp(`(?:const|let|var)\\s+(${identifier})\\s*=\\s*(?:async\\s*)?(?:\\([^)]*\\)|${identifier})\\s*=>`, 'g'),
-  ];
-
-  for (const pattern of patterns) {
-    let match = pattern.exec(code);
-    while (match) {
-      names.add(match[1]);
-      match = pattern.exec(code);
-    }
-  }
-
-  return [...names].filter((name) => /^[A-Za-z_$][\w$]*$/.test(name));
-}
-
-function cloneInput(input) {
-  return JSON.parse(JSON.stringify(input));
-}
-
 function getNow() {
   return typeof performance !== 'undefined' && performance.now
     ? performance.now()
@@ -103,113 +59,107 @@ function prepareCodeForRunner(code) {
   };
 }
 
-function formatValue(value) {
-  const json = JSON.stringify(value);
-  return json === undefined ? String(value) : json;
-}
+export function runTestsAsync(code, testCases, { timeoutMs = 3000 } = {}) {
+  const unavailable = () => withRuntime([{
+    passed: false,
+    kind: 'runner-unavailable',
+    input: '',
+    expected: '',
+    got: '',
+    error: 'The secure JavaScript runner is unavailable in this browser. Your code was not executed. Try a current browser or reload the page.',
+  }], getNow());
 
-function valuesEqual(actual, expected) {
-  if (typeof actual === 'number' && typeof expected === 'number') {
-    return Object.is(actual, expected) || Math.abs(actual - expected) < 1e-9;
-  }
+  if (typeof Worker === 'undefined') return Promise.resolve(unavailable());
 
-  if (Array.isArray(actual) && Array.isArray(expected)) {
-    return (
-      actual.length === expected.length &&
-      actual.every((value, index) => valuesEqual(value, expected[index]))
-    );
-  }
-
-  if (
-    actual &&
-    expected &&
-    typeof actual === 'object' &&
-    typeof expected === 'object' &&
-    !Array.isArray(actual) &&
-    !Array.isArray(expected)
-  ) {
-    const actualKeys = Object.keys(actual);
-    const expectedKeys = Object.keys(expected);
-    return (
-      actualKeys.length === expectedKeys.length &&
-      actualKeys.every((key) => Object.prototype.hasOwnProperty.call(expected, key)) &&
-      actualKeys.every((key) => valuesEqual(actual[key], expected[key]))
-    );
-  }
-
-  return Object.is(actual, expected);
-}
-
-export function runTests(code, testCases) {
-  const startedAt = getNow();
   const prepared = prepareCodeForRunner(code);
   if (prepared.unsupportedLanguageError) {
-    return withRuntime([{
+    return Promise.resolve(withRuntime([{
       passed: false,
       kind: 'unsupported-language',
       error: prepared.unsupportedLanguageError,
       input: '',
       expected: '',
       got: '',
-    }], startedAt);
+    }], getNow()));
   }
 
-  const results = [];
-  let fn;
-  try {
-    const resolver = getCandidateFunctionNames(prepared.code)
-      .map((name) => `typeof ${name} !== 'undefined' ? ${name} :`)
-      .join('\n  ');
-
-    // eslint-disable-next-line no-new-func
-    fn = new Function(`${prepared.code}
-return ${resolver}
-  null;`)();
-  } catch (e) {
-    return withRuntime([{
+  if (/\bimport\s*\(|\bimportScripts\s*\(/.test(prepared.code)) {
+    return Promise.resolve(withRuntime([{
       passed: false,
-      kind: 'syntax',
-      error: `Syntax error: ${e.message}`,
+      kind: 'unsupported-runtime-api',
+      error: 'Dynamic imports are disabled in the isolated practice runner.',
       input: '',
       expected: '',
       got: '',
-    }], startedAt);
-  }
-  if (!fn) {
-    return withRuntime([{
-      passed: false,
-      kind: 'runtime',
-      error: 'Could not find a function to test. Define function solve(...) for this practice problem.',
-      input: '',
-      expected: '',
-      got: '',
-    }], startedAt);
+    }], getNow()));
   }
 
-  for (const tc of testCases) {
+  return new Promise((resolve) => {
+    let worker;
     try {
-      const inputCopy = cloneInput(tc.input);
-      const returned = fn(...inputCopy);
-      const got = returned === undefined ? inputCopy[0] : returned;
-      const passed = valuesEqual(got, tc.expected);
-      results.push({
-        passed,
-        kind: passed ? 'accepted' : 'wrong-answer',
-        input: formatValue(tc.input),
-        expected: formatValue(tc.expected),
-        got: formatValue(got),
-        error: null,
-      });
-    } catch (e) {
-      results.push({
+      const publicBase = String(import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+      worker = new Worker(`${publicBase}/testRunnerWorker.js`);
+    } catch {
+      resolve(unavailable());
+      return;
+    }
+
+    const startedAt = getNow();
+    const requestId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    let activeCase = null;
+    const timer = window.setTimeout(() => {
+      worker.terminate();
+      resolve(withRuntime([{
+        passed: false,
+        kind: 'timeout',
+        caseIndex: activeCase?.caseIndex ?? 0,
+        testSuiteSize: activeCase?.testSuiteSize ?? testCases.length,
+        input: activeCase?.input || '',
+        expected: activeCase?.expected || '',
+        got: '',
+        error: `Execution exceeded ${timeoutMs} ms on case ${(activeCase?.caseIndex ?? 0) + 1}. Check for an infinite loop or an algorithm that grows too quickly.`,
+      }], startedAt));
+    }, timeoutMs);
+
+    worker.onmessage = (event) => {
+      if (event.data?.protocol !== 'algovista-runner-v1' || event.data?.requestId !== requestId) {
+        return;
+      }
+      if (event.data?.event === 'case-started') {
+        activeCase = {
+          caseIndex: Number(event.data.caseIndex) || 0,
+          testSuiteSize: Number(event.data.testSuiteSize) || testCases.length,
+          input: String(event.data.input || ''),
+          expected: String(event.data.expected || ''),
+        };
+        return;
+      }
+      window.clearTimeout(timer);
+      worker.terminate();
+      const results = Array.isArray(event.data?.results) ? event.data.results : [];
+      resolve(withRuntime(results, startedAt));
+    };
+
+    worker.onerror = (event) => {
+      window.clearTimeout(timer);
+      worker.terminate();
+      resolve(withRuntime([{
         passed: false,
         kind: 'runtime',
-        input: formatValue(tc.input),
-        expected: formatValue(tc.expected),
+        input: '',
+        expected: '',
         got: '',
-        error: e.message,
-      });
-    }
-  }
-  return withRuntime(results, startedAt);
+        error: event.message || 'The isolated runner stopped unexpectedly.',
+      }], startedAt));
+    };
+
+    worker.postMessage({
+      protocol: 'algovista-runner-v1',
+      requestId,
+      code: prepared.code,
+      testCases,
+    });
+  });
 }
