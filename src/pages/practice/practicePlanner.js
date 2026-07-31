@@ -92,12 +92,20 @@ export function getDifficultySummaries(allProblems, getStatus) {
   });
 }
 
-export function getReviewQueue(allProblems, getStatus, isBookmarked = () => false, limit = 5) {
+export function getReviewQueue(
+  allProblems,
+  getStatus,
+  isBookmarked = () => false,
+  limit = 5,
+  isDueForReview = () => false
+) {
   const all = getAllPracticeProblems(allProblems);
 
   return all
-    .filter((problem) => getStatus(problem.id) !== 'solved')
+    .filter((problem) => getStatus(problem.id) !== 'solved' || isDueForReview(problem.id))
     .sort((a, b) => {
+      const dueDiff = (isDueForReview(a.id) ? 0 : 1) - (isDueForReview(b.id) ? 0 : 1);
+      if (dueDiff !== 0) return dueDiff;
       const aBookmarked = isBookmarked(a.id) ? 0 : 1;
       const bBookmarked = isBookmarked(b.id) ? 0 : 1;
       if (aBookmarked !== bBookmarked) return aBookmarked - bBookmarked;
@@ -113,9 +121,14 @@ export function getReviewQueue(allProblems, getStatus, isBookmarked = () => fals
     .slice(0, limit);
 }
 
-export function getDailyTrainingPlan(allProblems, getStatus, isBookmarked = () => false) {
+export function getDailyTrainingPlan(
+  allProblems,
+  getStatus,
+  isBookmarked = () => false,
+  isDueForReview = () => false
+) {
   const all = getAllPracticeProblems(allProblems);
-  const review = getReviewQueue(allProblems, getStatus, isBookmarked, 3);
+  const review = getReviewQueue(allProblems, getStatus, isBookmarked, 3, isDueForReview);
   const used = new Set();
 
   const pick = (predicate) => {
@@ -124,7 +137,9 @@ export function getDailyTrainingPlan(allProblems, getStatus, isBookmarked = () =
     return problem || null;
   };
 
-  const warmup = pick((problem) => problem.difficulty === 'Easy') || review[0] || null;
+  const dueRecall = all.find((problem) => isDueForReview(problem.id)) || null;
+  if (dueRecall) used.add(dueRecall.id);
+  const warmup = dueRecall || pick((problem) => problem.difficulty === 'Easy') || review[0] || null;
   const builder = pick((problem) => problem.difficulty === 'Medium') || review[1] || warmup;
   const stretch = pick((problem) => problem.difficulty === 'Hard') || review[2] || builder;
 
@@ -134,7 +149,9 @@ export function getDailyTrainingPlan(allProblems, getStatus, isBookmarked = () =
       label: 'Warm-up',
       duration: '10 min',
       problem: warmup,
-      reason: 'Start with fast recall and a clean invariant.',
+      reason: dueRecall?.id === warmup?.id
+        ? 'This pattern is due for spaced recall. Solve it without revealing the topic.'
+        : 'Start with fast recall and a clean invariant.',
     },
     {
       id: 'builder',
@@ -156,8 +173,28 @@ export function getDailyTrainingPlan(allProblems, getStatus, isBookmarked = () =
   });
 }
 
-export function getMasterySignal(allProblems, getStatus) {
+export function getMasterySignal(allProblems, getStatus, getRecord) {
   const summary = getProgressSummary(allProblems, getStatus);
+  if (getRecord) {
+    const weights = { seen: 0.1, guided: 0.25, independent: 0.55, durable: 0.82, transfer: 1 };
+    const evidenceTotal = summary.all.reduce((total, problem) => {
+      const level = getRecord(problem.id)?.evidenceLevel;
+      return total + (weights[level] || 0);
+    }, 0);
+    const score = summary.all.length ? Math.round((evidenceTotal / summary.all.length) * 100) : 0;
+    const levelCounts = summary.all.reduce((counts, problem) => {
+      const level = getRecord(problem.id)?.evidenceLevel;
+      if (level) counts[level] = (counts[level] || 0) + 1;
+      return counts;
+    }, {});
+    const label = score >= 75 ? 'Durable' : score >= 45 ? 'Independent' : score >= 15 ? 'Guided' : 'Foundation';
+    return {
+      score,
+      label,
+      levelCounts,
+      nextMilestone: `${levelCounts.durable || 0} patterns retained · ${levelCounts.independent || 0} ready for review`,
+    };
+  }
   const attemptedValue = summary.attempted * 0.35;
   const solvedValue = summary.solved;
   const score = summary.all.length

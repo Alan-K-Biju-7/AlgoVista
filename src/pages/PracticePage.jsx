@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ALL_PROBLEMS, PHASE_META, getTopicList } from './practice/allProblems';
 import TopicSidebar from './practice/TopicSidebar';
 import ProblemList from './practice/ProblemList';
@@ -15,6 +16,27 @@ import {
   getReviewQueue,
 } from './practice/practicePlanner';
 import './practice/PracticeExperience.css';
+import PracticeModeBar from './practice/PracticeModeBar';
+
+const PRACTICE_MODE_KEY = 'algovista.practice.mode.v1';
+export const PRACTICE_RESET_UNDO_MS = 10_000;
+
+const RESET_CONFIRMATION = [
+  'Reset all practice progress?',
+  '',
+  'This will erase practice progress stored locally on this device and, if you are signed in, the progress synced to your AlgoVista account.',
+  '',
+  'You will have 10 seconds to undo before anything is deleted.',
+].join('\n');
+
+function findProblemLocation(problemId) {
+  if (!problemId) return null;
+  for (const [topicId, topic] of Object.entries(ALL_PROBLEMS)) {
+    const problem = topic.problems?.find((candidate) => candidate.id === problemId);
+    if (problem) return { topicId, problem };
+  }
+  return null;
+}
 
 function PracticeCommandCenter({
   allProblems,
@@ -24,13 +46,17 @@ function PracticeCommandCenter({
   exportSnapshot,
   importSnapshot,
   resetPracticeData,
+  getRecord,
+  isDueForReview,
 }) {
   const [snapshotText, setSnapshotText] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
-  const mastery = getMasterySignal(allProblems, getStatus);
+  const [resetPending, setResetPending] = useState(false);
+  const resetTimerRef = useRef(null);
+  const mastery = getMasterySignal(allProblems, getStatus, getRecord);
   const difficultySummaries = getDifficultySummaries(allProblems, getStatus);
-  const reviewQueue = getReviewQueue(allProblems, getStatus, isBookmarked, 5);
-  const dailyPlan = getDailyTrainingPlan(allProblems, getStatus, isBookmarked);
+  const reviewQueue = getReviewQueue(allProblems, getStatus, isBookmarked, 5, isDueForReview);
+  const dailyPlan = getDailyTrainingPlan(allProblems, getStatus, isBookmarked, isDueForReview);
 
   const handleExport = () => {
     setSnapshotText(JSON.stringify(exportSnapshot(), null, 2));
@@ -46,10 +72,32 @@ function PracticeCommandCenter({
     }
   };
 
+  useEffect(() => () => {
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+  }, []);
+
+  const cancelPendingReset = () => {
+    if (resetTimerRef.current) window.clearTimeout(resetTimerRef.current);
+    resetTimerRef.current = null;
+    setResetPending(false);
+    setTransferMessage('Reset cancelled. No local or synced progress was changed.');
+  };
+
   const handleReset = () => {
-    resetPracticeData();
-    setSnapshotText('');
-    setTransferMessage('Local practice progress reset.');
+    if (resetPending || !window.confirm(RESET_CONFIRMATION)) {
+      if (!resetPending) setTransferMessage('Reset cancelled. No local or synced progress was changed.');
+      return;
+    }
+
+    setResetPending(true);
+    setTransferMessage('Reset scheduled. Undo within 10 seconds; nothing has been deleted yet.');
+    resetTimerRef.current = window.setTimeout(() => {
+      resetPracticeData();
+      resetTimerRef.current = null;
+      setResetPending(false);
+      setSnapshotText('');
+      setTransferMessage('Practice progress reset locally and, when signed in, queued for account sync.');
+    }, PRACTICE_RESET_UNDO_MS);
   };
 
   return (
@@ -89,7 +137,7 @@ function PracticeCommandCenter({
           <div className="practice-review-list">
             {reviewQueue.map((problem) => (
               <button key={problem.id} type="button" onClick={() => onSelectProblem(problem)}>
-                <span>{getStatus(problem.id) === 'attempted' ? 'Resume' : isBookmarked(problem.id) ? 'Bookmark' : 'Review'}</span>
+                <span>{isDueForReview(problem.id) ? 'Due now' : getStatus(problem.id) === 'attempted' ? 'Resume' : isBookmarked(problem.id) ? 'Bookmark' : 'Review'}</span>
                 <b>{problem.title}</b>
                 <i>{problem.difficulty}</i>
               </button>
@@ -124,8 +172,8 @@ function PracticeCommandCenter({
             </div>
             <div className="practice-transfer-actions">
               <button type="button" onClick={handleExport}>Export</button>
-              <button type="button" onClick={handleImport} disabled={!snapshotText.trim()}>Import</button>
-              <button type="button" onClick={handleReset}>Reset</button>
+              <button type="button" onClick={handleImport} disabled={!snapshotText.trim() || resetPending}>Import</button>
+              <button type="button" onClick={handleReset} disabled={resetPending}>Reset all</button>
             </div>
           </div>
           <textarea
@@ -136,7 +184,12 @@ function PracticeCommandCenter({
             aria-label="Practice progress snapshot"
             placeholder="Export creates a JSON snapshot here. Paste one here to import."
           />
-          {transferMessage && <p className="practice-transfer-message">{transferMessage}</p>}
+          {transferMessage && (
+            <div className="practice-transfer-message" role="status" aria-live="polite" aria-atomic="true">
+              <span>{transferMessage}</span>
+              {resetPending && <button type="button" onClick={cancelPendingReset}>Undo reset</button>}
+            </div>
+          )}
         </article>
       </div>
     </section>
@@ -259,8 +312,16 @@ function MissionControl({ allProblems, topic, getStatus, onSelectProblem }) {
 }
 
 export default function PracticePage() {
-  const [activeTopic, setActiveTopic] = useState('arrays-hashing');
-  const [activeProblem, setActiveProblem] = useState(null);
+  const navigate = useNavigate();
+  const { problemId = '' } = useParams();
+  const initialLocation = findProblemLocation(problemId);
+  const [activeTopic, setActiveTopic] = useState(initialLocation?.topicId || 'arrays-hashing');
+  const [activeProblem, setActiveProblem] = useState(initialLocation?.problem || null);
+  const [practiceMode, setPracticeMode] = useState(() => {
+    if (typeof window === 'undefined') return 'learn';
+    const stored = window.localStorage.getItem(PRACTICE_MODE_KEY);
+    return ['learn', 'focus', 'review'].includes(stored) ? stored : 'learn';
+  });
 
   const {
     markSolved,
@@ -271,9 +332,36 @@ export default function PracticePage() {
     exportSnapshot,
     importSnapshot,
     resetPracticeData,
+    getRecord,
+    isDueForReview,
+    recordHintViewed,
+    recordSolutionViewed,
+    recordReflection,
+    records,
+    activity,
   } = usePracticeProgress();
 
+  useEffect(() => {
+    window.localStorage.setItem(PRACTICE_MODE_KEY, practiceMode);
+  }, [practiceMode]);
+
+  useEffect(() => {
+    const location = findProblemLocation(problemId);
+    setActiveProblem(location?.problem || null);
+    if (location?.topicId) setActiveTopic(location.topicId);
+  }, [problemId]);
+
   const topic = ALL_PROBLEMS[activeTopic] || ALL_PROBLEMS['arrays-hashing'];
+  const dueProblems = Object.values(ALL_PROBLEMS)
+    .flatMap((item) => item.problems || [])
+    .filter((problem) => isDueForReview(problem.id));
+  const deckTopic = practiceMode === 'review' && dueProblems.length
+    ? { ...topic, label: 'Spaced Review', problems: dueProblems }
+    : topic;
+  const libraryProblems = practiceMode === 'review' && dueProblems.length
+    ? dueProblems
+    : Object.values(ALL_PROBLEMS).flatMap((item) => item.problems || []);
+  const dueCount = Object.keys(records).filter((problemId) => isDueForReview(problemId)).length;
   const nextProblem = activeProblem
     ? getRecommendedProblem({
         allProblems: ALL_PROBLEMS,
@@ -284,29 +372,53 @@ export default function PracticePage() {
     : null;
 
   const selectProblem = (problem) => {
+    const owner = Object.entries(ALL_PROBLEMS).find(([, item]) =>
+      item.problems?.some((candidate) => candidate.id === problem.id)
+    );
+    if (owner) setActiveTopic(owner[0]);
     setActiveProblem(problem);
+    navigate(`/practice/${encodeURIComponent(problem.id)}`);
     if (typeof window !== 'undefined') {
       window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }));
     }
   };
 
+  const leaveProblem = () => {
+    setActiveProblem(null);
+    navigate('/practice');
+  };
+
+  if (problemId && !findProblemLocation(problemId)) {
+    return (
+      <section className="practice-route-error" aria-label="Practice problem not found">
+        <p className="mission-kicker">Practice library</p>
+        <h1>That interview problem was not found.</h1>
+        <p>The link may be outdated. Return to the curated problem library and choose another mission.</p>
+        <button type="button" onClick={() => navigate('/practice', { replace: true })}>Browse all problems</button>
+      </section>
+    );
+  }
+
   return (
     <div className={activeProblem ? 'practice-shell practice-shell--detail' : 'practice-shell'}>
-      <TopicSidebar
-        activeTopic={activeTopic}
-        onSelect={(id) => {
-          setActiveTopic(id);
-          setActiveProblem(null);
-        }}
-        getStatus={getStatus}
-      />
+      {!activeProblem && (
+        <TopicSidebar
+          activeTopic={activeTopic}
+          onSelect={(id) => {
+            setActiveTopic(id);
+            setActiveProblem(null);
+          }}
+          getStatus={getStatus}
+        />
+      )}
 
       <div className="practice-main">
         {activeProblem ? (
           <ProblemDetail
+            key={`${activeProblem.id}:${practiceMode}`}
             problem={activeProblem}
             topicColor={topic.color}
-            onBack={() => setActiveProblem(null)}
+            onBack={leaveProblem}
             onSolved={markSolved}
             onAttempted={markAttempted}
             isBookmarked={isBookmarked}
@@ -314,14 +426,35 @@ export default function PracticePage() {
             status={getStatus(activeProblem.id)}
             nextProblem={nextProblem}
             onNextProblem={nextProblem ? () => selectProblem(nextProblem) : null}
+            practiceMode={practiceMode}
+            onPracticeModeChange={setPracticeMode}
+            practiceRecord={getRecord(activeProblem.id)}
+            onHintViewed={(depth) => recordHintViewed(activeProblem.id, depth)}
+            onSolutionViewed={() => recordSolutionViewed(activeProblem.id)}
+            onReflect={(confidence) => recordReflection(activeProblem.id, confidence)}
           />
         ) : (
           <>
+            <PracticeModeBar
+              mode={practiceMode}
+              onChange={setPracticeMode}
+              activity={activity}
+              dueCount={dueCount}
+            />
             <MissionControl
               allProblems={ALL_PROBLEMS}
               topic={topic}
               getStatus={getStatus}
               onSelectProblem={selectProblem}
+            />
+            <ProblemList
+              topic={deckTopic}
+              problems={deckTopic.problems}
+              allProblems={libraryProblems}
+              onSelect={selectProblem}
+              getStatus={getStatus}
+              isBookmarked={isBookmarked}
+              toggleBookmark={toggleBookmark}
             />
             <PracticeCommandCenter
               allProblems={ALL_PROBLEMS}
@@ -331,14 +464,8 @@ export default function PracticePage() {
               exportSnapshot={exportSnapshot}
               importSnapshot={importSnapshot}
               resetPracticeData={resetPracticeData}
-            />
-            <ProblemList
-              topic={topic}
-              problems={topic.problems}
-              onSelect={selectProblem}
-              getStatus={getStatus}
-              isBookmarked={isBookmarked}
-              toggleBookmark={toggleBookmark}
+              getRecord={getRecord}
+              isDueForReview={isDueForReview}
             />
           </>
         )}

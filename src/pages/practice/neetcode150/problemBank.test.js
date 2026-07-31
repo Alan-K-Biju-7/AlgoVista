@@ -6,7 +6,7 @@ import {
   getNeetcode150Problems,
   isNeetcode150,
 } from './index';
-import { runTests } from '../testRunner';
+import { evaluateTrustedReferenceSolution } from '../../../test-support/trustedSolutionEvaluator';
 
 describe('NeetCode 150 problem bank', () => {
   test('ships exactly 150 uniquely identified problems across configured topics', () => {
@@ -48,7 +48,7 @@ describe('NeetCode 150 problem bank', () => {
     const failures = [];
 
     for (const problem of NEETCODE150) {
-      const results = runTests(problem.solution, problem.testCases);
+      const results = evaluateTrustedReferenceSolution(problem.solution, problem.testCases);
       results.forEach((result, caseIndex) => {
         if (!result.passed) {
           failures.push({

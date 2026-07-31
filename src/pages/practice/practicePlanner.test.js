@@ -113,4 +113,16 @@ describe('practicePlanner', () => {
       expect.objectContaining({ score: 34, label: 'Momentum' })
     );
   });
+
+  test('puts solved patterns back into the queue when spaced recall is due', () => {
+    const isDue = (id) => id === 'a';
+    expect(getReviewQueue(topics, getStatus, () => false, 5, isDue).map((problem) => problem.id)[0]).toBe('a');
+    expect(getDailyTrainingPlan(topics, getStatus, () => false, isDue)[0]).toEqual(
+      expect.objectContaining({
+        id: 'warmup',
+        problem: expect.objectContaining({ id: 'a' }),
+        reason: expect.stringContaining('spaced recall'),
+      })
+    );
+  });
 });
