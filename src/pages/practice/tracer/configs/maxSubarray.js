@@ -1,6 +1,6 @@
 export const maxSubarrayTracer = {
   defaultInput: { nums: [-2, 1, -3, 4, -1, 2, 1, -5, 4] },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { nums } = __args__;
     let cur = nums[0], best = nums[0];
     __log__({ line: 0, message: 'Init: cur=' + cur + ', best=' + best, vars: { i: 0, cur, best }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: i === 0 ? 'current' : null })) } });
@@ -20,5 +20,5 @@ export const maxSubarrayTracer = {
       });
     }
     __log__({ line: 8, message: 'Done. Maximum subarray sum = ' + best, vars: { result: best }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: null })) } });
-  `,
+  },
 };

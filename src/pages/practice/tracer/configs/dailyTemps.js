@@ -1,6 +1,6 @@
 export const dailyTempsTracer = {
   defaultInput: { temps: [73, 74, 75, 71, 69, 72, 76, 73] },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { temps } = __args__;
     const res = new Array(temps.length).fill(0);
     const stack = [];
@@ -16,5 +16,5 @@ export const dailyTempsTracer = {
       __log__({ line: 6, message: 'Push index ' + i + ' (temp=' + temps[i] + ') onto stack. Stack: [' + stack.join(',') + ']', vars: { i, 'temps[i]': temps[i], stack: '[' + stack.join(',') + ']', resultSoFar: '[' + res.join(',') + ']' }, structure: { type: 'array', label: 'temps', items: temps.map((v, k) => ({ idx: k, val: v, role: k === i ? 'current' : stack.includes(k) ? 'compare' : null })) } });
     }
     __log__({ line: 8, message: 'Done. Result: [' + res.join(',') + ']', vars: { result: '[' + res.join(',') + ']' }, structure: { type: 'array', label: 'result', items: res.map((v,i) => ({ idx: i, val: v, role: v > 0 ? 'found' : null })) } });
-  `,
+  },
 };

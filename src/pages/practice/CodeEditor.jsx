@@ -1,53 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
+import Editor, { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor/editor/editor.api';
+import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
+import 'monaco-editor/editor/contrib/bracketMatching/browser/bracketMatching';
+import 'monaco-editor/editor/contrib/clipboard/browser/clipboard';
+import 'monaco-editor/editor/contrib/comment/browser/comment';
+import 'monaco-editor/editor/contrib/contextmenu/browser/contextmenu';
+import 'monaco-editor/editor/contrib/find/browser/findController';
+import 'monaco-editor/editor/contrib/folding/browser/folding';
+import 'monaco-editor/editor/contrib/format/browser/formatActions';
+import 'monaco-editor/editor/contrib/hover/browser/hoverContribution';
+import 'monaco-editor/editor/contrib/indentation/browser/indentation';
+import 'monaco-editor/editor/contrib/lineSelection/browser/lineSelection';
+import 'monaco-editor/editor/contrib/linesOperations/browser/linesOperations';
+import 'monaco-editor/editor/contrib/multicursor/browser/multicursor';
+import 'monaco-editor/editor/contrib/snippet/browser/snippetController2';
+import 'monaco-editor/editor/contrib/suggest/browser/suggestController';
+import 'monaco-editor/editor/contrib/toggleTabFocusMode/browser/toggleTabFocusMode';
+import 'monaco-editor/editor/contrib/tokenization/browser/tokenization';
+import 'monaco-editor/editor/contrib/wordHighlighter/browser/wordHighlighter';
+import 'monaco-editor/editor/contrib/wordOperations/browser/wordOperations';
+import 'monaco-editor/editor/contrib/wordPartOperations/browser/wordPartOperations';
+import 'monaco-editor/languages/definitions/cpp/register';
+import 'monaco-editor/languages/definitions/csharp/register';
+import 'monaco-editor/languages/definitions/go/register';
+import 'monaco-editor/languages/definitions/java/register';
+import 'monaco-editor/languages/definitions/javascript/register';
+import 'monaco-editor/languages/definitions/kotlin/register';
+import 'monaco-editor/languages/definitions/python/register';
+import 'monaco-editor/languages/definitions/rust/register';
+import 'monaco-editor/languages/definitions/swift/register';
+import 'monaco-editor/languages/definitions/typescript/register';
 
-const MONACO_VS = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs';
+loader.config({ monaco });
 
-// Fix cross-origin worker "Script error." by proxying workers as blobs
-function setupMonacoWorkerProxy() {
-  window.MonacoEnvironment = {
-    getWorkerUrl: function (_moduleId, label) {
-      const workerSrc = `
-        self.MonacoEnvironment = { baseUrl: '${MONACO_VS}/' };
-        importScripts('${MONACO_VS}/base/worker/workerMain.js');
-      `;
-      const blob = new Blob([workerSrc], { type: 'application/javascript' });
-      return URL.createObjectURL(blob);
+if (typeof self !== 'undefined') {
+  self.MonacoEnvironment = {
+    getWorker() {
+      return new EditorWorker();
     },
   };
-}
-
-let monacoLoaded = false;
-let monacoLoading = false;
-let monacoFailed = false;
-const monacoCallbacks = [];
-
-function loadMonaco(cb) {
-  if (monacoLoaded) { cb(true); return; }
-  if (monacoFailed) { cb(false); return; }
-  monacoCallbacks.push(cb);
-  if (monacoLoading) return;
-  monacoLoading = true;
-
-  setupMonacoWorkerProxy();
-
-  const script = document.createElement('script');
-  script.src = `${MONACO_VS}/loader.min.js`;
-  script.onload = () => {
-    window.require.config({ paths: { vs: MONACO_VS } });
-    window.require(['vs/editor/editor.main'], () => {
-      monacoLoaded = true;
-      monacoCallbacks.forEach(fn => fn(true));
-      monacoCallbacks.length = 0;
-    });
-  };
-  script.onerror = (e) => {
-    console.error('Monaco failed to load', e);
-    monacoFailed = true;
-    monacoLoading = false;
-    monacoCallbacks.forEach(fn => fn(false));
-    monacoCallbacks.length = 0;
-  };
-  document.head.appendChild(script);
 }
 
 function parseHeight(height, fallback = 280) {
@@ -98,6 +90,16 @@ function toggleSelectedLineComments(textarea) {
   };
 }
 
+function editorPath(storageKey, language) {
+  const safeKey = String(storageKey || 'solution').replace(/[^a-zA-Z0-9._-]/g, '-');
+  return `inmemory://algovista/${safeKey}.${language}`;
+}
+
+function monacoLanguage(language) {
+  // Monaco intentionally shares its C/C++ grammar under the `cpp` id.
+  return language === 'c' ? 'cpp' : language;
+}
+
 export default function CodeEditor({
   value,
   onChange,
@@ -107,15 +109,19 @@ export default function CodeEditor({
   maxHeight = 820,
   storageKey,
   resizable = true,
+  fontSize = 13,
+  wordWrap = true,
 }) {
-  const containerRef = useRef(null);
   const editorRef = useRef(null);
   const fallbackRef = useRef(null);
   const defaultHeight = clampHeight(parseHeight(height), minHeight, maxHeight);
   const [editorHeight, setEditorHeight] = useState(() =>
     readStoredHeight(storageKey, defaultHeight, minHeight, maxHeight)
   );
-  const [useFallback, setUseFallback] = useState(monacoFailed);
+  const [editorAvailable, setEditorAvailable] = useState(() => (
+    typeof window !== 'undefined' && typeof window.Worker === 'function' ? null : false
+  ));
+  const [tabInserts, setTabInserts] = useState(true);
 
   const updateHeight = (nextHeight) => {
     const clamped = clampHeight(nextHeight, minHeight, maxHeight);
@@ -146,6 +152,7 @@ export default function CodeEditor({
 
   useEffect(() => {
     updateHeight(readStoredHeight(storageKey, defaultHeight, minHeight, maxHeight));
+  // Height storage is intentionally re-read only when its owning editor changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey, defaultHeight, minHeight, maxHeight]);
 
@@ -154,62 +161,35 @@ export default function CodeEditor({
   }, [editorHeight]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    let canceled = false;
-    const fallbackTimer = setTimeout(() => {
-      if (!editorRef.current && !monacoLoaded && !canceled) setUseFallback(true);
-    }, 3000);
-
-    loadMonaco((ok) => {
-      if (canceled) return;
-      clearTimeout(fallbackTimer);
-      if (!ok) {
-        setUseFallback(true);
-        return;
-      }
-      if (!containerRef.current || editorRef.current || useFallback) return;
-      editorRef.current = window.monaco.editor.create(containerRef.current, {
-        value,
-        language,
-        theme: 'vs-dark',
-        fontSize: 13,
-        minimap: { enabled: false },
-        wordWrap: 'on',
-        scrollBeyondLastLine: false,
-        lineNumbers: 'on',
-        folding: false,
-        automaticLayout: true,
-        tabSize: 2,
-        insertSpaces: true,
-        formatOnPaste: true,
-        contextmenu: true,
-        quickSuggestions: { other: true, comments: true, strings: true },
-        comments: { insertSpace: true, ignoreEmptyLines: true },
-        padding: { top: 12 },
-      });
-      editorRef.current.onDidChangeModelContent(() => {
-        onChange && onChange(editorRef.current.getValue());
-      });
-    });
+    if (editorAvailable === false) return undefined;
+    let active = true;
+    loader.init().then(
+      () => active && setEditorAvailable(true),
+      () => active && setEditorAvailable(false)
+    );
     return () => {
-      canceled = true;
-      clearTimeout(fallbackTimer);
-      editorRef.current?.dispose();
-      editorRef.current = null;
+      active = false;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [useFallback, language]);
+  }, [editorAvailable]);
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.getValue() !== value) {
-      editorRef.current.setValue(value);
-    }
-  }, [value]);
+    editorRef.current?.updateOptions({
+      fontSize,
+      wordWrap: wordWrap ? 'on' : 'off',
+      tabFocusMode: !tabInserts,
+    });
+  }, [fontSize, tabInserts, wordWrap]);
 
   const handleFallbackKeyDown = (event) => {
     const textarea = event.currentTarget;
 
-    if (event.key === 'Tab') {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'm') {
+      event.preventDefault();
+      setTabInserts((current) => !current);
+      return;
+    }
+
+    if (event.key === 'Tab' && tabInserts) {
       event.preventDefault();
       const { selectionStart, selectionEnd } = textarea;
       const nextValue = `${value.slice(0, selectionStart)}  ${value.slice(selectionEnd)}`;
@@ -231,6 +211,8 @@ export default function CodeEditor({
     }
   };
 
+  const renderFallback = editorAvailable === false;
+
   return (
     <div className="code-editor-shell">
       <div
@@ -241,7 +223,7 @@ export default function CodeEditor({
           maxHeight: `${maxHeight}px`,
         }}
       >
-        {useFallback ? (
+        {renderFallback ? (
           <textarea
             ref={fallbackRef}
             value={value}
@@ -250,27 +232,76 @@ export default function CodeEditor({
             spellCheck={false}
             aria-label={`${language} code editor`}
             className="code-editor-fallback"
+            style={{ fontSize: `${fontSize}px`, whiteSpace: wordWrap ? 'pre-wrap' : 'pre' }}
           />
         ) : (
-          <div ref={containerRef} className="code-editor-monaco" />
+          <Editor
+            className="code-editor-monaco"
+            height="100%"
+            path={editorPath(storageKey, language)}
+            language={monacoLanguage(language)}
+            value={value}
+            theme="vs-dark"
+            loading={<div className="code-editor-loading" role="status">Loading professional editor…</div>}
+            onMount={(editor) => {
+              editorRef.current = editor;
+              editor.updateOptions({ tabFocusMode: !tabInserts });
+              editor.focus();
+            }}
+            onChange={(nextValue) => onChange?.(nextValue ?? '')}
+            options={{
+              accessibilitySupport: 'auto',
+              ariaLabel: `${language} code editor`,
+              automaticLayout: true,
+              bracketPairColorization: { enabled: true },
+              contextmenu: true,
+              cursorBlinking: 'smooth',
+              folding: true,
+              fontLigatures: true,
+              fontSize,
+              formatOnPaste: true,
+              guides: { bracketPairs: true, indentation: true },
+              insertSpaces: true,
+              lineNumbers: 'on',
+              minimap: { enabled: false },
+              padding: { top: 12, bottom: 12 },
+              quickSuggestions: { other: true, comments: false, strings: true },
+              renderLineHighlight: 'all',
+              scrollBeyondLastLine: false,
+              smoothScrolling: true,
+              tabFocusMode: !tabInserts,
+              tabSize: 2,
+              wordWrap: wordWrap ? 'on' : 'off',
+            }}
+          />
         )}
       </div>
       {resizable && (
         <div className="code-editor-resizebar">
-          <button type="button" onClick={() => updateHeight(minHeight)}>
-            Compact
+          <button type="button" onClick={() => setTabInserts((current) => !current)} title="Ctrl+M toggles whether Tab indents or moves focus">
+            Tab: {tabInserts ? 'indent' : 'focus'}
           </button>
-          <button type="button" onClick={() => updateHeight(defaultHeight)}>
-            Reset
-          </button>
-          <button type="button" onClick={() => updateHeight(maxHeight)}>
-            Tall
-          </button>
+          <button type="button" onClick={() => updateHeight(minHeight)}>Compact</button>
+          <button type="button" onClick={() => updateHeight(defaultHeight)}>Reset</button>
+          <button type="button" onClick={() => updateHeight(maxHeight)}>Tall</button>
           <span
             role="separator"
+            tabIndex="0"
             aria-orientation="horizontal"
+            aria-label="Resize code editor"
+            aria-valuemin={minHeight}
+            aria-valuemax={maxHeight}
+            aria-valuenow={editorHeight}
             className="code-editor-drag-handle"
             onPointerDown={startResize}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                updateHeight(editorHeight + (event.key === 'ArrowDown' ? 24 : -24));
+              }
+              if (event.key === 'Home') updateHeight(minHeight);
+              if (event.key === 'End') updateHeight(maxHeight);
+            }}
             title="Drag to resize editor"
           >
             Resize

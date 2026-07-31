@@ -20,7 +20,7 @@
   margin: 1rem 0 1rem;
   font-size: 3.1rem;
   line-height: 1.04;
-  letter-spacing: 0;
+  letter-spacing: -0.045em;
 }
 
 .beginners-hero__copy p {
@@ -51,10 +51,12 @@
   gap: 1rem;
   padding: 1.2rem;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border-radius: 14px;
   background:
-    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(13, 18, 32, 0.96)),
+    linear-gradient(145deg, rgba(45, 212, 191, 0.055), transparent 45%),
+    linear-gradient(135deg, rgba(17, 25, 37, 0.96), rgba(12, 18, 28, 0.96)),
     var(--bg-card);
+  box-shadow: var(--shadow-card);
 }
 
 .beginners-progress-panel > strong {
@@ -86,10 +88,81 @@
 .beginners-progress-panel__stats span {
   padding: 0.65rem;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border-radius: 10px;
   color: var(--text-muted);
   background: rgba(10, 14, 26, 0.5);
   font-size: 0.78rem;
+}
+
+.beginners-learning-loop {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
+  gap: 1.25rem;
+  align-items: center;
+  max-width: 1240px;
+  margin: 0 auto 1.2rem;
+  padding: 1.1rem 1.5rem;
+  border-block: 1px solid var(--border-subtle);
+}
+
+.beginners-learning-loop h2 {
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
+.beginners-learning-loop ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  list-style: none;
+}
+
+.beginners-learning-loop li {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 92px;
+  align-content: center;
+  padding: 0.7rem;
+  border: 1px solid var(--border-default);
+  border-radius: 11px;
+  background: rgba(13, 20, 30, 0.66);
+}
+
+.beginners-learning-loop li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 1px);
+  z-index: 2;
+  width: 0.55rem;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+.beginners-learning-loop li > span {
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.beginners-learning-loop strong,
+.beginners-learning-loop small {
+  display: block;
+}
+
+.beginners-learning-loop strong {
+  margin-top: 0.12rem;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.beginners-learning-loop small {
+  margin-top: 0.12rem;
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1.4;
 }
 
 .beginners-progress-panel__stats b {
@@ -112,8 +185,9 @@
 .beginners-main,
 .beginners-cockpit {
   border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: rgba(17, 24, 39, 0.78);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(17, 25, 37, 0.9), rgba(13, 20, 30, 0.9));
+  box-shadow: var(--shadow-card);
 }
 
 .beginners-rail {
@@ -146,7 +220,7 @@
   width: 100%;
   min-height: 58px;
   padding: 0.68rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 10px;
   text-align: left;
   border-color: transparent;
   background: transparent;
@@ -232,9 +306,9 @@
   width: 100%;
   min-height: 74px;
   padding: 0.75rem;
-  border-radius: 8px;
+  border-radius: 11px;
   border: 1px solid var(--border-default);
-  background: rgba(13, 18, 32, 0.7);
+  background: rgba(10, 16, 25, 0.66);
   text-align: left;
   text-decoration: none;
   color: inherit;
@@ -244,6 +318,7 @@
 .beginner-concept.is-active {
   border-color: color-mix(in srgb, var(--concept-color) 50%, transparent);
   background: color-mix(in srgb, var(--concept-color) 10%, rgba(13, 18, 32, 0.9));
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--concept-color) 72%, transparent);
 }
 
 .beginner-concept__index {
@@ -381,6 +456,37 @@
   text-align: center;
 }
 
+.beginners-cockpit__coach.is-locked {
+  border-color: rgba(245, 166, 35, 0.3);
+  color: var(--yellow-soft);
+  background: rgba(245, 166, 35, 0.07);
+}
+
+.beginners-main__empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--border-default);
+  border-radius: 11px;
+  text-align: center;
+}
+
+.beginners-main__empty strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+}
+
+.beginners-main__empty span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.beginners-main__empty button {
+  margin-top: 0.35rem;
+}
+
 .beginners-cockpit__lesson {
   border-color: rgba(0, 212, 170, 0.35);
   color: var(--accent);
@@ -392,8 +498,10 @@
   min-height: 136px;
   overflow: hidden;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: rgba(10, 14, 26, 0.6);
+  border-radius: 11px;
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--viz-color) 7%, transparent), transparent 68%),
+    rgba(8, 13, 21, 0.7);
 }
 
 .beginner-visual--array,
@@ -548,6 +656,10 @@
   .beginners-rail__list {
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   }
+
+  .beginners-learning-loop {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -564,6 +676,15 @@
     grid-template-columns: 1fr;
   }
 
+  .beginners-learning-loop ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .beginners-learning-loop li:nth-child(2)::after,
+  .beginners-learning-loop li:nth-child(4)::after {
+    display: none;
+  }
+
   .beginner-concept__status {
     justify-self: start;
   }
@@ -571,5 +692,15 @@
   .beginners-progress-panel__stats,
   .beginners-cockpit__actions {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .beginners-learning-loop ol {
+    grid-template-columns: 1fr;
+  }
+
+  .beginners-learning-loop li::after {
+    display: none;
   }
 }

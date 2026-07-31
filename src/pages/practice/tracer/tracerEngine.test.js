@@ -33,14 +33,14 @@ describe('tracer validation', () => {
 });
 
 describe('tracer engine', () => {
-  test('runs code in the tracer runner and deep-clones logged snapshots', () => {
+  test('runs a trusted trace recipe and deep-clones logged snapshots', () => {
     const config = {
-      runnerBody: `
-        const arr = __args__[0];
-        __log__({ line: 1, vars: { first: arr[0] }, structure: { type: 'array', items: arr } });
+      runner(args, log) {
+        const arr = args[0];
+        log({ line: 1, vars: { first: arr[0] }, structure: { type: 'array', items: arr } });
         arr[0] = 99;
-        __log__({ line: 2, vars: { first: arr[0] }, structure: { type: 'array', items: arr } });
-      `,
+        log({ line: 2, vars: { first: arr[0] }, structure: { type: 'array', items: arr } });
+      },
     };
 
     const steps = runWithTracer('function solve(nums) { return nums; }', [[1, 2, 3]], config);
@@ -64,9 +64,29 @@ describe('tracer engine', () => {
     );
   });
 
+  test('never evaluates learner source in the application realm', () => {
+    const steps = runWithTracer(
+      'throw new Error("LEARNER_SOURCE_EXECUTED");',
+      [[4, 2]],
+      {
+        runner(args, log) {
+          const arr = args[0];
+          log({ line: 1, vars: { smallest: Math.min(...arr) }, structure: null });
+        },
+      }
+    );
+
+    expect(steps).toEqual([
+      expect.objectContaining({ line: 1, vars: { smallest: 2 } }),
+    ]);
+    expect(steps[0].message).toBeUndefined();
+  });
+
   test('normalizes runtime errors into trace steps', () => {
     const steps = runWithTracer('', [], {
-      runnerBody: 'missingFunction();',
+      runner() {
+        missingFunction();
+      },
     });
 
     expect(steps).toHaveLength(1);
@@ -76,6 +96,16 @@ describe('tracer engine', () => {
         message: expect.stringContaining('missingFunction is not defined'),
       })
     );
+  });
+
+  test('fails closed when no repository-owned trace function exists', () => {
+    const steps = runWithTracer('function solve() {}', [], { runnerBody: 'return 1;' });
+    expect(steps).toEqual([
+      expect.objectContaining({
+        type: 'error',
+        message: 'This problem does not have a trusted reference trace yet.',
+      }),
+    ]);
   });
 
   test('diffSnapshots reports changed keys only', () => {

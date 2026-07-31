@@ -1938,7 +1938,7 @@ export default function SimulatorPage() {
         })}
       </aside>
 
-      <main className="simulator-main">
+      <section className="simulator-main" aria-label="Interactive simulator workspace">
         <section className="simulator-hero">
           <div className="simulator-hero__chips">
             <span
@@ -2043,7 +2043,7 @@ export default function SimulatorPage() {
 
           <div className="simulator-stage__body">{renderTabContent()}</div>
         </section>
-      </main>
+      </section>
     </div>
   );
 }

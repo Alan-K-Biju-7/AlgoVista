@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { buildVisualSteps } from './visualStepBuilder';
 
 function compactSentence(text = '') {
@@ -276,6 +276,10 @@ export default function ProblemVisualLab({ problem, topicColor }) {
   const steps = useMemo(() => buildVisualSteps(problem), [problem]);
   const [stepIndex, setStepIndex] = useState(0);
   const [confirmedSteps, setConfirmedSteps] = useState(() => new Set());
+  const visualId = useId();
+  const visualTitleId = `${visualId}-title`;
+  const visualStageId = `${visualId}-stage`;
+  const visualStepTitleId = `${visualId}-step-title`;
   const step = steps[stepIndex];
   const pct = Math.round(((stepIndex + 1) / steps.length) * 100);
   const masteryPct = Math.round((confirmedSteps.size / steps.length) * 100);
@@ -300,11 +304,11 @@ export default function ProblemVisualLab({ problem, topicColor }) {
   };
 
   return (
-    <section className="visual-lab">
+    <section className="visual-lab" aria-labelledby={visualTitleId}>
       <div className="visual-lab__header" style={{ borderColor: `${topicColor}45` }}>
         <div>
           <p style={{ color: topicColor }}>In-page visualization</p>
-          <h3>{problem.title}</h3>
+          <h3 id={visualTitleId}>{problem.title}</h3>
           <span>{compactSentence(problem.description)}</span>
           {example && (
             <div className="visual-lab__example">
@@ -313,17 +317,28 @@ export default function ProblemVisualLab({ problem, topicColor }) {
             </div>
           )}
         </div>
-        <div className="visual-lab__progress">
+        <div
+          className="visual-lab__progress"
+          role="progressbar"
+          aria-label="Visualization progress"
+          aria-valuemin={0}
+          aria-valuemax={steps.length}
+          aria-valuenow={stepIndex + 1}
+          aria-valuetext={`Step ${stepIndex + 1} of ${steps.length}`}
+        >
           <b style={{ color: topicColor }}>{stepIndex + 1}/{steps.length}</b>
           <div><i style={{ width: `${pct}%`, background: topicColor }} /></div>
         </div>
       </div>
 
       <div className="visual-lab__grid">
-        <div className="visual-lab__stage" style={{ borderColor: `${topicColor}38` }}>
+        <div id={visualStageId} className="visual-lab__stage" aria-labelledby={visualStepTitleId} style={{ borderColor: `${topicColor}38` }}>
           <div className="visual-lab__stage-top">
             <p style={{ color: topicColor }}>Step {stepIndex + 1}</p>
-            <h3>{step.title}</h3>
+            <h3 id={visualStepTitleId}>{step.title}</h3>
+            <p className="practice-sr-only" role="status" aria-live="polite" aria-atomic="true">
+              Step {stepIndex + 1} of {steps.length}: {step.title}. {step.narration}
+            </p>
           </div>
           <VisualCanvas visual={step.visual} color={topicColor} />
           <div className="visual-lab__controls">
@@ -333,6 +348,7 @@ export default function ProblemVisualLab({ problem, topicColor }) {
               type="button"
               onClick={confirmStep}
               disabled={stepConfirmed}
+              aria-pressed={stepConfirmed}
               style={stepConfirmed ? { borderColor: `${topicColor}55`, color: topicColor } : null}
             >
               {stepConfirmed ? 'Explained' : 'I Can Explain This'}
@@ -363,20 +379,29 @@ export default function ProblemVisualLab({ problem, topicColor }) {
             <span>
               Explain why this step keeps the {problem.pattern || 'pattern'} state truthful before moving to code.
             </span>
-            <div>
+            <div
+              role="progressbar"
+              aria-label="Explained steps"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={masteryPct}
+            >
               <i style={{ width: `${masteryPct}%`, background: topicColor }} />
             </div>
           </div>
-          <div className="visual-state">
+          <div className="visual-state" role="status" aria-label="Current algorithm state" aria-live="polite" aria-atomic="true">
             <p>Live state</p>
             {stateRows(step.visual.state)}
           </div>
-          <div className="visual-step-list">
+          <nav className="visual-step-list" aria-label="Visualization steps">
             {steps.map((item, index) => (
               <button
                 key={`${item.title}-${index}`}
                 type="button"
                 className={index === stepIndex ? 'is-active' : ''}
+                aria-current={index === stepIndex ? 'step' : undefined}
+                aria-controls={visualStageId}
+                aria-label={`${item.title}${confirmedSteps.has(index) ? ', explained' : ''}`}
                 onClick={() => moveToStep(index)}
                 style={index === stepIndex ? { borderColor: topicColor, color: topicColor } : null}
               >
@@ -384,7 +409,7 @@ export default function ProblemVisualLab({ problem, topicColor }) {
                 {item.title}
               </button>
             ))}
-          </div>
+          </nav>
         </aside>
       </div>
     </section>

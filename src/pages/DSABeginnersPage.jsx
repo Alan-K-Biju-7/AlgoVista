@@ -21,9 +21,21 @@ function getProgressStatus(progress, conceptId) {
 }
 
 function CurriculumVisual({ sectionId, color }) {
+  const visualLabels = {
+    graphs: 'Graph nodes connected by edges',
+    'dynamic-programming': 'Dynamic programming table with solved states',
+    'linked-list': 'Linked list nodes connected in sequence',
+    stack: 'Stack values arranged from base to top',
+    strings: 'String characters with a highlighted matching window',
+  };
+  const accessibilityProps = {
+    role: 'img',
+    'aria-label': visualLabels[sectionId] || 'Array values with active indexes highlighted',
+  };
+
   if (sectionId === 'graphs') {
     return (
-      <div className="beginner-visual beginner-visual--graph" style={{ '--viz-color': color }}>
+      <div className="beginner-visual beginner-visual--graph" style={{ '--viz-color': color }} {...accessibilityProps}>
         {['A', 'B', 'C', 'D', 'E'].map((node, index) => (
           <span key={node} className={`graph-node graph-node--${index}`}>{node}</span>
         ))}
@@ -36,7 +48,7 @@ function CurriculumVisual({ sectionId, color }) {
 
   if (sectionId === 'dynamic-programming') {
     return (
-      <div className="beginner-visual beginner-visual--dp" style={{ '--viz-color': color }}>
+      <div className="beginner-visual beginner-visual--dp" style={{ '--viz-color': color }} {...accessibilityProps}>
         {Array.from({ length: 20 }).map((_, index) => (
           <span key={index} className={index % 5 === 0 || index > 13 ? 'is-filled' : ''} />
         ))}
@@ -46,7 +58,7 @@ function CurriculumVisual({ sectionId, color }) {
 
   if (sectionId === 'linked-list') {
     return (
-      <div className="beginner-visual beginner-visual--list" style={{ '--viz-color': color }}>
+      <div className="beginner-visual beginner-visual--list" style={{ '--viz-color': color }} {...accessibilityProps}>
         {[12, 24, 36, 48].map((item) => (
           <span key={item}>{item}</span>
         ))}
@@ -56,7 +68,7 @@ function CurriculumVisual({ sectionId, color }) {
 
   if (sectionId === 'stack') {
     return (
-      <div className="beginner-visual beginner-visual--stack" style={{ '--viz-color': color }}>
+      <div className="beginner-visual beginner-visual--stack" style={{ '--viz-color': color }} {...accessibilityProps}>
         {[4, 8, 15, 16].map((item) => (
           <span key={item}>{item}</span>
         ))}
@@ -66,7 +78,7 @@ function CurriculumVisual({ sectionId, color }) {
 
   if (sectionId === 'strings') {
     return (
-      <div className="beginner-visual beginner-visual--string" style={{ '--viz-color': color }}>
+      <div className="beginner-visual beginner-visual--string" style={{ '--viz-color': color }} {...accessibilityProps}>
         {'KMPMATCH'.split('').map((letter, index) => (
           <span key={`${letter}-${index}`}>{letter}</span>
         ))}
@@ -75,7 +87,7 @@ function CurriculumVisual({ sectionId, color }) {
   }
 
   return (
-    <div className="beginner-visual beginner-visual--array" style={{ '--viz-color': color }}>
+    <div className="beginner-visual beginner-visual--array" style={{ '--viz-color': color }} {...accessibilityProps}>
       {[3, 1, 4, 1, 5, 9, 2].map((item, index) => (
         <span key={`${item}-${index}`} className={index === 2 || index === 5 ? 'is-active' : ''}>
           {item}
@@ -87,7 +99,7 @@ function CurriculumVisual({ sectionId, color }) {
 
 function SectionRail({ activeSectionId, onSelect, progress }) {
   return (
-    <aside className="beginners-rail">
+    <aside className="beginners-rail" aria-label="Curriculum sections">
       <p className="beginners-rail__eyebrow">Curriculum</p>
       <div className="beginners-rail__list">
         {DSA_BEGINNERS_CURRICULUM.map((section) => {
@@ -104,6 +116,7 @@ function SectionRail({ activeSectionId, onSelect, progress }) {
               className={active ? 'beginners-rail__item is-active' : 'beginners-rail__item'}
               style={{ '--section-color': section.color }}
               onClick={() => onSelect(section.id)}
+              aria-pressed={active}
             >
               <span>
                 <strong>{section.title}</strong>
@@ -125,6 +138,7 @@ function ConceptCard({ concept, active, status, onSelect }) {
       className={active ? 'beginner-concept is-active' : 'beginner-concept'}
       style={{ '--concept-color': concept.color }}
       onClick={() => onSelect(concept)}
+      aria-current={active ? 'true' : undefined}
     >
       <span className="beginner-concept__index">{String(concept.order).padStart(3, '0')}</span>
       <span className="beginner-concept__body">
@@ -163,10 +177,10 @@ function LearningCockpit({ concept, section, progressItem, onSave, isAuthenticat
   };
 
   return (
-    <aside className="beginners-cockpit">
+    <aside className="beginners-cockpit" aria-labelledby="active-concept-title">
       <div>
         <p className="section-label">Active concept</p>
-        <h2>{concept.title}</h2>
+        <h2 id="active-concept-title">{concept.title}</h2>
         <p>{concept.focus}</p>
       </div>
 
@@ -186,6 +200,7 @@ function LearningCockpit({ concept, section, progressItem, onSave, isAuthenticat
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Write the invariant, tricky edge case, or mistake to revisit."
+          maxLength="2000"
         />
       </div>
 
@@ -197,6 +212,7 @@ function LearningCockpit({ concept, section, progressItem, onSave, isAuthenticat
             className={status === 'mastered' ? 'btn-primary' : 'btn-ghost'}
             onClick={() => saveStatus(status)}
             disabled={!isAuthenticated}
+            aria-pressed={progressItem?.status === status}
           >
             {statusMeta[status].label}
           </button>
@@ -206,13 +222,13 @@ function LearningCockpit({ concept, section, progressItem, onSave, isAuthenticat
       {!isAuthenticated && (
         <p className="beginners-cockpit__hint">Log in to sync this progress through the backend.</p>
       )}
-      {message && <p className="beginners-cockpit__hint">{message}</p>}
+      {message && <p className="beginners-cockpit__hint" role="status">{message}</p>}
 
       <Link
         to={`/coach?concept=${encodeURIComponent(concept.id)}`}
-        className="beginners-cockpit__coach"
+        className={isAuthenticated ? 'beginners-cockpit__coach' : 'beginners-cockpit__coach is-locked'}
       >
-        Open AI coach for this concept
+        {isAuthenticated ? 'Open personal tutor for this concept' : 'Sign in to use personal tutoring'}
       </Link>
       <Link
         to={`/dsa-beginners/${concept.id}`}
@@ -242,12 +258,22 @@ export default function DSABeginnersPage() {
   const filteredConcepts = useMemo(() => {
     const cleanQuery = query.trim().toLowerCase();
     if (!cleanQuery) return activeSection.concepts;
-    return activeSection.concepts.filter((concept) => {
+    return DSA_BEGINNER_CONCEPTS.filter((concept) => {
       return `${concept.title} ${concept.focus} ${concept.sectionTitle}`
         .toLowerCase()
         .includes(cleanQuery);
     });
   }, [activeSection, query]);
+
+  const handleSectionSelect = (sectionId) => {
+    setQuery('');
+    setActiveSectionId(sectionId);
+  };
+
+  const handleConceptSelect = (concept) => {
+    setActiveConcept(concept);
+    setActiveSectionId(concept.sectionId);
+  };
 
   const mastered = DSA_BEGINNER_CONCEPTS.filter(
     (concept) => getProgressStatus(progress, concept.id) === 'mastered'
@@ -268,12 +294,14 @@ export default function DSABeginnersPage() {
           <span className="badge-teal">DSA for Beginners</span>
           <h1>From first array to advanced graph thinking.</h1>
           <p>
-            A complete beginner-to-advanced DSA map with visual checkpoints, backend-synced
-            progress, and an AI coach ready for concept-level help.
+            A complete beginner-to-advanced DSA map with visual checkpoints, synced progress,
+            and personal concept coaching after sign-in.
           </p>
           <div className="beginners-hero__actions">
             <a href="#beginner-curriculum" className="btn-primary">Start the map</a>
-            <Link to="/coach" className="btn-ghost">AI coach</Link>
+            <Link to="/coach" className="btn-ghost">
+              {isAuthenticated ? 'Personal tutor' : 'Sign in for tutoring'}
+            </Link>
             <Link to="/simulator" className="btn-ghost">Visual lab</Link>
           </div>
         </div>
@@ -281,7 +309,14 @@ export default function DSABeginnersPage() {
         <div className="beginners-progress-panel">
           <p className="section-label">Your beginner arc</p>
           <strong>{completionPct}% mastered</strong>
-          <div className="beginners-progress-panel__bar">
+          <div
+            className="beginners-progress-panel__bar"
+            role="progressbar"
+            aria-label="Curriculum mastery"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={completionPct}
+          >
             <span style={{ width: `${completionPct}%` }} />
           </div>
           <div className="beginners-progress-panel__stats">
@@ -290,28 +325,46 @@ export default function DSABeginnersPage() {
             <span><b>{confident}</b> confident</span>
             <span><b>{mastered}</b> mastered</span>
           </div>
-          <AuthPanel compact />
+          <div id="beginner-account">
+            <AuthPanel compact purpose="Sign in to save progress and unlock personal tutoring." />
+          </div>
         </div>
+      </section>
+
+      <section className="beginners-learning-loop" aria-labelledby="learning-loop-title">
+        <div>
+          <p className="section-label">Designed for retention</p>
+          <h2 id="learning-loop-title">One repeatable loop for every concept</h2>
+        </div>
+        <ol>
+          <li><span>01</span><strong>Understand</strong><small>Build the mental model</small></li>
+          <li><span>02</span><strong>Simulate</strong><small>Predict every state change</small></li>
+          <li><span>03</span><strong>Practice</strong><small>Apply it to interview code</small></li>
+          <li><span>04</span><strong>Review</strong><small>Retrieve it after a delay</small></li>
+        </ol>
       </section>
 
       <section id="beginner-curriculum" className="beginners-shell">
         <SectionRail
           activeSectionId={activeSectionId}
-          onSelect={setActiveSectionId}
+          onSelect={handleSectionSelect}
           progress={progress}
         />
 
-        <main className="beginners-main" style={{ '--active-section-color': activeSection.color }}>
+        <section className="beginners-main" style={{ '--active-section-color': activeSection.color }} aria-label="DSA curriculum concepts">
           <div className="beginners-main__header">
             <div>
-              <p className="section-label">{activeSection.track}</p>
-              <h2>{activeSection.title}</h2>
-              <p>{activeSection.description}</p>
+              <p className="section-label">{query.trim() ? 'Entire curriculum' : activeSection.track}</p>
+              <h2>{query.trim() ? 'Search results' : activeSection.title}</h2>
+              <p>{query.trim()
+                ? `${filteredConcepts.length} concepts match across every learning track.`
+                : activeSection.description}</p>
             </div>
             <div className="beginners-search">
-              <label htmlFor="beginner-search">Search section</label>
+              <label htmlFor="beginner-search">Search curriculum</label>
               <input
                 id="beginner-search"
+                type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="binary search, trie, dp..."
@@ -326,11 +379,18 @@ export default function DSABeginnersPage() {
                 concept={concept}
                 active={concept.id === activeConcept.id}
                 status={getProgressStatus(progress, concept.id)}
-                onSelect={setActiveConcept}
+                onSelect={handleConceptSelect}
               />
             ))}
+            {!filteredConcepts.length && (
+              <div className="beginners-main__empty" role="status">
+                <strong>No concept matched “{query.trim()}”</strong>
+                <span>Try a shorter topic such as graph, search, tree, or DP.</span>
+                <button type="button" onClick={() => setQuery('')}>Clear search</button>
+              </div>
+            )}
           </div>
-        </main>
+        </section>
 
         <LearningCockpit
           concept={activeConcept}

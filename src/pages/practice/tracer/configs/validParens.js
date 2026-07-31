@@ -1,6 +1,6 @@
 export const validParensTracer = {
   defaultInput: { s: '()[{}]' },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { s } = __args__;
     const stack = [];
     const map = { ')': '(', '}': '{', ']': '[' };
@@ -22,5 +22,5 @@ export const validParensTracer = {
     const valid = stack.length === 0;
     __log__({ line: 10, message: valid ? '✓ Stack is empty → all brackets matched → true' : '✗ Stack not empty → unmatched openers remain → false', vars: { stackSize: stack.length, result: valid }, structure: { type: 'stack', label: 'Stack', items: [...stack].reverse().map((v, j) => ({ val: v, isTop: j === 0, role: null })) } });
     return valid;
-  `,
+  },
 };

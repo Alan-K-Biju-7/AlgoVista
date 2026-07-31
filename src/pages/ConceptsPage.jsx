@@ -1,152 +1,230 @@
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import './ConceptsPage.css';
 
-function ConceptCard({ num, icon, title, desc, complexities, to, accent }) {
-  return (
-    <div style={{
-      background: 'var(--bg-card)', border: '1px solid var(--border-default)',
-      borderRadius: 'var(--radius-xl)', padding: '1.35rem',
-      display: 'flex', flexDirection: 'column', gap: '0.85rem',
-      transition: 'border-color 0.2s, box-shadow 0.2s',
-    }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${accent}44`; e.currentTarget.style.boxShadow = `0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px ${accent}22`; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.boxShadow = 'none'; }}
-    >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <div style={{
-            width: '36px', height: '36px', borderRadius: '9px', flexShrink: 0,
-            background: `${accent}18`, border: `1px solid ${accent}30`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1rem',
-          }}>{icon}</div>
-          <div>
-            <p style={{ fontSize: '0.62rem', fontWeight: '700', color: accent, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.1rem' }}>{num}</p>
-            <h3 style={{ fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: '700' }}>{title}</h3>
-          </div>
-        </div>
-      </div>
-
-      <p style={{ fontSize: '0.79rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>{desc}</p>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-        {complexities.map(({ label, val, color }) => (
-          <span key={label} style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            {label}:{' '}
-            <span style={{ fontWeight: '700', color, fontFamily: 'monospace' }}>{val}</span>
-          </span>
-        ))}
-      </div>
-
-      <Link to={to} style={{
-        display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
-        fontSize: '0.78rem', color: accent, fontWeight: '600',
-        padding: '0.38rem 0.8rem', borderRadius: '0.4rem',
-        border: `1px solid ${accent}30`, background: `${accent}10`,
-        alignSelf: 'flex-start', transition: 'all 0.15s',
-      }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}20`; e.currentTarget.style.borderColor = `${accent}55`; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}30`; }}
-      >
-        Open in simulator →
-      </Link>
-    </div>
-  );
-}
-
-const G = '#00d4aa';
+const G = '#2dd4bf';
 const Y = '#f5a623';
 const R = '#ff6b6b';
-const B = '#4a9eff';
-const P = '#8b7cf8';
+const B = '#60a5fa';
+const P = '#a78bfa';
 
 const concepts = [
-  { num: '01', icon: '▦',  title: 'Array',          accent: G, to: '/simulator#array',
-    desc: 'Contiguous memory block. O(1) access by index, O(n) insert/delete in the middle.',
-    complexities: [{ label: 'Read', val: 'O(1)', color: G }, { label: 'Insert end', val: 'O(1)', color: G }, { label: 'Insert mid', val: 'O(n)', color: '#ff6b6b' }, { label: 'Search', val: 'O(n)', color: '#ffd166' }] },
-  { num: '02', icon: '⬡',  title: 'Linked List',    accent: G, to: '/simulator#linkedlist',
-    desc: 'Nodes linked by pointers. O(1) insert at head, O(n) traversal to reach any node.',
-    complexities: [{ label: 'Insert head', val: 'O(1)', color: G }, { label: 'Insert tail', val: 'O(n)', color: '#ffd166' }, { label: 'Search', val: 'O(n)', color: '#ff6b6b' }, { label: 'Space', val: 'O(n)', color: B }] },
-  { num: '03', icon: '⬆',  title: 'Stack',          accent: G, to: '/simulator#stack',
-    desc: 'LIFO — Last In First Out. Push and pop both O(1). Used in call stacks and undo systems.',
-    complexities: [{ label: 'Push', val: 'O(1)', color: G }, { label: 'Pop', val: 'O(1)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
-  { num: '04', icon: '⇉',  title: 'Queue',          accent: G, to: '/simulator#queue',
-    desc: 'FIFO — First In First Out. Enqueue and dequeue both O(1). Used in BFS and task scheduling.',
-    complexities: [{ label: 'Enqueue', val: 'O(1)', color: G }, { label: 'Dequeue', val: 'O(1)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
-  { num: '05', icon: '🌲', title: 'BST',            accent: B, to: '/simulator#bst',
-    desc: 'Binary Search Tree: left < parent < right. O(log n) average for all ops, O(n) worst on skewed trees.',
-    complexities: [{ label: 'Insert avg', val: 'O(log n)', color: G }, { label: 'Search avg', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(n)', color: '#ff6b6b' }, { label: 'Space', val: 'O(n)', color: B }] },
-  { num: '06', icon: '⚖️', title: 'AVL Tree',       accent: B, to: '/simulator#avl',
-    desc: 'Self-balancing BST. Maintains balance factor (bf = lh − rh). LL/RR/LR/RL rotations guarantee O(log n) worst-case.',
-    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Delete', val: 'O(log n)', color: G }, { label: 'Rotation', val: 'O(1)', color: '#a78bfa' }, { label: 'Space', val: 'O(n)', color: B }] },
-  { num: '11', icon: '◉',  title: 'Graph BFS/DFS', accent: B, to: '/simulator#graph',
-    desc: 'Graph of nodes and edges. BFS (queue) explores level by level and finds shortest path. DFS (stack) dives deep first and is used for cycle detection and topological sort.',
-    complexities: [{ label: 'Time', val: 'O(V+E)', color: G }, { label: 'BFS space', val: 'O(V)', color: B }, { label: 'DFS space', val: 'O(V)', color: B }, { label: 'Shortest path', val: 'BFS ✓', color: G }] },
-  { num: '12', icon: '⬡',  title: 'Heap / Priority Queue', accent: B, to: '/simulator#heap',
-    desc: 'Complete binary tree stored as an array. Min-heap keeps smallest at root (index 0). Insert bubbles up, extract-min heapifies down. Powers Dijkstra, A*, and task schedulers.',
-    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Extract min', val: 'O(log n)', color: G }, { label: 'Peek', val: 'O(1)', color: G }, { label: 'Build', val: 'O(n)', color: B }] },
-  { num: '13', icon: '#',   title: 'Hash Table',   accent: B, to: '/simulator#hashtable',
-    desc: 'Array of buckets with separate chaining for collision resolution. djb2 hash maps keys to bucket indices. Load factor λ = entries/buckets — keep λ < 0.75 for O(1) average ops.',
-    complexities: [{ label: 'Insert', val: 'O(1) avg', color: G }, { label: 'Search', val: 'O(1) avg', color: G }, { label: 'Delete', val: 'O(1) avg', color: G }, { label: 'Space', val: 'O(n+m)', color: B }] },
-  { num: '14', icon: '✦',  title: 'Trie (Prefix Tree)', accent: B, to: '/simulator#trie',
-    desc: 'Tree where each edge = one character. Words with common prefix share nodes. Powers autocomplete, spell-check and IP routing. O(m) insert/search where m = word length.',
-    complexities: [{ label: 'Insert', val: 'O(m)', color: G }, { label: 'Search', val: 'O(m)', color: G }, { label: 'Autocomplete', val: 'O(m+k)', color: G }, { label: 'Space', val: 'O(α×n)', color: B }] },
-  { num: '15', icon: '→',  title: "Dijkstra's Algorithm", accent: B, to: '/simulator#dijkstra',
-    desc: "Greedy shortest path on weighted graphs. Pops the lowest-dist unvisited node from a min-PQ, relaxes all its edges. Once settled a node's distance is final. Cannot handle negative weights.",
-    complexities: [{ label: 'Time (heap)', val: 'O((V+E)logV)', color: G }, { label: 'Time (array)', val: 'O(V²)', color: Y }, { label: 'Space', val: 'O(V+E)', color: B }, { label: 'Negative w', val: '✗ No', color: R }] },
-  { num: '18', icon: '⇌', title: 'Bellman-Ford', accent: '#4a9eff', to: '/simulator#bellmanford',
-    desc: 'V−1 relaxation passes over all edges. Handles negative weights — unlike Dijkstra. V-th pass detects negative cycles. O(V×E) time. Foundation for SPFA and currency arbitrage detection.',
-    complexities: [{ label: 'Time', val: 'O(V×E)', color: Y }, { label: 'Space', val: 'O(V)', color: B }, { label: 'Neg weights', val: '✓ Yes', color: G }, { label: 'Neg cycle', val: '✓ Detect', color: G }] },
-  { num: '17', icon: '⚡', title: 'Quick Sort', accent: '#8b7cf8', to: '/simulator#quicksort',
-    desc: 'Lomuto partition: pick last element as pivot, scan with j pointer, swap elements ≤ pivot into left zone tracked by i. Pivot lands at i+1 — its final position. O(n²) worst case on sorted arrays.',
-    complexities: [{ label: 'Average', val: 'O(n log n)', color: G }, { label: 'Worst', val: 'O(n²)', color: R }, { label: 'Space', val: 'O(log n)', color: B }, { label: 'In-place', val: '✓ Yes', color: G }] },
-  { num: '16', icon: '↕', title: 'Merge Sort', accent: '#8b7cf8', to: '/simulator#mergesort',
-    desc: 'Divide array recursively until single elements. Merge sorted halves by comparing heads and picking smaller. O(n log n) guaranteed all cases — stable sort, extra O(n) space for merge.',
-    complexities: [{ label: 'All cases', val: 'O(n log n)', color: G }, { label: 'Space', val: 'O(n)', color: B }, { label: 'Stable', val: '✓ Yes', color: G }, { label: 'In-place', val: '✗ No', color: R }] },
-  { num: '07', icon: '⌖',  title: 'Binary Search',  accent: P, to: '/simulator#bsearch',
-    desc: 'Halves the search space each step on a sorted array. O(log n) vs O(n) for linear search.',
-    complexities: [{ label: 'Best', val: 'O(1)', color: G }, { label: 'Average', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(log n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
-  { num: '08', icon: '↕',  title: 'Bubble Sort',    accent: P, to: '/simulator#bubble',
-    desc: 'Repeatedly swaps adjacent elements if out of order. Best case O(n) on nearly sorted data.',
-    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Swaps', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Space', val: 'O(1)', color: B }] },
-  { num: '09', icon: '⤓',  title: 'Insertion Sort', accent: P, to: '/simulator#insertion',
-    desc: 'Builds sorted portion one element at a time. Powers Timsort for small arrays and nearly sorted data.',
-    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Shifts', val: 'O(n²)', color: '#ffd166' }, { label: 'Space', val: 'O(1)', color: B }] },
-  { num: '10', icon: '↓',  title: 'Selection Sort', accent: P, to: '/simulator#selection',
-    desc: 'Finds the minimum each pass and places it. Always O(n²) comparisons but only O(n) swaps.',
-    complexities: [{ label: 'Best', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Worst', val: 'O(n²)', color: '#ff6b6b' }, { label: 'Swaps', val: 'O(n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '01', icon: '▦', title: 'Array', accent: G, to: '/simulator#array', lessonTo: '/dsa-beginners/arrays-introduction-and-basic-operations',
+    desc: 'Contiguous indexed storage with constant-time access and predictable traversal.',
+    complexities: [{ label: 'Read', val: 'O(1)', color: G }, { label: 'Insert middle', val: 'O(n)', color: R }, { label: 'Search', val: 'O(n)', color: Y }] },
+  { num: '02', icon: '⬡', title: 'Linked List', accent: G, to: '/simulator#linkedlist', lessonTo: '/dsa-beginners/linked-list-singly-linked-list',
+    desc: 'A chain of nodes and references built for deliberate pointer movement and rewiring.',
+    complexities: [{ label: 'Insert head', val: 'O(1)', color: G }, { label: 'Search', val: 'O(n)', color: R }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '03', icon: '⬆', title: 'Stack', accent: G, to: '/simulator#stack', lessonTo: '/dsa-beginners/stack-implementation-array-and-linked-list',
+    desc: 'Last-in, first-out state for nested work, undo systems, parsing, and monotonic patterns.',
+    complexities: [{ label: 'Push', val: 'O(1)', color: G }, { label: 'Pop', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '04', icon: '⇉', title: 'Queue', accent: G, to: '/simulator#queue', lessonTo: '/dsa-beginners/queue-simple-queue',
+    desc: 'First-in, first-out processing for BFS, task scheduling, and streaming work.',
+    complexities: [{ label: 'Enqueue', val: 'O(1)', color: G }, { label: 'Dequeue', val: 'O(1)', color: G }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '05', icon: '⌘', title: 'BST', accent: B, to: '/simulator#bst', lessonTo: '/dsa-beginners/trees-binary-search-tree-bst',
+    desc: 'Ordered branching where left values are smaller and right values are larger.',
+    complexities: [{ label: 'Search avg', val: 'O(log n)', color: G }, { label: 'Worst', val: 'O(n)', color: R }, { label: 'Space', val: 'O(n)', color: B }] },
+  { num: '06', icon: '⚖', title: 'AVL Tree', accent: B, to: '/simulator#avl', lessonTo: '/dsa-beginners/trees-avl-tree',
+    desc: 'A self-balancing BST whose rotations preserve logarithmic worst-case operations.',
+    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Delete', val: 'O(log n)', color: G }, { label: 'Rotation', val: 'O(1)', color: P }] },
+  { num: '11', icon: '◎', title: 'Graph BFS/DFS', accent: B, to: '/simulator#graph', lessonTo: '/dsa-beginners/graphs-bfs-breadth-first-search',
+    desc: 'Explore networks breadth-first or depth-first while tracking a frontier and visited state.',
+    complexities: [{ label: 'Time', val: 'O(V+E)', color: G }, { label: 'Space', val: 'O(V)', color: B }, { label: 'Shortest path', val: 'BFS', color: G }] },
+  { num: '12', icon: '◇', title: 'Heap / Priority Queue', accent: B, to: '/simulator#heap', lessonTo: '/dsa-beginners/trees-heap-min-heap-max-heap',
+    desc: 'A complete tree that keeps the highest-priority value ready at the root.',
+    complexities: [{ label: 'Insert', val: 'O(log n)', color: G }, { label: 'Extract', val: 'O(log n)', color: G }, { label: 'Peek', val: 'O(1)', color: G }] },
+  { num: '13', icon: '#', title: 'Hash Table', accent: B, to: '/simulator#hashtable', lessonTo: '/dsa-beginners/hashing-hash-table-implementation',
+    desc: 'Key-based lookup with buckets, collision handling, and load-factor tradeoffs.',
+    complexities: [{ label: 'Insert avg', val: 'O(1)', color: G }, { label: 'Search avg', val: 'O(1)', color: G }, { label: 'Worst', val: 'O(n)', color: R }] },
+  { num: '14', icon: '✦', title: 'Trie (Prefix Tree)', accent: B, to: '/simulator#trie', lessonTo: '/dsa-beginners/trees-trie-prefix-tree-insert-search-autocomplete',
+    desc: 'A character-by-character tree for prefixes, autocomplete, and dictionary search.',
+    complexities: [{ label: 'Insert', val: 'O(m)', color: G }, { label: 'Search', val: 'O(m)', color: G }, { label: 'Prefix', val: 'O(m)', color: B }] },
+  { num: '15', icon: '→', title: "Dijkstra's Algorithm", accent: Y, to: '/simulator#dijkstra', lessonTo: '/dsa-beginners/graphs-dijkstra-s-algorithm',
+    desc: 'Greedy shortest paths on non-negative weighted graphs using repeated relaxation.',
+    complexities: [{ label: 'Heap', val: 'O((V+E)log V)', color: G }, { label: 'Space', val: 'O(V+E)', color: B }, { label: 'Negative edges', val: 'No', color: R }] },
+  { num: '18', icon: '⇌', title: 'Bellman-Ford', accent: Y, to: '/simulator#bellmanford', lessonTo: '/dsa-beginners/graphs-bellman-ford-algorithm',
+    desc: 'Round-based edge relaxation that supports negative weights and detects negative cycles.',
+    complexities: [{ label: 'Time', val: 'O(VE)', color: Y }, { label: 'Space', val: 'O(V)', color: B }, { label: 'Negative edges', val: 'Yes', color: G }] },
+  { num: '17', icon: '⚡', title: 'Quick Sort', accent: Y, to: '/simulator#quicksort', lessonTo: '/dsa-beginners/sorting-quick-sort',
+    desc: 'Partition around a pivot, then recursively order the two resulting regions.',
+    complexities: [{ label: 'Average', val: 'O(n log n)', color: G }, { label: 'Worst', val: 'O(n²)', color: R }, { label: 'Space avg', val: 'O(log n)', color: B }] },
+  { num: '16', icon: '↕', title: 'Merge Sort', accent: Y, to: '/simulator#mergesort', lessonTo: '/dsa-beginners/sorting-merge-sort',
+    desc: 'Split into smaller arrays, sort recursively, and merge in stable order.',
+    complexities: [{ label: 'All cases', val: 'O(n log n)', color: G }, { label: 'Space', val: 'O(n)', color: B }, { label: 'Stable', val: 'Yes', color: G }] },
+  { num: '07', icon: '⌖', title: 'Binary Search', accent: P, to: '/simulator#bsearch', lessonTo: '/dsa-beginners/arrays-binary-search',
+    desc: 'Use sorted or monotonic structure to prove half the search space impossible each step.',
+    complexities: [{ label: 'Best', val: 'O(1)', color: G }, { label: 'Worst', val: 'O(log n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '08', icon: '↕', title: 'Bubble Sort', accent: P, to: '/simulator#bubble', lessonTo: '/dsa-beginners/sorting-bubble-sort',
+    desc: 'Fix adjacent inversions over repeated passes and observe a sorted suffix emerge.',
+    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: R }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '09', icon: '⤓', title: 'Insertion Sort', accent: P, to: '/simulator#insertion', lessonTo: '/dsa-beginners/sorting-insertion-sort',
+    desc: 'Grow a sorted prefix by shifting larger values and inserting one value at a time.',
+    complexities: [{ label: 'Best', val: 'O(n)', color: G }, { label: 'Worst', val: 'O(n²)', color: R }, { label: 'Space', val: 'O(1)', color: B }] },
+  { num: '10', icon: '↓', title: 'Selection Sort', accent: P, to: '/simulator#selection', lessonTo: '/dsa-beginners/sorting-selection-sort',
+    desc: 'Select the next minimum, place it once, and grow a finalized prefix.',
+    complexities: [{ label: 'Comparisons', val: 'O(n²)', color: R }, { label: 'Swaps', val: 'O(n)', color: G }, { label: 'Space', val: 'O(1)', color: B }] },
 ];
 
 const groups = [
-  { phase: 'P1', label: 'Phase 01 — Linear Data Structures', color: G, ids: ['01','02','03','04'] },
-  { phase: 'P2', label: 'Phase 02 — Trees, Graphs & Advanced DS', color: B, ids: ['05','06','11','12','13','14'] },
-  { phase: 'P3', label: 'Phase 03 — Algorithms',             color: P, ids: ['07','08','09','10'] },
-  { phase: 'P4', label: 'Phase 04 — Advanced Algorithms',     color: Y, ids: ['15','16','17','18'] },
+  { phase: 'P1', label: 'Linear data structures', eyebrow: 'Start here', color: G, ids: ['01', '02', '03', '04'] },
+  { phase: 'P2', label: 'Trees, graphs & lookup', eyebrow: 'Build structure', color: B, ids: ['05', '06', '11', '12', '13', '14'] },
+  { phase: 'P3', label: 'Search & foundational sorting', eyebrow: 'Learn movement', color: P, ids: ['07', '08', '09', '10'] },
+  { phase: 'P4', label: 'Advanced algorithms', eyebrow: 'Deepen reasoning', color: Y, ids: ['15', '16', '17', '18'] },
 ];
 
-export default function ConceptsPage() {
+function ConceptCard({ concept }) {
   return (
-    <div style={{ maxWidth: '1160px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+    <article className="concept-card" style={{ '--concept-accent': concept.accent }}>
+      <div className="concept-card__header">
+        <span className="concept-card__icon" aria-hidden="true">{concept.icon}</span>
+        <div>
+          <span className="concept-card__number">Module {concept.num}</span>
+          <h3>{concept.title}</h3>
+        </div>
+      </div>
 
-      <span className="badge-teal" style={{ marginBottom: '1.25rem' }}>All concepts</span>
-      <h1 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.5rem' }}>Concepts</h1>
-      <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '3.5rem', maxWidth: '44rem', lineHeight: 1.7 }}>
-        Every data structure and algorithm in AlgoVista — plain-English explanation, time complexity, and a direct link into the live simulator.
-      </p>
+      <p className="concept-card__description">{concept.desc}</p>
 
-      {groups.map((g) => (
-        <div key={g.phase} style={{ marginBottom: '3.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.75rem', borderBottom: `1px solid var(--border-subtle)` }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: g.color, display: 'inline-block', boxShadow: `0 0 6px ${g.color}` }} />
-            <h2 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: '700' }}>{g.label}</h2>
+      <dl className="concept-card__complexity" aria-label={`${concept.title} complexity summary`}>
+        {concept.complexities.map(({ label, val, color }) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd style={{ color }}>{val}</dd>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.9rem' }}>
-            {concepts.filter((c) => g.ids.includes(c.num)).map((c) => (
-              <ConceptCard key={c.num} {...c} />
-            ))}
+        ))}
+      </dl>
+
+      <div className="concept-card__actions">
+        <Link to={concept.lessonTo} className="concept-card__learn">Learn concept</Link>
+        <Link to={concept.to} className="concept-card__simulate">Open simulator <span aria-hidden="true">→</span></Link>
+      </div>
+    </article>
+  );
+}
+
+export default function ConceptsPage() {
+  const [query, setQuery] = useState('');
+  const [activePhase, setActivePhase] = useState('all');
+
+  const filteredConcepts = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return concepts.filter((concept) => {
+      const group = groups.find((item) => item.ids.includes(concept.num));
+      const phaseMatches = activePhase === 'all' || group?.phase === activePhase;
+      const queryMatches = !normalizedQuery || [
+        concept.title,
+        concept.desc,
+        ...concept.complexities.flatMap((item) => [item.label, item.val]),
+      ].join(' ').toLowerCase().includes(normalizedQuery);
+      return phaseMatches && queryMatches;
+    });
+  }, [activePhase, query]);
+
+  return (
+    <div className="concepts-page">
+      <section className="concepts-hero">
+        <div className="concepts-hero__copy">
+          <span className="badge-teal">Visual concept library</span>
+          <h1>Concepts</h1>
+          <p className="concepts-hero__lead">Build the mental model before the muscle memory.</p>
+          <p>
+            Learn the invariant, trace a small example, inspect the cost model, then manipulate
+            the same idea in a live simulator. Each module connects explanation to action.
+          </p>
+          <div className="concepts-hero__actions">
+            <Link className="btn-primary" to="/dsa-beginners">Follow the guided path</Link>
+            <Link className="btn-ghost" to="/practice">Practice interview questions</Link>
           </div>
         </div>
-      ))}
 
+        <div className="concepts-learning-loop" aria-label="AlgoVista learning loop">
+          <p className="section-label">Learning loop</p>
+          {[
+            ['01', 'Understand', 'Plain-English mental model'],
+            ['02', 'Trace', 'Predict each state change'],
+            ['03', 'Simulate', 'Control the algorithm visually'],
+            ['04', 'Practice', 'Transfer the pattern to code'],
+          ].map(([number, title, detail]) => (
+            <div key={number}>
+              <span>{number}</span>
+              <p><strong>{title}</strong><small>{detail}</small></p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="concepts-library" aria-labelledby="concept-library-heading">
+        <div className="concepts-library__header">
+          <div>
+            <p className="section-label">18 interactive modules</p>
+            <h2 id="concept-library-heading">Choose what you want to understand</h2>
+          </div>
+          <label className="concepts-search">
+            <span>Search concepts</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Try graph, heap, O(log n)..."
+            />
+          </label>
+        </div>
+
+        <div className="concepts-filters" aria-label="Filter concepts by learning phase">
+          <button
+            type="button"
+            className={activePhase === 'all' ? 'is-active' : ''}
+            aria-pressed={activePhase === 'all'}
+            onClick={() => setActivePhase('all')}
+          >
+            All phases
+          </button>
+          {groups.map((group) => (
+            <button
+              key={group.phase}
+              type="button"
+              className={activePhase === group.phase ? 'is-active' : ''}
+              aria-pressed={activePhase === group.phase}
+              onClick={() => setActivePhase(group.phase)}
+              style={{ '--filter-accent': group.color }}
+            >
+              {group.phase} · {group.label}
+            </button>
+          ))}
+          <span className="concepts-results" aria-live="polite">
+            {filteredConcepts.length} {filteredConcepts.length === 1 ? 'module' : 'modules'}
+          </span>
+        </div>
+
+        {groups.map((group) => {
+          const groupConcepts = filteredConcepts.filter((concept) => group.ids.includes(concept.num));
+          if (!groupConcepts.length) return null;
+
+          return (
+            <section key={group.phase} className="concept-group" style={{ '--group-color': group.color }}>
+              <header className="concept-group__header">
+                <span className="concept-group__marker">{group.phase}</span>
+                <div>
+                  <p>{group.eyebrow}</p>
+                  <h2>{group.label}</h2>
+                </div>
+                <span>{groupConcepts.length} modules</span>
+              </header>
+              <div className="concept-group__grid">
+                {groupConcepts.map((concept) => <ConceptCard key={concept.num} concept={concept} />)}
+              </div>
+            </section>
+          );
+        })}
+
+        {!filteredConcepts.length && (
+          <div className="concepts-empty" role="status">
+            <strong>No matching concept yet</strong>
+            <p>Try a structure, algorithm name, or complexity such as “O(n)”.</p>
+            <button type="button" onClick={() => { setQuery(''); setActivePhase('all'); }}>Clear filters</button>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

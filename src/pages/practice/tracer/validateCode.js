@@ -1,4 +1,5 @@
-// Pre-flight checks before we run new Function()
+// These checks give useful editor feedback. Learner source is never executed
+// by the reference tracer; only repository-owned trace recipes are evaluated.
 export function validateCodeForTracer(code, tracerConfig) {
   const warnings = [];
   const errors   = [];
@@ -10,10 +11,10 @@ export function validateCodeForTracer(code, tracerConfig) {
 
   // Dangerous patterns
   if (/while\s*\(\s*true\s*\)/.test(code))
-    warnings.push('Infinite loop detected (while(true)). The tracer will stop it after 3 seconds.');
+    warnings.push('Infinite loop detected (while(true)). The reference trace is safe, but your submitted solution would time out.');
 
   if (/fetch\(|XMLHttpRequest|localStorage|sessionStorage/.test(code))
-    warnings.push('Network/storage APIs are not available inside the tracer sandbox.');
+    warnings.push('Network/storage APIs are not part of interview-style solutions and are never run by the reference tracer.');
 
   if (/import\s|require\(/.test(code))
     warnings.push('import/require are not supported in the tracer. Use plain JS only.');

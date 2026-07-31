@@ -1,6 +1,6 @@
 export const containsDuplicateTracer = {
   defaultInput: { nums: [1, 2, 3, 1] },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { nums } = __args__;
     const seen = new Set();
     __log__({ line: 0, message: 'Start: scan array, insert each into Set. If already present → duplicate found.', vars: { i: '-', 'nums[i]': '-', seenSize: 0 }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: null })) } });
@@ -16,5 +16,5 @@ export const containsDuplicateTracer = {
     }
     __log__({ line: 7, message: 'Scanned all elements, no duplicate found → return false', vars: { result: false }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: null })) } });
     return false;
-  `,
+  },
 };

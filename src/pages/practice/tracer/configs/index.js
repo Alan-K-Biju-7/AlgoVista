@@ -1,4 +1,3 @@
-import hashmap from './hashmap';
 import { binarySearchTracer } from './binarySearch';
 import { containsDuplicateTracer } from './containsDuplicate';
 import { dailyTempsTracer } from './dailyTemps';
@@ -12,7 +11,6 @@ export const TRACER_CONFIGS = {
   'binary-search': binarySearchTracer,
   'contains-duplicate': containsDuplicateTracer,
   'daily-temperatures': dailyTempsTracer,
-  hashmap,
   'maximum-subarray': maxSubarrayTracer,
   'two-sum': twoSumTracer,
   'valid-parentheses': validParensTracer,

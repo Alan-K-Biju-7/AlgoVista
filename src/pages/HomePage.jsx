@@ -17,24 +17,24 @@ const phases = [
 ];
 
 const topics = [
-  { icon: '▦', label: 'Array',          phase: 'P1', desc: 'Insert, delete, update, linear search.' },
-  { icon: '⬡', label: 'Linked List',    phase: 'P1', desc: 'HEAD pointer, traversal, all ops.' },
-  { icon: '⬆', label: 'Stack',          phase: 'P1', desc: 'Push / pop with LIFO step history.' },
-  { icon: '⇉', label: 'Queue',          phase: 'P1', desc: 'Enqueue / dequeue with pointer labels.' },
-  { icon: '🌲', label: 'BST',           phase: 'P2', desc: 'Insert, delete, search, traversals.' },
-  { icon: '→',   label: 'Dijkstra',     phase: 'P2', desc: 'Weighted shortest path — live dist table, PQ snapshot, path reconstruction with cost.' },
-  { icon: '✦',   label: 'Trie',          phase: 'P2', desc: 'Prefix tree: insert words, search, autocomplete suggestions — letter by letter animation.' },
-  { icon: '#',   label: 'Hash Table',    phase: 'P2', desc: 'djb2 hash, separate chaining, live load factor λ, collision visualization.' },
-  { icon: '⬡',  label: 'Heap',          phase: 'P2', desc: 'Min-heap: insert bubbles up, extract-min heapifies down. Array + tree view.' },
-  { icon: '◉',  label: 'Graph',          phase: 'P2', desc: 'BFS (queue, shortest path) and DFS (stack, deep dive) — drag nodes to rearrange.' },
-  { icon: '⚖️', label: 'AVL Tree',      phase: 'P2', desc: 'Self-balancing with LL/RR/LR/RL rotations.' },
-  { icon: '⌖', label: 'Binary Search',  phase: 'P3', desc: 'Mid pointer, eliminated halves.' },
-  { icon: '↕', label: 'Bubble Sort',    phase: 'P3', desc: 'Adjacent swaps, pass counter.' },
-  { icon: '⤓', label: 'Insertion Sort', phase: 'P3', desc: 'Key element, shift counter.' },
-  { icon: '↓', label: 'Selection Sort', phase: 'P3', desc: 'Min tracker, n−1 swaps.' },
-  { icon: '⇄', label: 'Merge Sort',     phase: 'P4', desc: 'Recursive split tree, stable merge, guaranteed n log n.' },
-  { icon: '⚡', label: 'Quick Sort',     phase: 'P4', desc: 'Pivot partitioning, in-place recursion, boundary tracking.' },
-  { icon: '⇌', label: 'Bellman-Ford',   phase: 'P4', desc: 'Negative-edge shortest paths with relaxation rounds.' },
+  { id: 'array', icon: '▦', label: 'Array', phase: 'P1', desc: 'Insert, delete, update, linear search.' },
+  { id: 'linkedlist', icon: '⬡', label: 'Linked List', phase: 'P1', desc: 'HEAD pointer, traversal, all ops.' },
+  { id: 'stack', icon: '⬆', label: 'Stack', phase: 'P1', desc: 'Push / pop with LIFO step history.' },
+  { id: 'queue', icon: '⇉', label: 'Queue', phase: 'P1', desc: 'Enqueue / dequeue with pointer labels.' },
+  { id: 'bst', icon: '🌲', label: 'BST', phase: 'P2', desc: 'Insert, delete, search, traversals.' },
+  { id: 'dijkstra', icon: '→', label: 'Dijkstra', phase: 'P2', desc: 'Weighted shortest path — live dist table, PQ snapshot, path reconstruction with cost.' },
+  { id: 'trie', icon: '✦', label: 'Trie', phase: 'P2', desc: 'Prefix tree: insert words, search, autocomplete suggestions — letter by letter animation.' },
+  { id: 'hashtable', icon: '#', label: 'Hash Table', phase: 'P2', desc: 'djb2 hash, separate chaining, live load factor λ, collision visualization.' },
+  { id: 'heap', icon: '⬡', label: 'Heap', phase: 'P2', desc: 'Min-heap: insert bubbles up, extract-min heapifies down. Array + tree view.' },
+  { id: 'graph', icon: '◉', label: 'Graph', phase: 'P2', desc: 'BFS (queue, shortest path) and DFS (stack, deep dive) — drag nodes to rearrange.' },
+  { id: 'avl', icon: '⚖️', label: 'AVL Tree', phase: 'P2', desc: 'Self-balancing with LL/RR/LR/RL rotations.' },
+  { id: 'bsearch', icon: '⌖', label: 'Binary Search', phase: 'P3', desc: 'Mid pointer, eliminated halves.' },
+  { id: 'bubble', icon: '↕', label: 'Bubble Sort', phase: 'P3', desc: 'Adjacent swaps, pass counter.' },
+  { id: 'insertion', icon: '⤓', label: 'Insertion Sort', phase: 'P3', desc: 'Key element, shift counter.' },
+  { id: 'selection', icon: '↓', label: 'Selection Sort', phase: 'P3', desc: 'Min tracker, n−1 swaps.' },
+  { id: 'mergesort', icon: '⇄', label: 'Merge Sort', phase: 'P4', desc: 'Recursive split tree, stable merge, guaranteed n log n.' },
+  { id: 'quicksort', icon: '⚡', label: 'Quick Sort', phase: 'P4', desc: 'Pivot partitioning, in-place recursion, boundary tracking.' },
+  { id: 'bellmanford', icon: '⇌', label: 'Bellman-Ford', phase: 'P4', desc: 'Negative-edge shortest paths with relaxation rounds.' },
 ];
 
 const phaseColor = { P1: '#00d4aa', P2: '#4a9eff', P3: '#8b7cf8', P4: '#f5a623' };
@@ -183,10 +183,15 @@ export default function HomePage() {
           {topics.map((t) => {
             const pc = phaseColor[t.phase];
             return (
-              <div key={t.label} style={{
+              <Link
+                key={t.label}
+                to={`/simulator#${t.id}`}
+                aria-label={`Open the ${t.label} visual simulator`}
+                style={{
                 background: 'var(--bg-card)', border: '1px solid var(--border-default)',
                 borderRadius: 'var(--radius-xl)', padding: '1.1rem',
-                transition: 'border-color 0.2s, box-shadow 0.2s', cursor: 'default',
+                transition: 'border-color 0.2s, box-shadow 0.2s', cursor: 'pointer',
+                color: 'inherit', textDecoration: 'none',
               }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${pc}44`; e.currentTarget.style.boxShadow = `0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px ${pc}22`; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.boxShadow = 'none'; }}
@@ -199,7 +204,7 @@ export default function HomePage() {
                   <span style={{ padding: '0.12rem 0.45rem', borderRadius: '999px', background: `${pc}15`, border: `1px solid ${pc}30`, fontSize: '0.6rem', fontWeight: '700', color: pc }}>{t.phase}</span>
                 </div>
                 <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>{t.desc}</p>
-              </div>
+              </Link>
             );
           })}
         </div>

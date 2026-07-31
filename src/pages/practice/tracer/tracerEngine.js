@@ -1,7 +1,7 @@
 const MAX_STEPS = 500;
 const TIMEOUT_MS = 3000;
 
-export function runWithTracer(code, inputArgs, tracerConfig) {
+export function runWithTracer(_code, inputArgs, tracerConfig) {
   const steps = [];
   const deadline = Date.now() + TIMEOUT_MS;
 
@@ -21,11 +21,13 @@ export function runWithTracer(code, inputArgs, tracerConfig) {
     // Deep clone inputs so user mutations don't corrupt snapshots
     const safeArgs = JSON.parse(JSON.stringify(inputArgs));
 
-    const sandboxCode = `"use strict";\n${code}\nreturn function __run__(__args__, __log__) {\n${tracerConfig.runnerBody}\n}`;
-
-    // eslint-disable-next-line no-new-func
-    const runner = new Function(sandboxCode)();
-    runner(safeArgs, log);
+    // Trace recipes are imported repository-owned functions. Learner source is
+    // deliberately not evaluated here, and no string compilation is needed in
+    // the application realm, so the production CSP can keep unsafe-eval off.
+    if (typeof tracerConfig?.runner !== 'function') {
+      throw new Error('__missing_trace_recipe__');
+    }
+    tracerConfig.runner(safeArgs, log);
 
   } catch (e) {
     let msg;
@@ -33,6 +35,8 @@ export function runWithTracer(code, inputArgs, tracerConfig) {
       msg = `Execution timed out after ${TIMEOUT_MS / 1000}s. Check for infinite loops.`;
     else if (e.message === '__step_limit__')
       msg = `Trace stopped after ${MAX_STEPS} steps. Try a smaller input.`;
+    else if (e.message === '__missing_trace_recipe__')
+      msg = 'This problem does not have a trusted reference trace yet.';
     else if (e.message === 'Script error.' || !e.message)
       msg = `A cross-origin script error occurred. This usually means a syntax error in your code or an unsupported browser API. Check your code carefully.`;
     else if (/is not defined/.test(e.message))
