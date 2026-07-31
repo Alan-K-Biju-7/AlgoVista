@@ -6,7 +6,7 @@ import {
   DSA_BEGINNERS_CURRICULUM,
 } from './data/dsaBeginnersCurriculum';
 
-jest.mock('react-router-dom', () => {
+vi.mock('react-router-dom', () => {
   const React = require('react');
   const RouterContext = React.createContext(null);
 
@@ -87,19 +87,47 @@ jest.mock('react-router-dom', () => {
     return React.useContext(RouterContext) || readLocation();
   }
 
+  function useNavigate() {
+    const context = React.useContext(RouterContext);
+    return context?.navigate || (() => {});
+  }
+
+  function useParams() {
+    const location = React.useContext(RouterContext) || readLocation();
+    const practiceMatch = location.pathname.match(/^\/practice\/([^/]+)$/);
+    const conceptMatch = location.pathname.match(/^\/dsa-beginners\/([^/]+)$/);
+    if (practiceMatch) return { problemId: decodeURIComponent(practiceMatch[1]) };
+    if (conceptMatch) return { conceptId: decodeURIComponent(conceptMatch[1]) };
+    return {};
+  }
+
   return {
     BrowserRouter,
     Routes,
     Route,
     Link,
     useLocation,
+    useNavigate,
+    useParams,
   };
-}, { virtual: true });
+});
 
 function renderAt(path) {
   window.history.pushState({}, '', path);
   return render(<App />);
 }
+
+beforeEach(() => {
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: false,
+    status: 401,
+    text: async () => JSON.stringify({ error: 'Sign in required.' }),
+  });
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 test('ships the complete DSA for Beginners curriculum map', () => {
   expect(DSA_BEGINNERS_CURRICULUM).toHaveLength(16);
@@ -125,10 +153,20 @@ test('primary navigation opens the practice learning workspace', async () => {
   expect(screen.getByRole('heading', { name: /Build intuition first/i })).toBeInTheDocument();
 });
 
-test('concepts page exposes every advanced simulator module', () => {
+test('AI coach route keeps the requested URL and renders a sign-in boundary for guests', async () => {
+  renderAt('/coach?concept=binary-search');
+
+  expect(await screen.findByRole('heading', { name: /Sign in to unlock your personal DSA coach/i })).toBeInTheDocument();
+  expect(window.location.pathname).toBe('/coach');
+  expect(screen.getByText(/current page and problem context will be preserved/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /^Log in$/i })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: /DSA coach that knows/i })).not.toBeInTheDocument();
+});
+
+test('concepts page exposes every advanced simulator module', async () => {
   renderAt('/concepts');
 
-  expect(screen.getByRole('heading', { name: 'Concepts' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: 'Concepts' })).toBeInTheDocument();
   expect(screen.getByText('Merge Sort')).toBeInTheDocument();
   expect(screen.getByText('Quick Sort')).toBeInTheDocument();
   expect(screen.getByText('Bellman-Ford')).toBeInTheDocument();
