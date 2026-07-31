@@ -1,6 +1,6 @@
 export const stockProfitTracer = {
   defaultInput: { prices: [7, 1, 5, 3, 6, 4] },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { prices } = __args__;
     let minPrice = Infinity, maxProfit = 0;
     __log__({ line: 0, message: 'Start: track minimum price and maximum profit seen so far.', vars: { minPrice: '∞', maxProfit: 0 }, structure: { type: 'array', label: 'prices', items: prices.map((v,i) => ({ idx: i, val: v, role: null })) } });
@@ -19,5 +19,5 @@ export const stockProfitTracer = {
       });
     }
     __log__({ line: 7, message: 'Done. Maximum profit = ' + maxProfit, vars: { result: maxProfit }, structure: { type: 'array', label: 'prices', items: prices.map((v,i) => ({ idx: i, val: v, role: null })) } });
-  `,
+  },
 };

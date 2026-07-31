@@ -11,8 +11,8 @@ export default function TracerPanel({ tracer, code, topicColor }) {
     return (
       <div style={{ padding: '2.5rem', textAlign: 'center', border: '1px dashed var(--border-default)', borderRadius: '0.6rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
         <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔍</div>
-        <p style={{ fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Visual Execution Tracer</p>
-        <p style={{ fontSize: '0.78rem' }}>Click <strong>▶ Trace</strong> to see your code execute step by step with live visualizations.</p>
+        <p style={{ fontWeight: '600', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Reference Algorithm Trace</p>
+        <p style={{ fontSize: '0.78rem' }}>Run the reference trace to inspect the canonical algorithm events step by step.</p>
       </div>
     );
   }

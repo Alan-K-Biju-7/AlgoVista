@@ -1,6 +1,6 @@
 export const binarySearchTracer = {
   defaultInput: { nums: [-1, 0, 3, 5, 9, 12], target: 9 },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { nums, target } = __args__;
     let lo = 0, hi = nums.length - 1;
     __log__({ line: 0, message: 'Start: lo=' + lo + ', hi=' + hi + ', searching for target=' + target, vars: { lo, hi, mid: '-', target }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: i >= lo && i <= hi ? 'window' : 'eliminated' })) } });
@@ -15,5 +15,5 @@ export const binarySearchTracer = {
     }
     __log__({ line: 7, message: 'lo > hi — target not found → return -1', vars: { lo, hi, result: -1 }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: 'eliminated' })) } });
     return -1;
-  `,
+  },
 };

@@ -1,6 +1,6 @@
 export const twoSumTracer = {
   defaultInput: { nums: [2, 7, 11, 15], target: 9 },
-  runnerBody: `
+  runner(__args__, __log__) {
     const { nums, target } = __args__;
     const map = {};
     __log__({ line: 0, message: 'Start: scan array looking for two numbers that sum to ' + target, vars: { target, i: '-', complement: '-', result: '-' }, structure: { type: 'array', label: 'nums', items: nums.map((v,i) => ({ idx: i, val: v, role: null })) } });
@@ -17,5 +17,5 @@ export const twoSumTracer = {
       map[nums[i]] = i;
       __log__({ line: 5, message: 'Not found yet. Stored ' + nums[i] + ':' + i + ' in map', vars: { i, 'nums[i]': nums[i], complement, map: JSON.stringify(map) }, structure: { type: 'hashmap', label: 'Hash Map {num: index}', entries: Object.entries(map).map(([k,v]) => ({ key: k, val: v, role: String(k) === String(nums[i]) ? 'new' : null })) } });
     }
-  `,
+  },
 };

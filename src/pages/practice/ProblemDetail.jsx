@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import HintSystem from './HintSystem';
-import CodeEditor from './CodeEditor';
 import TestResults from './TestResults';
-import { runTests } from './testRunner';
+import { runTestsAsync } from './testRunner';
 import TracerPanel from './tracer/TracerPanel';
 import { useTracerSteps } from './tracer/useTracerSteps';
 import { TRACER_CONFIGS } from './tracer/configs/index';
@@ -10,20 +9,72 @@ import { validateCodeForTracer } from './tracer/validateCode';
 import TracerErrorBoundary from './tracer/TracerErrorBoundary';
 import StoryModePanel from './StoryModePanel';
 import ProblemVisualLab from './ProblemVisualLab';
+import LearningDebrief from './LearningDebrief';
+import { PRACTICE_LANGUAGES, buildStarterCode, getLanguage } from './languageConfig';
+import ContextualPracticeTutor from './tutor';
+import { buildTutorTurnRequest } from './tutor/tutorRequestAdapter';
+import { createClientTutorFallback, shouldUseClientTutorFallback } from './tutor/clientTutorFallback';
+import { createAuthRequiredError, useOptionalAuth } from '../../context/AuthContext';
+import AuthRequired from '../../components/AuthRequired';
+
+const CodeEditor = lazy(() => import('./CodeEditor'));
+
+function EditorModuleLoading({ height = 360 }) {
+  return (
+    <div className="code-editor-frame editor-module-loading" style={{ height }} role="status" aria-live="polite">
+      <span>Loading professional editor…</span>
+    </div>
+  );
+}
 
 const DIFF_COLOR = { Easy: '#00d4aa', Medium: '#f5a623', Hard: '#ff6b6b' };
 
-const defaultStarterCode = `function solve() {
-  // Write your solution here
-}`;
+const defaultStarterCode = buildStarterCode('', 'javascript');
+const PREFERRED_LANGUAGE_KEY = 'algovista.practice.preferred-language.v1';
 
-function buildStarterCode(solution = '') {
-  const solveMatch = solution.match(/function\s+solve\s*\(([^)]*)\)/);
-  const params = solveMatch ? solveMatch[1].trim() : '';
+function accountScopedKey(baseKey, accountScope = '') {
+  const normalized = String(accountScope || '').trim().slice(0, 160);
+  return normalized ? `${baseKey}:account:${encodeURIComponent(normalized)}` : baseKey;
+}
 
-  return `function solve(${params}) {
-  // Write your solution here
-}`;
+function draftKey(problemId, language, scope = 'main', accountScope = '') {
+  return accountScopedKey(`algovista.practice.draft.v1:${scope}:${problemId}:${language}`, accountScope);
+}
+
+function notesKey(problemId, accountScope = '') {
+  return accountScopedKey(`algovista.practice.notes.v1:${problemId}`, accountScope);
+}
+
+function customCaseKey(problemId, accountScope = '') {
+  return accountScopedKey(`algovista.practice.custom-case.v1:${problemId}`, accountScope);
+}
+
+function submissionsKey(problemId, accountScope = '') {
+  return accountScopedKey(`algovista.practice.submissions.v1:${problemId}`, accountScope);
+}
+
+function readLocalString(key, fallback = '') {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    return window.localStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function readLocalJson(key, fallback) {
+  try {
+    const parsed = JSON.parse(readLocalString(key, ''));
+    return parsed ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function formatClock(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function Badge({ children, color }) {
@@ -68,7 +119,7 @@ function LearningRail({ tab, topicColor, hasTracer, solved }) {
         ['story', 'Story'],
         ['visual', 'Visual'],
         ['editor', 'Code'],
-        ['trace', 'Trace'],
+        ['trace', 'Reference'],
         ['solution', 'Review'],
       ]
     : [
@@ -296,7 +347,7 @@ function MiniVisual({ type, color }) {
   );
 }
 
-function ProblemBrief({ problem, topicColor, compact = false }) {
+function ProblemBrief({ problem, topicColor, compact = false, revealPattern = true }) {
   return (
     <div style={{ display: 'grid', gap: '1rem' }}>
       <div>
@@ -306,7 +357,7 @@ function ProblemBrief({ problem, topicColor, compact = false }) {
         </p>
       </div>
 
-      <div
+      {revealPattern && <div
         style={{
           padding: '0.85rem',
           borderRadius: '0.6rem',
@@ -318,9 +369,9 @@ function ProblemBrief({ problem, topicColor, compact = false }) {
         <p style={{ fontSize: '0.84rem', color: 'var(--text-primary)', lineHeight: 1.65 }}>
           {problem.pattern_explanation}
         </p>
-      </div>
+      </div>}
 
-      <div>
+      {revealPattern && <div>
         <SectionLabel>Visual Model</SectionLabel>
         <div
           style={{
@@ -336,10 +387,9 @@ function ProblemBrief({ problem, topicColor, compact = false }) {
         >
           <MiniVisual type={problem.viz} color={topicColor} />
         </div>
-      </div>
+      </div>}
 
-      {!compact && (
-        <div>
+      <div>
           <SectionLabel>Examples</SectionLabel>
           {problem.examples.map((ex, i) => (
             <div
@@ -372,10 +422,138 @@ function ProblemBrief({ problem, topicColor, compact = false }) {
               ) : null}
             </div>
           ))}
-        </div>
-      )}
+      </div>
 
       {!compact && <HintSystem hints={problem.hints} />}
+    </div>
+  );
+}
+
+function PracticeSessionBar({ mode, onModeChange, seconds, running, onToggleTimer, onResetTimer, topicColor }) {
+  const modeCopy = {
+    learn: ['Learn', 'Visual guidance on'],
+    focus: ['Focus', 'Interview simulation'],
+    review: ['Review', 'Recall from memory'],
+  };
+  return (
+    <div className="practice-session-bar">
+      <div className="practice-session-bar__mode">
+        <span>Session</span>
+        <div>
+          {Object.entries(modeCopy).map(([id, copy]) => (
+            <button key={id} type="button" className={mode === id ? 'is-active' : ''} aria-pressed={mode === id} onClick={() => onModeChange?.(id)} style={mode === id ? { borderColor: `${topicColor}65`, color: topicColor } : null}>{copy[0]}</button>
+          ))}
+        </div>
+        <small>{modeCopy[mode]?.[1]}</small>
+      </div>
+      <div className="practice-session-bar__timer">
+        <span className={running ? 'is-live' : ''} />
+        <div><small>Session time</small><b className="mono">{formatClock(seconds)}</b></div>
+        <button type="button" onClick={onToggleTimer}>{running ? 'Pause' : 'Resume'}</button>
+        <button type="button" onClick={onResetTimer} aria-label="Reset session timer">↺</button>
+      </div>
+      <div className="practice-shortcut-hint"><kbd>Ctrl</kbd><span>+</span><kbd>Enter</kbd><span>run tests</span></div>
+    </div>
+  );
+}
+
+function LearningScratchpad({ problem, topicColor, accountScope = '' }) {
+  const storageKey = notesKey(problem.id, accountScope);
+  const initial = readLocalJson(storageKey, {});
+  const [plan, setPlan] = useState(initial.plan || '');
+  const [complexity, setComplexity] = useState(initial.complexity || '');
+  const [edgeCase, setEdgeCase] = useState(initial.edgeCase || '');
+
+  useEffect(() => {
+    const next = readLocalJson(notesKey(problem.id, accountScope), {});
+    setPlan(next.plan || '');
+    setComplexity(next.complexity || '');
+    setEdgeCase(next.edgeCase || '');
+  }, [accountScope, problem.id]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify({ plan, complexity, edgeCase }));
+    } catch {
+      // The scratchpad remains usable if local persistence is unavailable.
+    }
+  }, [complexity, edgeCase, plan, storageKey]);
+
+  return (
+    <section className="learning-scratchpad" style={{ borderColor: `${topicColor}35` }}>
+      <div><p style={{ color: topicColor }}>Think before typing</p><span>Retrieving the plan first makes the implementation easier to remember.</span></div>
+      <label><span>Invariant in one sentence</span><textarea rows="3" value={plan} onChange={(event) => setPlan(event.target.value)} placeholder="What remains true after every iteration?" /></label>
+      <div className="learning-scratchpad__row">
+        <label><span>Target complexity</span><select value={complexity} onChange={(event) => setComplexity(event.target.value)}><option value="">Predict…</option><option>O(1)</option><option>O(log n)</option><option>O(n)</option><option>O(n log n)</option><option>O(n²)</option></select></label>
+        <label><span>Edge case to protect</span><input value={edgeCase} onChange={(event) => setEdgeCase(event.target.value)} placeholder="empty, duplicate, overflow…" /></label>
+      </div>
+      <small>Autosaved on this device</small>
+    </section>
+  );
+}
+
+function CustomTestcasePanel({ problem, onRun, disabled, accountScope = '' }) {
+  const firstCase = problem.testCases?.[0] || { input: [], expected: null };
+  const storageKey = customCaseKey(problem.id, accountScope);
+  const stored = readLocalJson(storageKey, {});
+  const [input, setInput] = useState(stored.input || JSON.stringify(firstCase.input));
+  const [expected, setExpected] = useState(stored.expected || JSON.stringify(firstCase.expected));
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const next = readLocalJson(customCaseKey(problem.id, accountScope), {});
+    const fallback = problem.testCases?.[0] || { input: [], expected: null };
+    setInput(next.input || JSON.stringify(fallback.input));
+    setExpected(next.expected || JSON.stringify(fallback.expected));
+    setError('');
+  }, [accountScope, problem.id, problem.testCases]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify({ input, expected }));
+    } catch {
+      // Custom cases still work when storage is unavailable.
+    }
+  }, [expected, input, storageKey]);
+
+  const run = () => {
+    try {
+      const parsedInput = JSON.parse(input);
+      if (!Array.isArray(parsedInput)) throw new Error('Input must be a JSON array of function arguments.');
+      const parsedExpected = JSON.parse(expected);
+      setError('');
+      onRun?.({ input: parsedInput, expected: parsedExpected });
+    } catch (parseError) {
+      setError(parseError.message);
+    }
+  };
+
+  return (
+    <div className="custom-testcase-panel">
+      <div className="custom-testcase-panel__intro"><b>Design an edge case</b><span>Input is a JSON array containing the arguments passed to <code>solve(...)</code>.</span></div>
+      <div className="custom-testcase-grid">
+        <label><span>Input arguments</span><textarea aria-label="Custom testcase input" rows="3" value={input} onChange={(event) => setInput(event.target.value)} spellCheck="false" /></label>
+        <label><span>Expected output</span><textarea aria-label="Custom testcase expected output" rows="3" value={expected} onChange={(event) => setExpected(event.target.value)} spellCheck="false" /></label>
+      </div>
+      <div className="custom-testcase-panel__actions"><button type="button" onClick={run} disabled={disabled}>▶ Run custom case</button><span>{error || 'Custom cases are cached locally.'}</span></div>
+    </div>
+  );
+}
+
+function SubmissionHistory({ submissions, onRestore }) {
+  if (!submissions.length) {
+    return <div className="submission-empty"><b>No runs yet</b><span>Run your code to create a local history. You can restore any earlier attempt.</span></div>;
+  }
+  return (
+    <div className="submission-history">
+      {submissions.map((submission) => (
+        <article key={submission.id}>
+          <span className={submission.accepted ? 'is-accepted' : submission.label.includes('passed') ? 'is-passed' : 'is-failed'}>{submission.accepted ? 'Accepted' : submission.label}</span>
+          <div><b>{submission.languageLabel}</b><small>{new Date(submission.createdAt).toLocaleString()}</small></div>
+          <code>{submission.passed}/{submission.total} cases · {submission.runtimeMs} ms</code>
+          <button type="button" onClick={() => onRestore(submission)}>Restore code</button>
+        </article>
+      ))}
     </div>
   );
 }
@@ -384,8 +562,10 @@ function EditorWorkspace({
   code,
   setCode,
   handleRun,
+  handleCustomRun,
   handleTrace,
-  setTab,
+  onShowSolution,
+  onReviewVisual,
   problem,
   results,
   topicColor,
@@ -393,28 +573,185 @@ function EditorWorkspace({
   allPass,
   nextProblem,
   onNextProblem,
+  language,
+  onLanguageChange,
+  onResetCode,
+  practiceRecord,
+  onReflect,
+  isExecuting,
+  onExplainFailure,
+  tutorRequiresAuth,
+  accountScope,
 }) {
+  const [consoleTab, setConsoleTab] = useState(results ? 'result' : 'testcase');
+  const [fullscreen, setFullscreen] = useState(false);
+  const [fontSize, setFontSize] = useState(() => Number(readLocalString('algovista.practice.editor-font-size', '13')) || 13);
+  const workspaceRef = useRef(null);
+  const fullscreenToggleRef = useRef(null);
+  const editorId = useId();
+  const workspaceId = `${editorId}-workspace`;
+  const editorTitleId = `${editorId}-title`;
+  const editorDescriptionId = `${editorId}-description`;
+  const consoleId = `${editorId}-console`;
+  const currentLanguage = getLanguage(language);
+  const consoleTabs = [
+    ['testcase', `Testcases ${problem.testCases?.length || 0}`],
+    ['custom', 'Custom case'],
+    ['result', results ? `Result ${results.filter((result) => result.passed).length}/${results.length}` : 'Result'],
+  ];
+
+  useEffect(() => {
+    if (results) setConsoleTab('result');
+  }, [results]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('algovista.practice.editor-font-size', String(fontSize));
+    } catch {
+      // Editor preferences remain in memory when storage is unavailable.
+    }
+  }, [fontSize]);
+
+  useEffect(() => {
+    if (!fullscreen) return undefined;
+
+    const workspace = workspaceRef.current;
+    const focusBeforeOpen = fullscreenToggleRef.current;
+    const isolatedSiblings = [];
+    let branch = workspace;
+
+    while (branch?.parentElement) {
+      const parent = branch.parentElement;
+      Array.from(parent.children).forEach((sibling) => {
+        if (sibling === branch) return;
+        isolatedSiblings.push({
+          element: sibling,
+          inert: sibling.hasAttribute('inert'),
+          ariaHidden: sibling.getAttribute('aria-hidden'),
+        });
+        sibling.setAttribute('inert', '');
+        sibling.setAttribute('aria-hidden', 'true');
+      });
+      branch = parent;
+      if (parent === document.body) break;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    fullscreenToggleRef.current?.focus();
+
+    const handleModalKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        setFullscreen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(workspace?.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) || []);
+      if (!focusable.length) {
+        event.preventDefault();
+        workspace?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !workspace?.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !workspace?.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleModalKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', handleModalKeyDown, true);
+      document.body.style.overflow = previousOverflow;
+      isolatedSiblings.forEach(({ element, inert, ariaHidden }) => {
+        if (!inert) element.removeAttribute('inert');
+        if (ariaHidden === null) element.removeAttribute('aria-hidden');
+        else element.setAttribute('aria-hidden', ariaHidden);
+      });
+      if (focusBeforeOpen?.isConnected) focusBeforeOpen.focus();
+    };
+  }, [fullscreen]);
+
+  const activateConsoleTab = (nextTab) => setConsoleTab(nextTab);
+
+  const handleConsoleTabKeyDown = (event, id) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      activateConsoleTab(id);
+      return;
+    }
+
+    const index = consoleTabs.findIndex(([tabId]) => tabId === id);
+    const nextIndex = event.key === 'ArrowRight'
+      ? (index + 1) % consoleTabs.length
+      : event.key === 'ArrowLeft'
+        ? (index - 1 + consoleTabs.length) % consoleTabs.length
+        : event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? consoleTabs.length - 1
+            : null;
+    if (nextIndex === null) return;
+    event.preventDefault();
+    event.currentTarget.parentElement?.querySelectorAll('[role="tab"]')[nextIndex]?.focus();
+  };
+
   return (
-    <div>
+    <div
+      ref={workspaceRef}
+      id={workspaceId}
+      className={fullscreen ? 'coding-workspace is-fullscreen' : 'coding-workspace'}
+      role={fullscreen ? 'dialog' : undefined}
+      aria-modal={fullscreen ? 'true' : undefined}
+      aria-labelledby={fullscreen ? editorTitleId : undefined}
+      aria-describedby={fullscreen ? editorDescriptionId : undefined}
+      tabIndex={fullscreen ? -1 : undefined}
+    >
       <div className="editor-workspace-top">
-        <SectionLabel>Your Solution Editor</SectionLabel>
+        <div className="editor-title"><span className="editor-title__icon">&lt;/&gt;</span><div><b id={editorTitleId}>Code</b><small id={editorDescriptionId}>{fullscreen ? 'Expanded editor focus mode' : 'Saved locally'}</small></div></div>
         <div className="editor-workspace-pills" aria-label="Editor runtime">
-          <span>JavaScript</span>
-          <span>function solve(...)</span>
+          <label className="language-picker">
+            <span className="practice-sr-only">Programming language</span>
+            <select value={language} onChange={(event) => onLanguageChange(event.target.value)} aria-label="Programming language">
+              {PRACTICE_LANGUAGES.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.version}</option>)}
+            </select>
+          </label>
+          <span className={currentLanguage.runnable ? 'runtime-pill' : 'runtime-pill is-editor-only'}><i /> {currentLanguage.runnable ? 'Timed browser worker' : 'Editor only'}</span>
         </div>
       </div>
-      <CodeEditor
-        value={code}
-        onChange={setCode}
-        height="470px"
-        minHeight={320}
-        maxHeight={900}
-        storageKey={`algovista:practice-editor:${problem.id}`}
-      />
-      <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
+      <div className="editor-utilitybar">
+        <div><button type="button" onClick={() => setFontSize((value) => Math.max(11, value - 1))} aria-label="Decrease editor font size">A−</button><span>{fontSize}px</span><button type="button" onClick={() => setFontSize((value) => Math.min(20, value + 1))} aria-label="Increase editor font size">A+</button></div>
+        <div><button type="button" onClick={onResetCode}>Reset code</button><button ref={fullscreenToggleRef} type="button" aria-expanded={fullscreen} aria-controls={workspaceId} onClick={() => setFullscreen((value) => !value)}>{fullscreen ? 'Exit focus' : 'Expand editor'}</button></div>
+      </div>
+      {!currentLanguage.runnable && <div className="language-notice"><b>{currentLanguage.label} editing mode</b><span>A language-specific starter and independent draft are ready. Secure execution still requires an isolated judge service; switch to JavaScript to run tests today.</span></div>}
+      <Suspense fallback={<EditorModuleLoading height={470} />}>
+        <CodeEditor
+          value={code}
+          onChange={setCode}
+          language={language}
+          fontSize={fontSize}
+          height="470px"
+          minHeight={320}
+          maxHeight={900}
+          storageKey={`algovista:practice-editor:${problem.id}`}
+        />
+      </Suspense>
+      <div className="editor-actionbar">
         <button
           type="button"
-          onClick={handleRun}
+          onClick={() => handleRun('run')}
+          disabled={!currentLanguage.runnable || isExecuting}
+          aria-label="Run Tests"
           style={{
             padding: '0.55rem 1.05rem',
             borderRadius: '0.45rem',
@@ -424,11 +761,21 @@ function EditorWorkspace({
             fontWeight: 900,
           }}
         >
-          Run Tests
+          <span className="action-icon">{isExecuting ? '…' : '▶'}</span> {isExecuting ? 'Running' : 'Run'}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleRun('submit')}
+          aria-label="Submit"
+          disabled={!currentLanguage.runnable || isExecuting}
+          className="editor-submit-button"
+        >
+          <span className="action-icon">✓</span> Submit
         </button>
         <button
           type="button"
           onClick={handleTrace}
+          aria-label={tracerConfig ? 'Trace Execution' : 'Open In-page Visual'}
           style={{
             padding: '0.55rem 1.05rem',
             borderRadius: '0.45rem',
@@ -438,11 +785,11 @@ function EditorWorkspace({
             fontWeight: 800,
           }}
         >
-          {tracerConfig ? 'Trace Execution' : 'Open In-page Visual'}
+          {tracerConfig ? 'Reference Trace' : 'Open Visual'}
         </button>
         <button
           type="button"
-          onClick={() => setTab('solution')}
+          onClick={onShowSolution}
           style={{
             padding: '0.55rem 1.05rem',
             borderRadius: '0.45rem',
@@ -452,17 +799,66 @@ function EditorWorkspace({
             border: '1px solid var(--border-default)',
           }}
         >
-          Show Solution
+          Solution
         </button>
       </div>
-      <TestResults results={results} />
+      <section className="test-console">
+        <div className="test-console__tabs" role="tablist" aria-label="Test console" aria-orientation="horizontal">
+          {consoleTabs.map(([id, label]) => (
+            <button
+              key={id}
+              id={`${consoleId}-tab-${id}`}
+              type="button"
+              role="tab"
+              aria-selected={consoleTab === id}
+              aria-controls={`${consoleId}-panel-${id}`}
+              tabIndex={consoleTab === id ? 0 : -1}
+              className={consoleTab === id ? 'is-active' : ''}
+              onClick={() => activateConsoleTab(id)}
+              onKeyDown={(event) => handleConsoleTabKeyDown(event, id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {consoleTabs.filter(([id]) => id !== consoleTab).map(([id]) => (
+          <div
+            key={`inactive-console-panel-${id}`}
+            id={`${consoleId}-panel-${id}`}
+            role="tabpanel"
+            aria-labelledby={`${consoleId}-tab-${id}`}
+            tabIndex={-1}
+            hidden
+          />
+        ))}
+        <div
+          id={`${consoleId}-panel-${consoleTab}`}
+          className="test-console__body"
+          role="tabpanel"
+          aria-labelledby={`${consoleId}-tab-${consoleTab}`}
+          tabIndex={0}
+        >
+          {consoleTab === 'testcase' && <div className="builtin-testcases">{(problem.testCases || []).map((testCase, index) => <article key={index}><b>Case {index + 1}</b><div><span>Input</span><code>{JSON.stringify(testCase.input)}</code></div><div><span>Expected</span><code>{JSON.stringify(testCase.expected)}</code></div></article>)}</div>}
+          {consoleTab === 'custom' && (
+            <CustomTestcasePanel
+              key={`${problem.id}:${accountScope || 'guest'}`}
+              problem={problem}
+              onRun={handleCustomRun}
+              disabled={!currentLanguage.runnable || isExecuting}
+              accountScope={accountScope}
+            />
+          )}
+          {consoleTab === 'result' && (results ? <TestResults results={results} accepted={allPass} onExplainFailure={onExplainFailure} tutorRequiresAuth={tutorRequiresAuth} /> : <div className="console-empty"><span>▷</span><b>Run your code to see diagnostics</b><p>AlgoVista will focus the first failing case and show where your output diverges.</p></div>)}
+        </div>
+      </section>
       <CompletionPanel
         allPass={allPass}
         topicColor={topicColor}
         nextProblem={nextProblem}
         onNextProblem={onNextProblem}
-        onReviewVisual={() => setTab('visual')}
+        onReviewVisual={onReviewVisual}
       />
+      {allPass && <LearningDebrief record={practiceRecord} onReflect={onReflect} color={topicColor} />}
     </div>
   );
 }
@@ -478,28 +874,181 @@ export default function ProblemDetail({
   status = 'unsolved',
   nextProblem,
   onNextProblem,
+  practiceMode = 'learn',
+  onPracticeModeChange,
+  practiceRecord,
+  onHintViewed,
+  onSolutionViewed,
+  onReflect,
 }) {
-  const [code, setCode] = useState(() => buildStarterCode(problem.solution));
+  const auth = useOptionalAuth();
+  const accountScope = auth?.isAuthenticated
+    ? String(auth.user?.id || auth.user?.email || '').trim()
+    : '';
+  const [language, setLanguage] = useState(() => readLocalString(PREFERRED_LANGUAGE_KEY, 'javascript'));
+  const [code, setCode] = useState(() => {
+    const preferred = readLocalString(PREFERRED_LANGUAGE_KEY, 'javascript');
+    return practiceMode === 'review'
+      ? buildStarterCode(problem.solution, preferred)
+      : readLocalString(draftKey(problem.id, preferred, 'main', accountScope), buildStarterCode(problem.solution, preferred));
+  });
   const [results, setResults] = useState(null);
-  const [tab, setTab] = useState('story');
+  const [tab, setTab] = useState(practiceMode === 'learn' ? 'story' : 'editor');
   const [traceErrors, setTraceErrors] = useState([]);
   const [traceWarnings, setTraceWarnings] = useState([]);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(practiceMode !== 'learn');
+  const [submissions, setSubmissions] = useState(() => readLocalJson(submissionsKey(problem.id, accountScope), []));
+  const [loadedAccountScope, setLoadedAccountScope] = useState(accountScope);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [acceptedSubmission, setAcceptedSubmission] = useState(false);
+  const [tutorOpen, setTutorOpen] = useState(false);
+  const [tutorMode, setTutorMode] = useState('socratic');
+  const [tutorStarterQuestion, setTutorStarterQuestion] = useState('');
+  const workspaceTabsId = useId();
   const tracer = useTracerSteps();
   const tracerConfig = TRACER_CONFIGS[problem.id] || null;
   const bookmarked = isBookmarked ? isBookmarked(problem.id) : false;
-  const allPass = Boolean(results?.length && results.every((result) => result.passed));
+
+  const openTutor = (nextMode = 'socratic', starterQuestion = '') => {
+    setTutorMode(nextMode);
+    setTutorStarterQuestion(starterQuestion);
+    setTutorOpen(true);
+  };
+
+  const askContextualTutor = async (payload) => {
+    if (!auth?.isAuthenticated || typeof auth.askTutor !== 'function') {
+      throw createAuthRequiredError('the personal tutor');
+    }
+
+    try {
+      const response = await auth.askTutor(
+        buildTutorTurnRequest(payload),
+        { signal: payload.signal }
+      );
+      return response?.tutor ? response : createClientTutorFallback(payload);
+    } catch (error) {
+      if (shouldUseClientTutorFallback(error)) return createClientTutorFallback(payload);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    setCode(buildStarterCode(problem.solution));
+    if (loadedAccountScope === accountScope) return;
+    const nextCode = practiceMode === 'review'
+      ? buildStarterCode(problem.solution, language)
+      : readLocalString(
+          draftKey(problem.id, language, 'main', accountScope),
+          buildStarterCode(problem.solution, language)
+        );
+    setCode(nextCode);
+    setSubmissions(readLocalJson(submissionsKey(problem.id, accountScope), []));
     setResults(null);
-    setTraceErrors([]);
-    setTraceWarnings([]);
-    setTab('story');
-  }, [problem.id, problem.solution]);
+    setAcceptedSubmission(false);
+    setLoadedAccountScope(accountScope);
+  }, [accountScope, language, loadedAccountScope, practiceMode, problem.id, problem.solution]);
+
+  useEffect(() => {
+    if (!timerRunning) return undefined;
+    const timer = window.setInterval(() => setElapsedSeconds((value) => value + 1), 1000);
+    return () => window.clearInterval(timer);
+  }, [timerRunning]);
+
+  useEffect(() => {
+    if (loadedAccountScope !== accountScope) return;
+    try {
+      window.localStorage.setItem(
+        draftKey(problem.id, language, practiceMode === 'review' ? 'review' : 'main', accountScope),
+        code
+      );
+    } catch {
+      // Draft remains available for the current session.
+    }
+  }, [accountScope, code, language, loadedAccountScope, practiceMode, problem.id]);
+
+  useEffect(() => {
+    setAcceptedSubmission(false);
+  }, [code]);
+
+  useEffect(() => {
+    if (loadedAccountScope !== accountScope) return;
+    try {
+      window.localStorage.setItem(
+        submissionsKey(problem.id, accountScope),
+        JSON.stringify(submissions.slice(0, 20))
+      );
+    } catch {
+      // Submission history remains available for this session.
+    }
+  }, [accountScope, loadedAccountScope, problem.id, submissions]);
+
+  useEffect(() => {
+    if (practiceMode !== 'learn') {
+      setTab('editor');
+      setTimerRunning(true);
+    }
+  }, [practiceMode]);
+
+  const changeLanguage = (nextLanguage) => {
+    try {
+      window.localStorage.setItem(
+        draftKey(problem.id, language, practiceMode === 'review' ? 'review' : 'main', accountScope),
+        code
+      );
+      window.localStorage.setItem(PREFERRED_LANGUAGE_KEY, nextLanguage);
+    } catch {
+      // Continue with in-memory drafts.
+    }
+    setLanguage(nextLanguage);
+    setCode(practiceMode === 'review'
+      ? buildStarterCode(problem.solution, nextLanguage)
+      : readLocalString(
+          draftKey(problem.id, nextLanguage, 'main', accountScope),
+          buildStarterCode(problem.solution, nextLanguage)
+        ));
+    setResults(null);
+  };
+
+  const resetCode = () => {
+    if (typeof window !== 'undefined' && !window.confirm('Reset this language draft to the starter template?')) return;
+    setCode(buildStarterCode(problem.solution, language));
+    setResults(null);
+  };
+
+  const saveSubmission = (res, kind = 'run') => {
+    const passed = res.filter((result) => result.passed).length;
+    const firstFailed = res.find((result) => !result.passed);
+    const allPassed = Boolean(res.length && passed === res.length);
+    const label = allPassed
+      ? kind === 'submit' ? 'Accepted' : kind === 'custom' ? 'Custom passed' : 'Tests passed'
+      : firstFailed?.kind === 'timeout'
+        ? 'Time Limit'
+        : firstFailed?.kind === 'syntax'
+          ? 'Compile Error'
+          : firstFailed?.error
+            ? 'Runtime Error'
+            : kind === 'custom'
+              ? 'Custom failed'
+              : 'Wrong Answer';
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      createdAt: new Date().toISOString(),
+      accepted: kind === 'submit' && allPassed,
+      label,
+      passed,
+      total: res.length,
+      runtimeMs: res.runtimeMs || 0,
+      language,
+      languageLabel: getLanguage(language).label,
+      code,
+      kind,
+    };
+    setSubmissions((current) => [entry, ...current].slice(0, 20));
+  };
 
   const handleTrace = () => {
     if (!tracerConfig) {
-      onAttempted(problem.id);
+      onAttempted(problem.id, { track: false });
       setTab('visual');
       return;
     }
@@ -513,38 +1062,74 @@ export default function ProblemDetail({
       return;
     }
 
-    onAttempted(problem.id);
+    onAttempted(problem.id, { durationSeconds: elapsedSeconds, language });
     tracer.run(code, tracerConfig.defaultInput, tracerConfig);
     setTab('trace');
   };
 
-  const handleRun = () => {
-    onAttempted(problem.id);
-    const res = runTests(code, problem.testCases || []);
+  const handleRun = async (kind = 'run') => {
+    onAttempted(problem.id, { durationSeconds: elapsedSeconds, language });
+    setIsExecuting(true);
+    const res = await runTestsAsync(code, problem.testCases || []);
+    setIsExecuting(false);
     setResults(res);
-    if (res.length && res.every((r) => r.passed)) onSolved(problem.id);
+    saveSubmission(res, kind);
+    const accepted = Boolean(res.length && res.every((r) => r.passed));
+    setAcceptedSubmission(kind === 'submit' && accepted);
+    if (kind === 'submit' && accepted) {
+      onSolved(problem.id, { durationSeconds: elapsedSeconds, language, mode: practiceMode });
+      if (kind === 'submit') setTimerRunning(false);
+    }
   };
+
+  const handleCustomRun = async (testCase) => {
+    onAttempted(problem.id, { durationSeconds: elapsedSeconds, language });
+    setIsExecuting(true);
+    const res = await runTestsAsync(code, [testCase]);
+    setIsExecuting(false);
+    setResults(res);
+    setAcceptedSubmission(false);
+    saveSubmission(res, 'custom');
+  };
+
+  useEffect(() => {
+    const runShortcut = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter' && tab === 'editor') {
+        event.preventDefault();
+        if (getLanguage(language).runnable) handleRun('run');
+      }
+    };
+    window.addEventListener('keydown', runShortcut);
+    return () => window.removeEventListener('keydown', runShortcut);
+  });
 
   const tabs = [
     ['story', 'Story Mode'],
     ['visual', 'Visual'],
     ['editor', 'Editor'],
     ['problem', 'Explanation'],
-    ...(tracerConfig ? [['trace', 'Trace']] : []),
+    ...(tracerConfig ? [['trace', 'Reference Trace']] : []),
+    ['submissions', `Runs${submissions.length ? ` (${submissions.length})` : ''}`],
     ['solution', 'Solution'],
   ];
 
+  const workspaceTabId = (id) => `${workspaceTabsId}-tab-${id}`;
+  const workspacePanelId = (id) => `${workspaceTabsId}-panel-${id}`;
+  const workspacePanelProps = (id) => ({
+    id: workspacePanelId(id),
+    role: 'tabpanel',
+    'aria-labelledby': workspaceTabId(id),
+    tabIndex: 0,
+  });
+
+  const activateWorkspaceTab = (id) => {
+    if (id === 'solution') onSolutionViewed?.();
+    setTab(id);
+  };
+
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.7rem',
-          flexWrap: 'wrap',
-          marginBottom: '1.25rem',
-        }}
-      >
+    <div className="problem-detail-page">
+      <div className="problem-detail-header">
         <button
           type="button"
           onClick={onBack}
@@ -561,9 +1146,9 @@ export default function ProblemDetail({
           {problem.title}
         </h2>
         <Badge color={DIFF_COLOR[problem.difficulty] || '#8b9cc8'}>{problem.difficulty}</Badge>
-        <Badge color={topicColor}>{problem.pattern}</Badge>
-        {problem.timeO && <Badge color="#4a9eff">{problem.timeO}</Badge>}
-        {problem.spaceO && <Badge color="#f5a623">{problem.spaceO}</Badge>}
+        {practiceMode === 'learn' && <Badge color={topicColor}>{problem.pattern}</Badge>}
+        {practiceMode === 'learn' && problem.timeO && <Badge color="#4a9eff">{problem.timeO}</Badge>}
+        {practiceMode === 'learn' && problem.spaceO && <Badge color="#f5a623">{problem.spaceO}</Badge>}
         <button
           type="button"
           onClick={() => toggleBookmark?.(problem.id)}
@@ -582,16 +1167,42 @@ export default function ProblemDetail({
         >
           {bookmarked ? '★' : '☆'}
         </button>
+        <button
+          type="button"
+          className={`practice-tutor-launcher ${auth?.isAuthenticated ? '' : 'is-locked'}`.trim()}
+          style={{ '--tutor-launcher-color': topicColor }}
+          onClick={() => openTutor('socratic', 'Help me find the next step without giving away the solution.')}
+          aria-haspopup="dialog"
+          aria-expanded={tutorOpen}
+          aria-label={auth?.isAuthenticated ? 'Open Personal Tutor' : 'Sign in to open Personal Tutor'}
+        >
+          <span aria-hidden="true">{auth?.isAuthenticated ? '✦' : '▣'}</span>
+          <b>Personal Tutor</b>
+          <small>{auth?.isAuthenticated ? 'Context-aware' : 'Sign in to use'}</small>
+        </button>
       </div>
+
+      <PracticeSessionBar
+        mode={practiceMode}
+        onModeChange={onPracticeModeChange}
+        seconds={elapsedSeconds}
+        running={timerRunning}
+        onToggleTimer={() => setTimerRunning((value) => !value)}
+        onResetTimer={() => setElapsedSeconds(0)}
+        topicColor={topicColor}
+      />
 
       <LearningRail
         tab={tab}
         topicColor={topicColor}
         hasTracer={Boolean(tracerConfig)}
-        solved={status === 'solved' || allPass}
+        solved={status === 'solved' || acceptedSubmission}
       />
 
       <div
+        role="tablist"
+        aria-label="Problem workspace"
+        aria-orientation="horizontal"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -603,8 +1214,34 @@ export default function ProblemDetail({
         {tabs.map(([id, label]) => (
           <button
             key={id}
+            id={workspaceTabId(id)}
             type="button"
-            onClick={() => setTab(id)}
+            role="tab"
+            aria-selected={tab === id}
+            aria-controls={workspacePanelId(id)}
+            tabIndex={tab === id ? 0 : -1}
+            onClick={() => activateWorkspaceTab(id)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                activateWorkspaceTab(id);
+                return;
+              }
+              const index = tabs.findIndex(([tabId]) => tabId === id);
+              const nextIndex = event.key === 'ArrowRight'
+                ? (index + 1) % tabs.length
+                : event.key === 'ArrowLeft'
+                  ? (index - 1 + tabs.length) % tabs.length
+                  : event.key === 'Home'
+                    ? 0
+                    : event.key === 'End'
+                      ? tabs.length - 1
+                      : null;
+              if (nextIndex !== null) {
+                event.preventDefault();
+                event.currentTarget.parentElement?.querySelectorAll('[role="tab"]')[nextIndex]?.focus();
+              }
+            }}
             style={{
               padding: '0.52rem 1rem',
               borderRadius: '0.4rem 0.4rem 0 0',
@@ -620,68 +1257,106 @@ export default function ProblemDetail({
         ))}
       </div>
 
+      {tabs.filter(([id]) => id !== tab).map(([id]) => (
+        <div key={`inactive-panel-${id}`} {...workspacePanelProps(id)} hidden />
+      ))}
+
       {tab === 'story' && (
-        <StoryModePanel
-          problem={problem}
-          topicColor={topicColor}
-          hasTracer={Boolean(tracerConfig)}
-          onStartEditor={() => {
-            onAttempted(problem.id);
-            setTab('editor');
-          }}
-          onTrace={handleTrace}
-        />
+        <div {...workspacePanelProps('story')}>
+          <StoryModePanel
+            problem={problem}
+            topicColor={topicColor}
+            hasTracer={Boolean(tracerConfig)}
+            onStartEditor={() => {
+              onAttempted(problem.id, { track: false });
+              setTab('editor');
+            }}
+            onTrace={handleTrace}
+          />
+        </div>
       )}
 
       {tab === 'editor' && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))',
-            gap: '1.35rem',
-            alignItems: 'start',
-          }}
-        >
-          <ProblemBrief problem={problem} topicColor={topicColor} compact />
+        <div className="leetcode-workspace" {...workspacePanelProps('editor')}>
+          <aside className="workspace-problem-pane">
+            <div className="workspace-pane-head"><b>Description</b><span>{problem.difficulty}</span></div>
+            <ProblemBrief problem={problem} topicColor={topicColor} compact revealPattern={practiceMode === 'learn'} />
+            <LearningScratchpad
+              key={`${problem.id}:${accountScope || 'guest'}`}
+              problem={problem}
+              topicColor={topicColor}
+              accountScope={accountScope}
+            />
+            {practiceMode === 'learn' && <HintSystem hints={problem.hints || []} onReveal={onHintViewed} />}
+          </aside>
           <EditorWorkspace
             code={code}
             setCode={setCode}
             handleRun={handleRun}
+            handleCustomRun={handleCustomRun}
             handleTrace={handleTrace}
-            setTab={setTab}
+            onShowSolution={() => {
+              onSolutionViewed?.();
+              setTab('solution');
+            }}
+            onReviewVisual={() => setTab('visual')}
             problem={problem}
             results={results}
             topicColor={topicColor}
             tracerConfig={tracerConfig}
-            allPass={allPass}
+            allPass={acceptedSubmission}
             nextProblem={nextProblem}
             onNextProblem={onNextProblem}
+            language={language}
+            onLanguageChange={changeLanguage}
+            onResetCode={resetCode}
+            practiceRecord={practiceRecord}
+            onReflect={onReflect}
+            isExecuting={isExecuting}
+            tutorRequiresAuth={!auth?.isAuthenticated}
+            accountScope={accountScope}
+            onExplainFailure={(diagnostic) => {
+              const evidence = diagnostic?.firstMismatch || diagnostic?.error || 'the first failing visible case';
+              openTutor('debug', `Help me understand why my code failed at ${evidence}. Start from the evidence and ask me one focused question.`);
+            }}
           />
         </div>
       )}
 
       {tab === 'problem' && (
-        <div style={{ maxWidth: '850px' }}>
+        <div {...workspacePanelProps('problem')} style={{ maxWidth: '850px' }}>
           <ProblemBrief problem={problem} topicColor={topicColor} />
         </div>
       )}
 
       {tab === 'visual' && (
-        <ProblemVisualLab problem={problem} topicColor={topicColor} />
+        <div {...workspacePanelProps('visual')}>
+          <ProblemVisualLab problem={problem} topicColor={topicColor} />
+        </div>
+      )}
+
+      {tab === 'submissions' && (
+        <section className="runs-panel" {...workspacePanelProps('submissions')}>
+          <div className="runs-panel__header"><div><p>Local run history</p><h3>Compare, recover, and learn from every attempt.</h3></div><span>{submissions.length} saved</span></div>
+          <SubmissionHistory submissions={submissions} onRestore={(submission) => { setLanguage(submission.language); setCode(submission.code); setResults(null); setTab('editor'); }} />
+        </section>
       )}
 
       {tab === 'trace' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '1.35rem' }}>
+        <div {...workspacePanelProps('trace')} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: '1.35rem' }}>
           <div>
-            <SectionLabel>Traceable Code</SectionLabel>
-            <CodeEditor
-              value={code}
-              onChange={setCode}
-              height="360px"
-              minHeight={280}
-              maxHeight={760}
-              storageKey={`algovista:trace-editor:${problem.id}`}
-            />
+            <SectionLabel>Code for pattern comparison</SectionLabel>
+            <Suspense fallback={<EditorModuleLoading height={360} />}>
+              <CodeEditor
+                value={code}
+                onChange={setCode}
+                language={language}
+                height="360px"
+                minHeight={280}
+                maxHeight={760}
+                storageKey={`algovista:trace-editor:${problem.id}`}
+              />
+            </Suspense>
             <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.7rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
@@ -695,7 +1370,7 @@ export default function ProblemDetail({
                   fontWeight: 900,
                 }}
               >
-                Trace Execution
+                Run Reference Trace
               </button>
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
                 Input: {JSON.stringify(tracerConfig?.defaultInput)}
@@ -703,6 +1378,7 @@ export default function ProblemDetail({
             </div>
           </div>
           <div>
+            <div className="reference-trace-notice"><b>Reference walkthrough</b><span>This visual follows the canonical algorithm events for this pattern. It validates compatible JavaScript, but it is not yet a line-perfect trace of arbitrary learner code.</span></div>
             {traceErrors.length > 0 && (
               <div
                 style={{
@@ -743,7 +1419,7 @@ export default function ProblemDetail({
       )}
 
       {tab === 'solution' && (
-        <div>
+        <div {...workspacePanelProps('solution')}>
           <div
             style={{
               background: 'var(--bg-card)',
@@ -781,6 +1457,42 @@ export default function ProblemDetail({
           </div>
         </div>
       )}
+
+      {tutorOpen && !auth?.isAuthenticated && (
+        <AuthRequired
+          variant="dialog"
+          feature="the personal tutor"
+          title="Sign in to continue with this problem"
+          description="Your private session lets AlgoVista ground coaching in this problem and keep every learner’s data isolated."
+          onDismiss={() => setTutorOpen(false)}
+        >
+          <span />
+        </AuthRequired>
+      )}
+
+      <ContextualPracticeTutor
+        open={tutorOpen && Boolean(auth?.isAuthenticated)}
+        onClose={() => setTutorOpen(false)}
+        problem={problem}
+        code={code}
+        language={language}
+        testResults={results}
+        learnerContext={practiceRecord || {}}
+        mode={tutorMode}
+        onModeChange={setTutorMode}
+        starterQuestion={tutorStarterQuestion}
+        conversationKey={problem.id}
+        accentColor={topicColor}
+        onAsk={askContextualTutor}
+        onVisualAction={() => {
+          setTutorOpen(false);
+          setTab('visual');
+        }}
+        onNextExercise={onNextProblem ? () => {
+          setTutorOpen(false);
+          onNextProblem();
+        } : undefined}
+      />
     </div>
   );
 }

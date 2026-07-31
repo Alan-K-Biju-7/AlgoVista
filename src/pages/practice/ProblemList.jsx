@@ -50,6 +50,7 @@ function firstSentence(text = '') {
 export default function ProblemList({
   topic,
   problems = [],
+  allProblems = problems,
   onSelect,
   getStatus = () => 'unsolved',
   isBookmarked = () => false,
@@ -62,17 +63,32 @@ export default function ProblemList({
     capability: 'all',
     sort: 'recommended',
   });
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window === 'undefined') return 'list';
+    const savedView = window.localStorage.getItem('algovista.practice.library-view');
+    return savedView === 'cards' ? 'cards' : 'list';
+  });
+  const [scope, setScope] = useState('topic');
+  const sourceProblems = scope === 'all' ? allProblems : problems;
   const filteredProblems = useMemo(
     () => filterProblems(
-      problems,
+      sourceProblems,
       filters,
       getStatus,
       isBookmarked,
       (problemId) => Boolean(TRACER_CONFIGS[problemId])
     ),
-    [filters, getStatus, isBookmarked, problems]
+    [filters, getStatus, isBookmarked, sourceProblems]
   );
   const updateFilter = (key, value) => setFilters((prev) => ({ ...prev, [key]: value }));
+  const changeView = (nextView) => {
+    setViewMode(nextView);
+    try {
+      window.localStorage.setItem('algovista.practice.library-view', nextView);
+    } catch {
+      // The selected view remains active for this session.
+    }
+  };
 
   if (!problems.length) {
     return <EmptyState topicLabel={topic?.label || 'this selection'} />;
@@ -89,9 +105,13 @@ export default function ProblemList({
             {topic?.label || 'Problems'}
           </h2>
         </div>
-        <span className="mission-chip">
-          {filteredProblems.length}/{problems.length} problems
-        </span>
+        <div className="problem-view-actions">
+          <span className="mission-chip">{filteredProblems.length}/{sourceProblems.length} problems</span>
+          <div role="group" aria-label="Problem library view">
+            <button type="button" aria-pressed={viewMode === 'list'} className={viewMode === 'list' ? 'is-active' : ''} onClick={() => changeView('list')} title="Compact list">☷</button>
+            <button type="button" aria-pressed={viewMode === 'cards'} className={viewMode === 'cards' ? 'is-active' : ''} onClick={() => changeView('cards')} title="Card grid">▦</button>
+          </div>
+        </div>
       </div>
 
       <div className="mission-toolbar" style={{ borderColor: `${topic?.color || '#00d4aa'}30` }}>
@@ -103,6 +123,10 @@ export default function ProblemList({
           placeholder="Search missions"
           aria-label="Search missions"
         />
+        <select value={scope} onChange={(event) => setScope(event.target.value)} className="mission-select" aria-label="Problem library scope">
+          <option value="topic">This topic</option>
+          <option value="all">All 150 problems</option>
+        </select>
         <select
           value={filters.status}
           onChange={(event) => updateFilter('status', event.target.value)}
@@ -133,7 +157,7 @@ export default function ProblemList({
           aria-label="Learning mode filter"
         >
           <option value="all">All modes</option>
-          <option value="trace">Trace-ready</option>
+          <option value="trace">Reference trace-ready</option>
           <option value="visual">Visual-only</option>
         </select>
         <select
@@ -156,7 +180,7 @@ export default function ProblemList({
         </div>
       )}
 
-      <div className="problem-grid">
+      <div className={`problem-grid is-${viewMode}`}>
       {filteredProblems.map((p, index) => {
         const status = getStatus(p.id);
         const statusColor =
@@ -168,13 +192,8 @@ export default function ProblemList({
         return (
           <article
             key={p.id}
-            role="button"
-            tabIndex={0}
             onClick={() => onSelect?.(p)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') onSelect?.(p);
-            }}
-            className="problem-card"
+            className={viewMode === 'list' ? 'problem-card problem-card--row' : 'problem-card'}
             style={{
               borderColor: status === 'solved' ? '#00d4aa55' : 'var(--border-default)',
               background: status === 'solved' ? 'rgba(0, 212, 170, 0.06)' : 'rgba(17, 24, 39, 0.78)',
@@ -224,7 +243,7 @@ export default function ProblemList({
                 </button>
               </div>
 
-              <h3>{p.title}</h3>
+              <h3><button type="button" className="problem-card__open-button" onClick={(event) => { event.stopPropagation(); onSelect?.(p); }}>{p.title}</button></h3>
               <p className="problem-card__desc">{firstSentence(p.description)}</p>
 
               <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -253,7 +272,7 @@ export default function ProblemList({
             <div className="problem-card__footer">
               <Pill color={topic?.color || '#00d4aa'} filled>Story</Pill>
               <Pill color={hasStepTrace ? '#4a9eff' : '#8b7cf8'} filled>
-                {hasStepTrace ? 'Trace' : 'Visual'}
+                {hasStepTrace ? 'Reference' : 'Visual'}
               </Pill>
               <span
                 style={{

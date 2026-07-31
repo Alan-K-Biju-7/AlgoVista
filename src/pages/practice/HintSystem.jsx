@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
-export default function HintSystem({ hints }) {
+export default function HintSystem({ hints = [], onReveal }) {
   const [revealed, setRevealed] = useState(0);
+  const reveal = (depth) => {
+    setRevealed(depth);
+    onReveal?.(depth);
+  };
   return (
     <div style={{ marginTop: '1rem' }}>
       <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>Hints</p>
@@ -13,7 +17,7 @@ export default function HintSystem({ hints }) {
                 <span style={{ color: '#f5a623', fontWeight: '700', marginRight: '0.5rem' }}>Hint {i + 1}:</span>{hint}
               </div>
             ) : (
-              <button onClick={() => setRevealed(i + 1)} style={{
+              <button type="button" onClick={() => reveal(i + 1)} style={{
                 width: '100%', padding: '0.75rem 1rem', background: 'var(--bg-card)',
                 border: 'none', cursor: 'pointer', textAlign: 'left',
                 fontSize: '0.83rem', color: 'var(--text-muted)',
@@ -27,7 +31,7 @@ export default function HintSystem({ hints }) {
         ))}
       </div>
       {revealed > 0 && revealed < hints.length && (
-        <button onClick={() => setRevealed(0)} style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+        <button type="button" onClick={() => setRevealed(0)} style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
           Reset hints
         </button>
       )}
