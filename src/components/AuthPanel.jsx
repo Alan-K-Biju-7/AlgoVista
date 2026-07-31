@@ -1,9 +1,22 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-export default function AuthPanel({ compact = false }) {
-  const { user, isAuthenticated, login, register, logout, authError } = useAuth();
-  const [mode, setMode] = useState('login');
+export default function AuthPanel({
+  compact = false,
+  defaultMode = 'login',
+  onAuthenticated,
+  purpose = 'Sync your progress across devices.',
+}) {
+  const {
+    user,
+    isAuthenticated,
+    login,
+    register,
+    logout,
+    logoutPending,
+    authError,
+  } = useAuth();
+  const [mode, setMode] = useState(defaultMode === 'register' ? 'register' : 'login');
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -19,11 +32,13 @@ export default function AuthPanel({ compact = false }) {
 
     try {
       if (mode === 'register') {
-        await register(form);
+        const session = await register(form);
         setMessage('Account created. Progress will now sync here.');
+        onAuthenticated?.(session);
       } else {
-        await login(form);
+        const session = await login(form);
         setMessage('Welcome back. Progress loaded.');
+        onAuthenticated?.(session);
       }
     } catch (error) {
       setMessage(error.message);
@@ -39,9 +54,10 @@ export default function AuthPanel({ compact = false }) {
           <p className="auth-panel__label">Signed in</p>
           <p className="auth-panel__name">{user.name}</p>
           <p className="auth-panel__email">{user.email}</p>
+          {authError && <p className="auth-panel__error" role="alert">{authError}</p>}
         </div>
-        <button type="button" className="btn-ghost" onClick={logout}>
-          Log out
+        <button type="button" className="btn-ghost" onClick={logout} disabled={logoutPending}>
+          {logoutPending ? 'Logging out…' : 'Log out'}
         </button>
       </div>
     );
@@ -53,6 +69,7 @@ export default function AuthPanel({ compact = false }) {
         <div>
           <p className="auth-panel__label">Learner account</p>
           <p className="auth-panel__name">{mode === 'login' ? 'Log in' : 'Create account'}</p>
+          <p className="auth-panel__purpose">{purpose}</p>
         </div>
         <div className="auth-panel__toggle" aria-label="Auth mode">
           <button
@@ -81,6 +98,9 @@ export default function AuthPanel({ compact = false }) {
             onChange={(event) => updateField('name', event.target.value)}
             placeholder="Alan"
             autoComplete="name"
+            required
+            minLength="2"
+            maxLength="80"
           />
         </div>
       )}
@@ -94,6 +114,8 @@ export default function AuthPanel({ compact = false }) {
           onChange={(event) => updateField('email', event.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
+          required
+          maxLength="254"
         />
       </div>
 
@@ -104,9 +126,15 @@ export default function AuthPanel({ compact = false }) {
           type="password"
           value={form.password}
           onChange={(event) => updateField('password', event.target.value)}
-          placeholder="8+ characters"
+          placeholder={mode === 'register' ? '12+ characters' : 'Your password'}
           autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+          required
+          minLength={mode === 'register' ? 12 : 8}
+          maxLength="128"
         />
+        {mode === 'register' && (
+          <small className="auth-panel__hint">Use 12 or more characters. A memorable passphrase works well.</small>
+        )}
       </div>
 
       <button type="submit" className="btn-primary" disabled={busy}>
@@ -114,7 +142,9 @@ export default function AuthPanel({ compact = false }) {
       </button>
 
       {(message || authError) && (
-        <p className="auth-panel__message">{message || authError}</p>
+        <p className="auth-panel__message" role={message || authError ? 'status' : undefined} aria-live="polite">
+          {message || authError}
+        </p>
       )}
     </form>
   );

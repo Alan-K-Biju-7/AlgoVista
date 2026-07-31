@@ -1,12 +1,14 @@
-const API_BASE = (process.env.REACT_APP_API_BASE_URL || '').replace(/\/$/, '');
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 export async function apiRequest(path, options = {}) {
   const headers = {
-    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers || {}),
   };
 
   const response = await fetch(`${API_BASE}${path}`, {
+    credentials: 'include',
     ...options,
     headers,
   });
@@ -31,6 +33,6 @@ export async function apiRequest(path, options = {}) {
   return data;
 }
 
-export function authHeader(token) {
-  return token ? { Authorization: `Bearer ${token}` } : {};
+export function csrfHeader(csrfToken) {
+  return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
 }
