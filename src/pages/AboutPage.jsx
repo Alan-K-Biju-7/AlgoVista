@@ -1,20 +1,20 @@
 import { Link } from 'react-router-dom';
 
 const stack = [
-  { label: 'React 18',          desc: 'Component architecture, hooks, state management' },
-  { label: 'React Router v6',   desc: 'Client-side routing and navigation' },
-  { label: 'SVG (native)',      desc: 'All tree visualizations — no canvas library needed' },
-  { label: 'Vanilla CSS-in-JS', desc: 'Inline styles + CSS variables, zero dependencies' },
-  { label: 'Git + GitHub',      desc: 'Version control, commit-by-commit feature building' },
+  { label: 'React 19 + Vite 8', desc: 'Fast, route-split learning interfaces with a production build pipeline' },
+  { label: 'React Router 7', desc: 'Shareable lessons and interview-practice workspaces' },
+  { label: 'Monaco Editor', desc: 'A self-hosted VS Code-grade editor with accessible fallback' },
+  { label: 'Node.js 24 + PostgreSQL', desc: 'Authenticated APIs, revocable sessions, progress, and tutor profiles' },
+  { label: 'Native SVG + CSS', desc: 'Responsive visualizations, simulations, and professional design tokens' },
 ];
 
 const features = [
-  { icon: '🎬', label: 'Step-by-step animation',   desc: 'Every operation is broken into discrete steps you can step through manually or auto-run.' },
-  { icon: '⚖️', label: 'AVL rotations',            desc: 'LL, RR, LR, RL — each rotation fires a live panel explaining why it happened.' },
-  { icon: '🌲', label: 'SVG tree rendering',        desc: 'Trees are rendered with a custom in-order layout engine — no third-party library.' },
-  { icon: '📊', label: 'Complexity breakdown',      desc: 'Every concept card shows time and space complexity with colour-coded tokens.' },
-  { icon: '📝', label: 'Step history log',          desc: 'Every operation is logged with type badges so you can trace exactly what happened.' },
-  { icon: '🔍', label: 'Animated search',           desc: 'Binary search, BST search, and AVL search all animate path traversal node-by-node.' },
+  { icon: '🎬', label: 'Narrated simulations', desc: 'Predict, step, play, pause, and inspect the invariant behind each state change.' },
+  { icon: '⌨️', label: 'Interview workspace', desc: 'Curated problems combine Story Mode, an editor, custom cases, traces, hints, and review.' },
+  { icon: '◎', label: 'Failure-first feedback', desc: 'The first output divergence is visualized with a likely cause and a focused next experiment.' },
+  { icon: '📊', label: 'Mastery, not streaks', desc: 'Evidence, reflection, spaced review, and account sync measure durable understanding.' },
+  { icon: '✦', label: 'Personal DSA tutor', desc: 'Signed-in coaching is grounded in the current concept, failed case, and bounded learner profile.' },
+  { icon: '▣', label: 'Private full-stack accounts', desc: 'HttpOnly sessions, CSRF protection, scoped data, and server-only provider credentials.' },
 ];
 
 export default function AboutPage() {
@@ -25,9 +25,10 @@ export default function AboutPage() {
       <span className="badge-teal" style={{ marginBottom: '1.25rem' }}>About</span>
       <h1 style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '0.75rem' }}>About AlgoVista</h1>
       <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', maxWidth: '44rem', lineHeight: 1.8, marginBottom: '3.5rem' }}>
-        AlgoVista is a self-built visual DSA lab — built as a learning project to make
-        data structures and algorithms tangible instead of abstract. Every feature was
-        implemented commit by commit: logic first, then visualizer, then UI.
+        AlgoVista is a visual DSA learning platform built to turn abstract algorithms into
+        inspectable state, deliberate practice, and durable interview skill. Concepts,
+        simulations, code execution, failure diagnosis, review, and coaching share one
+        learning loop instead of living in disconnected tools.
       </p>
 
       {/* Features grid */}
