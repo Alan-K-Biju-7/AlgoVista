@@ -22,6 +22,11 @@
 .env.test.local
 .env.production.local
 server/data/*.json
+server/data/*.sqlite
+server/data/*.sqlite-wal
+server/data/*.sqlite-shm
+server/data/*.lock
+server/data/*.tmp
 
 npm-debug.log*
 yarn-debug.log*
