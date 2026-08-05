@@ -428,11 +428,7 @@ function buildCoachMessages({ message, concept, progress, history, tutorProfile 
 
 async function callAiProvider({ message, concept, progress, history, tutorProfile }) {
   if (!getProviderConfig().enabled) {
-    return {
-      provider: 'local-fallback',
-      reply: fallbackCoachReply({ message, concept, progress, history }),
-      coachRevision: COACH_REVISION,
-    };
+    throw new AiProviderError('Live AI coaching is not configured.', 'provider_not_configured');
   }
 
   const completion = await withProviderSlot(() => requestChatCompletion({
@@ -489,10 +485,15 @@ function tutorErrorStatus(error) {
 
 async function handleApi(req, res, url, origin, requestId) {
   if (req.method === 'GET' && url.pathname === '/api/health') {
+    const provider = getProviderConfig();
     sendJson(res, 200, {
       ok: true,
       service: 'algovista-backend',
       coachRevision: COACH_REVISION,
+      aiProvider: {
+        configured: provider.enabled,
+        model: provider.model,
+      },
       database: await storage.healthCheck(),
       commit: process.env.RENDER_GIT_COMMIT || null,
     }, origin);
@@ -970,12 +971,14 @@ async function handleApi(req, res, url, origin, requestId) {
       const coach = await callAiProvider({ message, concept, progress, history, tutorProfile });
       sendJson(res, 200, coach, origin);
     } catch (error) {
-      sendJson(res, 200, {
-        provider: 'local-fallback',
-        warning: 'Live AI coaching is unavailable.',
-        reply: fallbackCoachReply({ message, concept, progress, history }),
-        coachRevision: COACH_REVISION,
-      }, origin);
+      const notConfigured = error?.code === 'provider_not_configured';
+      sendJson(res, 503, {
+        error: notConfigured
+          ? 'Live AI coaching is not configured.'
+          : 'Live AI coaching is temporarily unavailable.',
+        code: notConfigured ? 'ai_provider_not_configured' : 'ai_provider_unavailable',
+        requestId,
+      }, origin, { 'Retry-After': notConfigured ? '300' : '10' });
     }
     return;
   }

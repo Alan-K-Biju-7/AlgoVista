@@ -51,7 +51,7 @@ services:
       - key: AI_PROVIDER_BASE_URL
         value: https://generativelanguage.googleapis.com/v1beta/openai
       - key: AI_PROVIDER_MODEL
-        value: gemini-3.5-flash
+        value: gemini-3.6-flash
       - key: AI_TUTOR_OFFLINE
         value: "false"
       - key: GEMINI_API_KEY

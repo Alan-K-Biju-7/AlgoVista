@@ -15,7 +15,7 @@ function getProviderConfig(env = process.env) {
   const baseUrl = String(
     env.AI_PROVIDER_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai'
   ).replace(/\/$/, '');
-  const model = String(env.AI_PROVIDER_MODEL || 'gemini-3.5-flash').trim();
+  const model = String(env.AI_PROVIDER_MODEL || 'gemini-3.6-flash').trim();
   const timeoutMs = boundedEnvironmentInteger(
     'AI_PROVIDER_TIMEOUT_MS',
     15_000,
@@ -44,7 +44,7 @@ function extractMessageContent(payload) {
 async function requestChatCompletion({
   messages,
   maxTokens = 720,
-  temperature = 0.1,
+  temperature,
   env = process.env,
   fetchImpl = globalThis.fetch,
 }) {
@@ -69,7 +69,7 @@ async function requestChatCompletion({
       body: JSON.stringify({
         model: config.model,
         messages,
-        temperature,
+        ...(Number.isFinite(temperature) ? { temperature } : {}),
         max_tokens: Math.min(1200, Math.max(64, Number(maxTokens) || 720)),
         stream: false,
       }),

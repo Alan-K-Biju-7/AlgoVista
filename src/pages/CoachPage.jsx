@@ -135,17 +135,16 @@ export default function CoachPage() {
         history,
       });
       const coachReply = cleanCoachText(response.reply);
-      const hasLiveAnswer = !isUnhelpfulCoachReply(coachReply, coachMessage);
+      const hasLiveAnswer = response.provider === 'ai-provider'
+        && !isUnhelpfulCoachReply(coachReply, coachMessage);
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
           content: hasLiveAnswer
             ? coachReply
-            : 'I could not produce a reliable answer for that request. Rephrase it with the exact input or step you want to inspect.',
-          provider: hasLiveAnswer && response.provider === 'ai-provider'
-            ? 'AI-generated coaching'
-            : 'Built-in guide · not AI',
+            : 'Live AI coaching is unavailable right now. Your question was not answered; please retry after the provider is restored.',
+          provider: hasLiveAnswer ? 'AI-generated coaching' : 'AI unavailable · not answered',
         },
       ]);
     } catch (error) {
@@ -155,7 +154,9 @@ export default function CoachPage() {
           role: 'assistant',
           content: error.status === 401
             ? 'Your secure session expired. Sign in again before continuing this coaching session.'
-            : 'The coaching service is temporarily unavailable. Your question was not saved; please retry in a moment.',
+            : error.payload?.code === 'ai_provider_not_configured'
+              ? 'Live AI coaching has not been configured on the server. Ask the site owner to add the Gemini API key.'
+              : 'The coaching service is temporarily unavailable. Your question was not answered; please retry in a moment.',
           provider: 'Not sent',
         },
       ]);

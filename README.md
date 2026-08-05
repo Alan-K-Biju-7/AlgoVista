@@ -142,7 +142,7 @@ To enable the live provider, put the key only in `server/.env`:
 AI_TUTOR_OFFLINE=false
 GEMINI_API_KEY=replace_with_your_server_side_key
 AI_PROVIDER_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
-AI_PROVIDER_MODEL=gemini-3.5-flash
+AI_PROVIDER_MODEL=gemini-3.6-flash
 ```
 
 Leave the key empty or set `AI_TUTOR_OFFLINE=true` to exercise the deterministic authenticated tutor. Never put provider keys in a `VITE_*` variable: Vite variables are shipped to every browser.

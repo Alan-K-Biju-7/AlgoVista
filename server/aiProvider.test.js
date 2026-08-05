@@ -15,6 +15,10 @@ test('provider configuration stays offline without a server-side key', () => {
   assert.equal(config.model, 'test-model');
 });
 
+test('defaults to the current Gemini Flash model', () => {
+  assert.equal(getProviderConfig({}).model, 'gemini-3.6-flash');
+});
+
 test('explicit offline mode overrides configured provider credentials', () => {
   const config = getProviderConfig({
     AI_PROVIDER_API_KEY: 'server-secret',
@@ -55,4 +59,25 @@ test('provider errors never expose the upstream response body', async () => {
       && error.code === 'provider_http_error'
       && !error.message.includes('sensitive upstream payload')
   );
+});
+
+test('does not send deprecated sampling parameters unless explicitly requested', async () => {
+  let requestBody;
+  await requestChatCompletion({
+    messages: [{ role: 'user', content: 'Explain a queue.' }],
+    env: {
+      AI_PROVIDER_API_KEY: 'server-secret',
+      AI_PROVIDER_BASE_URL: 'https://provider.example/v1',
+      AI_PROVIDER_MODEL: 'test-model',
+    },
+    fetchImpl: async (_url, options) => {
+      requestBody = JSON.parse(options.body);
+      return {
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'A queue is FIFO.' } }] }),
+      };
+    },
+  });
+
+  assert.equal('temperature' in requestBody, false);
 });

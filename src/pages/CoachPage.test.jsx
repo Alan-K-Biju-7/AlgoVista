@@ -103,3 +103,44 @@ test('sends a concept-grounded coaching request after authentication', async () 
   }));
   expect(await screen.findByText(/binary search halves a sorted search space/i)).toBeInTheDocument();
 });
+
+test('does not present a deterministic fallback as an answer from AI', async () => {
+  mockAuthState = authState({
+    isAuthenticated: true,
+    user: { id: 'learner-1', name: 'Learner', email: 'learner@example.com' },
+  });
+  mockAskCoach.mockResolvedValue({
+    reply: 'Use the same four-step study loop for every question.',
+    provider: 'local-fallback',
+  });
+  renderProtectedCoach();
+
+  fireEvent.change(screen.getByLabelText(/ask the ai coach/i), {
+    target: { value: 'Why does Dijkstra fail with negative weights?' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+  expect(await screen.findByText(/live ai coaching is unavailable/i)).toBeInTheDocument();
+  expect(screen.queryByText(/same four-step study loop/i)).not.toBeInTheDocument();
+  expect(screen.getByText(/ai unavailable · not answered/i)).toBeInTheDocument();
+});
+
+test('explains when the server has no AI provider credentials', async () => {
+  mockAuthState = authState({
+    isAuthenticated: true,
+    user: { id: 'learner-1', name: 'Learner', email: 'learner@example.com' },
+  });
+  mockAskCoach.mockRejectedValue(Object.assign(new Error('Not configured'), {
+    status: 503,
+    payload: { code: 'ai_provider_not_configured' },
+  }));
+  renderProtectedCoach();
+
+  fireEvent.change(screen.getByLabelText(/ask the ai coach/i), {
+    target: { value: 'Explain a stack.' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+  expect(await screen.findByText(/has not been configured on the server/i)).toBeInTheDocument();
+  expect(screen.getByText('Not sent')).toBeInTheDocument();
+});
