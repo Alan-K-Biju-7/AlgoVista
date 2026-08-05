@@ -281,9 +281,7 @@ export default function CodeEditor({
           <button type="button" onClick={() => setTabInserts((current) => !current)} title="Ctrl+M toggles whether Tab indents or moves focus">
             Tab: {tabInserts ? 'indent' : 'focus'}
           </button>
-          <button type="button" onClick={() => updateHeight(minHeight)}>Compact</button>
-          <button type="button" onClick={() => updateHeight(defaultHeight)}>Reset</button>
-          <button type="button" onClick={() => updateHeight(maxHeight)}>Tall</button>
+          <span className="code-editor-resizebar__status">Saved locally</span>
           <span
             role="separator"
             tabIndex="0"
@@ -302,9 +300,9 @@ export default function CodeEditor({
               if (event.key === 'Home') updateHeight(minHeight);
               if (event.key === 'End') updateHeight(maxHeight);
             }}
-            title="Drag to resize editor"
+            title="Drag or use arrow keys to resize editor"
           >
-            Resize
+            Drag to resize
           </span>
         </div>
       )}

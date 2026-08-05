@@ -965,7 +965,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.65rem;
+  min-height: 3.05rem;
+  margin-bottom: 0;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border-default);
+  background: #1a1c21;
 }
 
 .problem-detail-header {
@@ -1031,23 +1035,39 @@
 
 .leetcode-workspace {
   display: grid;
-  grid-template-columns: minmax(300px, 0.72fr) minmax(480px, 1.28fr);
-  gap: 0.65rem;
-  min-height: calc(100vh - 245px);
-  padding: 0.4rem;
+  grid-template-columns: minmax(320px, 0.92fr) minmax(520px, 1.08fr);
+  gap: 0.5rem;
+  min-height: calc(100vh - 210px);
+  padding: 0.3rem;
   border: 1px solid var(--border-default);
-  border-radius: 12px;
-  background: #090d16;
+  border-radius: 10px;
+  background: #070a10;
 }
 
 .workspace-problem-pane,
 .coding-workspace {
   min-width: 0;
-  padding: 0.85rem;
+  padding: 0;
   border: 1px solid var(--border-default);
-  border-radius: 9px;
-  background: rgba(17, 24, 39, 0.92);
+  border-radius: 8px;
+  background: #111318;
 }
+
+.coding-workspace {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.coding-workspace > * { margin-left: 0.75rem; margin-right: 0.75rem; }
+.coding-workspace > .editor-workspace-top { order: 1; margin: 0; }
+.coding-workspace > .editor-actionbar { order: 2; }
+.coding-workspace > .editor-utilitybar { order: 3; }
+.coding-workspace > .language-notice { order: 4; }
+.coding-workspace > .code-editor-shell { order: 5; }
+.coding-workspace > .test-console { order: 6; }
+.coding-workspace > .completion-panel { order: 7; }
+.coding-workspace > .learning-debrief { order: 8; }
 
 .coding-workspace.is-fullscreen {
   position: fixed;
@@ -1072,20 +1092,22 @@
 }
 
 .workspace-problem-pane {
-  max-height: calc(100vh - 260px);
+  max-height: calc(100vh - 220px);
   overflow: auto;
+  padding: 0 1rem 1rem;
+  scrollbar-width: thin;
 }
 
 .workspace-pane-head {
   position: sticky;
-  top: -0.85rem;
+  top: 0;
   z-index: 2;
-  margin: -0.85rem -0.85rem 1rem;
-  padding: 0.72rem 0.85rem;
+  margin: 0 -1rem 1rem;
+  padding: 0.78rem 1rem;
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-default);
-  background: #111827;
+  background: rgba(24, 26, 31, 0.98);
   font-size: 0.8rem;
 }
 
@@ -1126,14 +1148,17 @@
 .runtime-pill.is-editor-only i { background: #f5a623; box-shadow: none; }
 
 .editor-utilitybar {
-  margin: -0.15rem 0 0.45rem;
+  margin-top: 0;
+  margin-bottom: 0.45rem;
+  padding: 0.38rem 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 }
 .editor-utilitybar > div { display: flex; align-items: center; gap: 0.25rem; }
-.editor-utilitybar button { min-height: 1.75rem; padding: 0.2rem 0.45rem; border-radius: 5px; font-size: 0.63rem; }
+.editor-utilitybar button { min-height: 1.65rem; padding: 0.15rem 0.42rem; border-color: transparent; border-radius: 5px; background: transparent; font-size: 0.62rem; }
+.editor-utilitybar button:hover { border-color: var(--border-default); background: var(--bg-elevated); }
 .editor-utilitybar span { min-width: 2.2rem; color: var(--text-muted); font-size: 0.62rem; text-align: center; }
 
 .language-notice {
@@ -1149,23 +1174,25 @@
 .language-notice span { color: var(--text-secondary); font-size: 0.7rem; line-height: 1.45; }
 
 .editor-actionbar {
-  margin-top: 0.6rem;
-  padding-top: 0.6rem;
+  margin-top: 0;
+  padding: 0.55rem 0;
   display: flex;
+  justify-content: flex-end;
   gap: 0.5rem;
   flex-wrap: wrap;
-  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
 }
-.editor-submit-button { margin-left: auto; color: #031a14 !important; border-color: var(--accent) !important; background: var(--accent) !important; font-weight: 900 !important; }
+.editor-actionbar button { min-height: 2rem; padding: 0.42rem 0.8rem !important; }
+.editor-submit-button { margin-left: 0; color: #031a14 !important; border-color: var(--accent) !important; background: var(--accent) !important; font-weight: 900 !important; }
 
 .learning-scratchpad {
-  margin-top: 1rem;
-  padding: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 0.7rem;
   display: grid;
   gap: 0.65rem;
   border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: rgba(9, 13, 22, 0.7);
+  background: rgba(9, 13, 22, 0.42);
 }
 .learning-scratchpad > div:first-child p { font-size: 0.64rem; font-weight: 900; text-transform: uppercase; }
 .learning-scratchpad > div:first-child span { display: block; margin-top: 0.15rem; color: var(--text-secondary); font-size: 0.7rem; line-height: 1.45; }
@@ -1176,7 +1203,8 @@
 .learning-scratchpad > small { justify-self: end; color: var(--text-muted); font-size: 0.58rem; }
 
 .test-console {
-  margin-top: 0.65rem;
+  margin-top: 0.55rem;
+  margin-bottom: 0.75rem;
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-radius: 8px;
@@ -1186,7 +1214,7 @@
 .test-console__tabs button { padding: 0.42rem 0.6rem; border: 0; border-bottom: 2px solid transparent; border-radius: 5px 5px 0 0; color: var(--text-muted); background: transparent; font-size: 0.68rem; }
 .test-console__tabs button.is-active { border-bottom-color: var(--accent); color: var(--text-primary); background: var(--bg-elevated); }
 .test-console__tabs span { margin-left: 0.22rem; padding: 0.06rem 0.28rem; border-radius: 999px; background: var(--bg-surface); font-size: 0.58rem; }
-.test-console__body { max-height: 32rem; padding: 0.65rem; overflow: auto; }
+.test-console__body { min-height: 9rem; max-height: 24rem; padding: 0.65rem; overflow: auto; }
 .builtin-testcases { display: flex; gap: 0.5rem; overflow-x: auto; }
 .builtin-testcases article { min-width: min(19rem, 85%); padding: 0.65rem; display: grid; gap: 0.45rem; border: 1px solid var(--border-default); border-radius: 7px; background: var(--bg-surface); }
 .builtin-testcases article > b { font-size: 0.7rem; }
@@ -1287,7 +1315,7 @@
   width: 100%;
   min-width: 0;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   background: #111111;
 }
@@ -1340,10 +1368,15 @@
 
 .code-editor-resizebar {
   display: grid;
-  grid-template-columns: repeat(4, auto) minmax(6rem, 1fr);
+  grid-template-columns: auto minmax(5rem, 1fr) minmax(8rem, 0.8fr);
   gap: 0.4rem;
   align-items: center;
   margin-top: 0.45rem;
+}
+
+.code-editor-resizebar__status {
+  color: var(--text-muted);
+  font-size: 0.62rem;
 }
 
 .code-editor-resizebar button {

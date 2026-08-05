@@ -718,7 +718,7 @@ function EditorWorkspace({
       tabIndex={fullscreen ? -1 : undefined}
     >
       <div className="editor-workspace-top">
-        <div className="editor-title"><span className="editor-title__icon">&lt;/&gt;</span><div><b id={editorTitleId}>Code</b><small id={editorDescriptionId}>{fullscreen ? 'Expanded editor focus mode' : 'Saved locally'}</small></div></div>
+        <div className="editor-title"><span className="editor-title__icon">&lt;/&gt;</span><div><b id={editorTitleId}>Code</b><small id={editorDescriptionId}>{fullscreen ? 'Focused coding workspace' : 'Write, run, improve'}</small></div></div>
         <div className="editor-workspace-pills" aria-label="Editor runtime">
           <label className="language-picker">
             <span className="practice-sr-only">Programming language</span>
@@ -740,8 +740,8 @@ function EditorWorkspace({
           onChange={setCode}
           language={language}
           fontSize={fontSize}
-          height="470px"
-          minHeight={320}
+          height="540px"
+          minHeight={380}
           maxHeight={900}
           storageKey={`algovista:practice-editor:${problem.id}`}
         />
