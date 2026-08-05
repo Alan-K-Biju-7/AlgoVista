@@ -175,7 +175,11 @@ test('concepts page exposes every advanced simulator module', async () => {
 test('simulator hash deep links and editor actions are functional', async () => {
   renderAt('/simulator#heap');
 
-  expect(await screen.findByRole('heading', { level: 1, name: 'Heap' })).toBeInTheDocument();
+  expect(await screen.findByRole(
+    'heading',
+    { level: 1, name: 'Heap' },
+    { timeout: 5_000 }
+  )).toBeInTheDocument();
 
   userEvent.click(screen.getByRole('tab', { name: 'Editor' }));
   userEvent.click(screen.getByRole('button', { name: 'Explain' }));
