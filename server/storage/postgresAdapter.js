@@ -482,6 +482,31 @@ class PostgresStorageAdapter {
     }
   }
 
+  async insertCoachingEvent(event) {
+    await this.ready();
+    const result = await this.getPool().query(
+      `INSERT INTO algovista_coaching_events
+       (id, user_id, event_type, session_id, attempt_id, concept_id, misconception, hint_level, outcome, rating, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [event.id, event.userId, event.eventType, event.sessionId, event.attemptId, event.conceptId,
+        event.misconception, event.hintLevel, event.outcome, event.rating, event.createdAt]
+    );
+    return result.rows[0];
+  }
+
+  async listCoachingEvents(userId) {
+    await this.ready();
+    const result = await this.getPool().query(
+      'SELECT * FROM algovista_coaching_events WHERE user_id = $1 ORDER BY created_at DESC LIMIT 500', [userId]
+    );
+    return result.rows.map((row) => ({
+      id: row.id, userId: row.user_id, eventType: row.event_type, sessionId: row.session_id,
+      attemptId: row.attempt_id, conceptId: row.concept_id, misconception: row.misconception,
+      hintLevel: Number(row.hint_level), outcome: row.outcome, rating: row.rating == null ? null : Number(row.rating),
+      createdAt: asIso(row.created_at),
+    }));
+  }
+
   async healthCheck() {
     await this.ready();
     await this.getPool().query('SELECT 1');
