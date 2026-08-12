@@ -1484,6 +1484,13 @@ export default function ProblemDetail({
         conversationKey={problem.id}
         accentColor={topicColor}
         onAsk={askContextualTutor}
+        onFeedback={(outcome, response) => auth.recordCoachFeedback?.({
+          outcome,
+          sessionId: `practice-${problem.id}`,
+          attemptId: `${problem.id}-${practiceRecord?.attempts || 0}`,
+          conceptId: problem.topic || problem.id,
+          hintLevel: response?.hintLevel || 0,
+        })}
         onVisualAction={() => {
           setTutorOpen(false);
           setTab('visual');
