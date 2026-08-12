@@ -78,6 +78,12 @@ AlgoVista currently uses a **dedicated tutoring orchestration layer over a repla
 
 A later fine-tuned tutor may be useful for tone, misconception classification, or response structure, but only after there is a consented, de-identified, high-quality dataset and repeatable safety/learning evaluations. Training a general DSA model from scratch is not required to deliver personalized tutoring and would add substantial cost and risk.
 
+### Adaptive tutor v2
+
+`POST /api/tutor/v2/turn` extends the stable v1 contract with opaque coaching session and attempt identifiers, consumed hint levels, and a learning objective. Responses add a bounded misconception diagnosis, teaching intervention, understanding check, and recommended follow-up. The v1 endpoint remains available during migration.
+
+External retrieval records fail closed unless they carry a license, source URL, revision, and an explicit `grounding` or `evaluation` permitted use. No scraped LeetCode statements, submissions, editorials, or hidden tests are bundled. Model-improvement examples require separate active consent, are de-identified into quarantine, and are excluded from exports until approved; revoked records are excluded from subsequent exports.
+
 ## Full-stack architecture
 
 ```text
