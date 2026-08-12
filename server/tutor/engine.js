@@ -8,6 +8,7 @@ const {
 } = require('./constants');
 const { formatGrounding, selectGrounding } = require('./grounding');
 const { cleanId, cleanText, isRecord, normalizeTutorRequest } = require('./sanitize');
+const { diagnoseMisconception, teachingPolicy } = require('./adaptive');
 
 const NEXT_ACTIONS = TUTOR_RESPONSE_SCHEMA.properties.nextAction.enum;
 const MASTERY_EVIDENCE = TUTOR_RESPONSE_SCHEMA.properties.masterySignal.properties.evidence.enum;
@@ -15,7 +16,7 @@ const MASTERY_EVIDENCE = TUTOR_RESPONSE_SCHEMA.properties.masterySignal.properti
 function isNormalizedRequest(value) {
   return Boolean(
     isRecord(value) &&
-    value.version === 1 &&
+    [1, 2].includes(value.version) &&
     PEDAGOGY_MODES.includes(value.mode) &&
     isRecord(value.lesson) &&
     isRecord(value.problem) &&
@@ -144,17 +145,27 @@ function createOfflineTutorResponse(normalizedRequest, suppliedGrounding) {
       : 'What information from earlier steps must still be true at the next decision?';
   }
 
+  const diagnosis = diagnoseMisconception(request);
+  const policy = teachingPolicy(request, diagnosis);
   return {
-    version: 1,
+    version: request.version,
     mode: request.mode,
     message: cleanText(message, LIMITS.responseMessage),
     nextQuestion: cleanText(nextQuestion, LIMITS.responseQuestion),
     nextAction: MODE_POLICIES[request.mode].nextAction,
-    hintLevel: request.hintLevel,
+    hintLevel: policy.hintLevel,
     solutionRevealed: false,
     citations: citation ? [citation.id] : [],
     masterySignal: { evidence: 'none', confidenceDelta: 0 },
     warnings: grounding.length ? ['offline-tutor'] : ['offline-tutor', 'grounding-missing'],
+    diagnosis,
+    intervention: policy.intervention,
+    checkForUnderstanding: cleanText(nextQuestion, LIMITS.responseQuestion),
+    recommendedFollowUp: {
+      kind: policy.followUpKind,
+      conceptId: request.lesson.id || request.problem.id,
+      reason: policy.followUpKind === 'none' ? '' : 'Check whether the learner can retrieve the idea without another hint.',
+    },
   };
 }
 
@@ -212,8 +223,14 @@ function normalizeProviderResponse(payload, normalizedRequest, suppliedGrounding
   const evidence = MASTERY_EVIDENCE.includes(rawMastery.evidence) ? rawMastery.evidence : 'none';
   const confidenceDelta = Math.max(-1, Math.min(1, Math.round(Number(rawMastery.confidenceDelta) || 0)));
 
+  const inferredDiagnosis = diagnoseMisconception(request);
+  const parsedDiagnosis = isRecord(parsed.diagnosis) ? parsed.diagnosis : {};
+  const misconception = require('./constants').MISCONCEPTION_TYPES.includes(parsedDiagnosis.misconception)
+    ? parsedDiagnosis.misconception
+    : inferredDiagnosis.misconception;
+  const policy = teachingPolicy(request, { ...inferredDiagnosis, misconception });
   return {
-    version: 1,
+    version: request.version,
     mode: request.mode,
     message: rawMessage,
     nextQuestion: cleanText(parsed.nextQuestion, LIMITS.responseQuestion),
@@ -232,6 +249,19 @@ function normalizeProviderResponse(payload, normalizedRequest, suppliedGrounding
         .map((warning) => cleanText(warning, LIMITS.shortText))
         .filter(Boolean)
       : [],
+    diagnosis: {
+      misconception,
+      confidence: Math.max(0, Math.min(1, Number(parsedDiagnosis.confidence) || inferredDiagnosis.confidence)),
+      evidence: cleanText(parsedDiagnosis.evidence || inferredDiagnosis.evidence, LIMITS.shortText),
+    },
+    intervention: cleanText(parsed.intervention || policy.intervention, LIMITS.shortText),
+    checkForUnderstanding: cleanText(parsed.checkForUnderstanding || parsed.nextQuestion, LIMITS.responseQuestion),
+    recommendedFollowUp: {
+      kind: ['none', 'retrieval-check', 'related-problem'].includes(parsed.recommendedFollowUp?.kind)
+        ? parsed.recommendedFollowUp.kind : policy.followUpKind,
+      conceptId: cleanId(parsed.recommendedFollowUp?.conceptId || request.lesson.id || request.problem.id),
+      reason: cleanText(parsed.recommendedFollowUp?.reason, LIMITS.shortText),
+    },
   };
 }
 
