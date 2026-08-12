@@ -5,7 +5,9 @@ const {
   MODE_POLICIES,
   PEDAGOGY_MODES,
   TUTOR_RESPONSE_SCHEMA,
+  MISCONCEPTION_TYPES,
 } = require('./constants');
+const { diagnoseMisconception, teachingPolicy } = require('./adaptive');
 const {
   buildGroundingCandidates,
   formatGrounding,
@@ -29,10 +31,12 @@ const {
 module.exports = {
   LIMITS,
   MODE_POLICIES,
+  MISCONCEPTION_TYPES,
   PEDAGOGY_MODES,
   TUTOR_RESPONSE_SCHEMA,
   TutorInputError,
   buildGroundingCandidates,
+  diagnoseMisconception,
   buildProviderMessages,
   createOfflineTutorResponse,
   formatGrounding,
@@ -42,4 +46,5 @@ module.exports = {
   prepareTutorTurn,
   resolveCanonicalProblem,
   selectGrounding,
+  teachingPolicy,
 };
