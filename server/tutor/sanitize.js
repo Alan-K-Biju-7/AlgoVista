@@ -237,7 +237,7 @@ function normalizeTutorRequest(input, trustedOptions = {}) {
   const defaultHintLevel = ['quiz', 'review'].includes(mode) ? 0 : 1;
 
   return {
-    version: 1,
+    version: input.version === 2 ? 2 : 1,
     mode,
     question: cleanText(rawQuestion, LIMITS.question),
     hintLevel: clampInteger(input.hintLevel, 0, 3, defaultHintLevel),
@@ -254,6 +254,16 @@ function normalizeTutorRequest(input, trustedOptions = {}) {
     execution: normalizeExecution(context.execution || input.execution, shareCode),
     learner: normalizeLearnerContext(context.learner || input.learnerContext || input.learner),
     history: normalizeHistory(input.history, shareHistory),
+    coachingState: {
+      sessionId: cleanId(input.coachingState?.sessionId),
+      attemptId: cleanId(input.coachingState?.attemptId),
+      learningObjective: cleanText(input.coachingState?.learningObjective, LIMITS.learningObjective),
+      consumedHintLevels: Array.isArray(input.coachingState?.consumedHintLevels)
+        ? [...new Set(input.coachingState.consumedHintLevels
+          .map((level) => clampInteger(level, 0, 3, -1))
+          .filter((level) => level >= 0))].sort()
+        : [],
+    },
   };
 }
 
