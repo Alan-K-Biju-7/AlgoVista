@@ -1125,3 +1125,20 @@
     forced-color-adjust: none;
   }
 }
+.av-tutor__feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.av-tutor__feedback button {
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}

@@ -11,7 +11,7 @@ const {
 } = require('./errors');
 const { isDigest } = require('./secrets');
 
-const JSON_SCHEMA_VERSION = 3;
+const JSON_SCHEMA_VERSION = 4;
 const PROGRESS_STATUSES = new Set(['not-started', 'learning', 'confident', 'mastered']);
 const PRACTICE_STATUSES = new Set(['unsolved', 'attempted', 'solved']);
 const PRACTICE_EVIDENCE = new Set(['unknown', 'seen', 'guided', 'independent', 'durable', 'transfer']);
@@ -350,6 +350,7 @@ function normalizeJsonState(input = {}) {
       left.language.localeCompare(right.language)
     )),
     tutorProfiles: tutorProfiles.sort((left, right) => left.userId.localeCompare(right.userId)),
+    coachingEvents: Array.isArray(input.coachingEvents) ? clone(input.coachingEvents) : [],
   };
 }
 
@@ -361,6 +362,7 @@ function emptyJsonState() {
     conceptProgress: [],
     practiceProgress: [],
     tutorProfiles: [],
+    coachingEvents: [],
   });
 }
 
@@ -708,6 +710,17 @@ class JsonStorageAdapter {
       state.tutorProfiles.push(clone(profile));
       return profile;
     });
+  }
+
+  async insertCoachingEvent(event) {
+    return this.update((state) => {
+      state.coachingEvents.push(clone(event));
+      return event;
+    });
+  }
+
+  async listCoachingEvents(userId) {
+    return this.read((state) => clone(state.coachingEvents.filter((event) => event.userId === userId)));
   }
 
   async healthCheck() {

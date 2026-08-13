@@ -431,14 +431,41 @@ async function callAiProvider({ message, concept, progress, history, tutorProfil
     throw new AiProviderError('Live AI coaching is not configured.', 'provider_not_configured');
   }
 
-  const completion = await withProviderSlot(() => requestChatCompletion({
-    messages: buildCoachMessages({ message, concept, progress, history, tutorProfile }),
-    maxTokens: 480,
-  }));
+  const cleanHistory = normalizeCoachHistory(history);
+  const turn = prepareTutorTurn({
+    version: 2,
+    question: resolvedCoachQuestion(message, cleanHistory),
+    mode: tutorProfile?.preferredMode || 'socratic',
+    privacy: { shareCode: false, shareHistory: cleanHistory.length > 0, retainConversation: false },
+    context: {
+      lesson: {
+        id: safeCoachText(concept?.id, 96),
+        title: safeCoachText(concept?.title, 160),
+        section: safeCoachText(concept?.sectionTitle, 160),
+        summary: safeCoachText(concept?.focus || concept?.description, 700),
+      },
+      learner: {
+        stage: tutorProfile?.stage,
+        mastery: tutorProfile?.mastery,
+        confidence: tutorProfile?.confidence,
+        progressStatus: progress?.[concept?.id]?.status,
+        weaknesses: tutorProfile?.focusAreas,
+      },
+    },
+    history: cleanHistory,
+    coachingState: {
+      sessionId: `coach-${safeCoachText(concept?.id, 80) || 'general'}`,
+      learningObjective: `Explain ${safeCoachText(concept?.title, 160) || 'the selected DSA concept'} independently`,
+      consumedHintLevels: [],
+    },
+  });
+  const completion = await withProviderSlot(() => requestChatCompletion({ messages: turn.messages, maxTokens: 720 }));
+  const tutor = normalizeProviderResponse(completion.content, turn.request, turn.grounding);
   return {
     provider: 'ai-provider',
     model: completion.model,
-    reply: completion.content,
+    reply: tutor.message,
+    tutor,
     coachRevision: COACH_REVISION,
     usage: completion.usage,
   };
@@ -459,7 +486,7 @@ function canonicalTutorRequest(body, canonicalProblem, trustedLearner = {}) {
   const learner = body.context.learner || {};
 
   return {
-    version: 1,
+    version: body.version,
     question: body.question,
     mode: body.mode,
     hintLevel: body.hintLevel,
@@ -474,6 +501,7 @@ function canonicalTutorRequest(body, canonicalProblem, trustedLearner = {}) {
       learner: { ...learner, ...trustedLearner },
     },
     history: body.history || [],
+    coachingState: body.coachingState || {},
   };
 }
 
@@ -805,7 +833,7 @@ async function handleApi(req, res, url, origin, requestId) {
     return;
   }
 
-  if (req.method === 'POST' && url.pathname === '/api/tutor/v1/turn') {
+  if (req.method === 'POST' && ['/api/tutor/v1/turn', '/api/tutor/v2/turn'].includes(url.pathname)) {
     const authenticated = await requireUser(req, res, origin, { csrf: true });
     if (!authenticated) return;
     const user = authenticated.user;
@@ -833,6 +861,15 @@ async function handleApi(req, res, url, origin, requestId) {
 
     try {
       const body = validateTutorHttpRequest(await parseBody(req));
+      const routeVersion = url.pathname.includes('/v2/') ? 2 : 1;
+      if (body.version !== routeVersion) {
+        sendJson(res, 400, {
+          error: `Tutor request version must match the v${routeVersion} route.`,
+          code: 'tutor_version_mismatch',
+          requestId,
+        }, origin);
+        return;
+      }
       const canonicalProblem = resolveCanonicalProblem(body.context.problem);
       if (!canonicalProblem) {
         sendJson(res, 422, {
@@ -901,6 +938,18 @@ async function handleApi(req, res, url, origin, requestId) {
         }
       }
 
+      if (routeVersion === 2) {
+        await storage.recordCoachingEvent({
+          userId: user.id,
+          eventType: 'tutor-turn',
+          sessionId: body.coachingState?.sessionId,
+          attemptId: body.coachingState?.attemptId,
+          conceptId: canonicalProblem.topic || canonicalProblem.id,
+          misconception: tutor.diagnosis?.misconception,
+          hintLevel: tutor.hintLevel,
+        });
+      }
+
       const remaining = Math.min(...quotaChecks.map((quota) => quota.remaining));
       const resetAt = new Date(Math.max(...quotaChecks.map((quota) => quota.resetAt))).toISOString();
       sendJson(res, 200, {
@@ -911,7 +960,7 @@ async function handleApi(req, res, url, origin, requestId) {
         policy: {
           solutionRevealed: tutor.solutionRevealed === true,
           hiddenTestsRevealed: false,
-          guidancePolicy: 'learning-first-v1',
+          guidancePolicy: routeVersion === 2 ? 'adaptive-learning-v2' : 'learning-first-v1',
           conversationRetained: false,
         },
         limits: { remaining, resetAt },
@@ -931,6 +980,39 @@ async function handleApi(req, res, url, origin, requestId) {
         requestId,
       }, origin);
     }
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/coach/adaptation') {
+    const authenticated = await requireUser(req, res, origin);
+    if (!authenticated) return;
+    sendJson(res, 200, { adaptation: await storage.getCoachingSummary(authenticated.user.id) }, origin);
+    return;
+  }
+
+  if (req.method === 'POST' && ['/api/coach/feedback', '/api/coach/transfer-outcome'].includes(url.pathname)) {
+    const authenticated = await requireUser(req, res, origin, { csrf: true });
+    if (!authenticated) return;
+    const body = await parseBody(req);
+    const transfer = url.pathname.endsWith('transfer-outcome');
+    const allowedOutcomes = transfer
+      ? new Set(['independent', 'guided', 'unsolved'])
+      : new Set(['helpful', 'unhelpful']);
+    if (!allowedOutcomes.has(body.outcome)) {
+      sendJson(res, 400, { error: 'The coaching outcome is invalid.', code: 'invalid_coaching_outcome' }, origin);
+      return;
+    }
+    const event = await storage.recordCoachingEvent({
+      userId: authenticated.user.id,
+      eventType: transfer ? 'transfer-outcome' : 'feedback',
+      sessionId: body.sessionId,
+      attemptId: body.attemptId,
+      conceptId: body.conceptId,
+      hintLevel: body.hintLevel,
+      outcome: body.outcome,
+      rating: transfer ? null : body.outcome === 'helpful' ? 1 : -1,
+    });
+    sendJson(res, 201, { event: { id: event.id, createdAt: event.createdAt } }, origin);
     return;
   }
 

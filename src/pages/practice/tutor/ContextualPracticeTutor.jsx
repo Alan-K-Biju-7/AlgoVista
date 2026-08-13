@@ -68,6 +68,9 @@ const RESPONSE_FIELDS = [
   'visualAction',
   'nextExercise',
   'sources',
+  'intervention',
+  'checkForUnderstanding',
+  'recommendedFollowUp',
 ];
 const SENSITIVE_CONTEXT_KEYS = /^(?:(?:current|editor|source|starter|submitted|reference)?code|(?:reference|canonical|full)?solution)$/i;
 const USER_HISTORY_TURNS = 6;
@@ -124,6 +127,10 @@ function normalizeTutorResponse(value) {
       solutionRevealed: candidate.solutionRevealed === true,
       citations: Array.isArray(candidate.citations) ? candidate.citations : [],
       masterySignal: candidate.masterySignal,
+      diagnosis: candidate.diagnosis,
+      intervention: candidate.intervention,
+      checkForUnderstanding: candidate.checkForUnderstanding,
+      recommendedFollowUp: candidate.recommendedFollowUp,
       warnings: Array.isArray(candidate.warnings) ? candidate.warnings : [],
       meta: {
         requestId: isServerEnvelope ? value.requestId : undefined,
@@ -579,6 +586,7 @@ export default function ContextualPracticeTutor({
   onModeChange,
   onAsk,
   onResponse,
+  onFeedback,
   onVisualAction,
   onNextExercise,
   initialMessages = [],
@@ -732,6 +740,7 @@ export default function ContextualPracticeTutor({
     const controller = new AbortController();
     requestControllerRef.current = controller;
     const request = {
+      version: 2,
       question: trimmedQuestion,
       mode: activeMode,
       privacy: {
@@ -749,6 +758,15 @@ export default function ContextualPracticeTutor({
         ),
       },
       ...(shareHistory ? { history: serializeUserHistory(priorHistoryMessages) } : {}),
+      coachingState: {
+        sessionId: `practice-${problem?.id || 'unknown'}`,
+        attemptId: `${problem?.id || 'unknown'}-${learnerContext?.attempts || learnerContext?.practiceRecord?.attempts || 0}`,
+        consumedHintLevels: messages
+          .filter((message) => message.role === 'assistant')
+          .map((message) => Number(message.content?.hintLevel))
+          .filter((level) => Number.isInteger(level) && level >= 0 && level <= 3),
+        learningObjective: `Solve ${problem?.title || 'this problem'} independently with fewer hints`,
+      },
       signal: controller.signal,
     };
 
@@ -924,6 +942,13 @@ export default function ContextualPracticeTutor({
               />
             ) : (
               <p>{message.content}</p>
+            )}
+            {message.role === 'assistant' && onFeedback && (
+              <div className="av-tutor__feedback" aria-label="Rate this coaching response">
+                <span>Was this useful?</span>
+                <button type="button" onClick={() => onFeedback('helpful', message.content)}>Yes</button>
+                <button type="button" onClick={() => onFeedback('unhelpful', message.content)}>No</button>
+              </div>
             )}
           </article>
         ))}

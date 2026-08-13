@@ -4,7 +4,8 @@ const { TutorInputError } = require('./sanitize');
 const { LIMITS } = require('./constants');
 
 const ALLOWED_KEYS = Object.freeze({
-  request: new Set(['version', 'question', 'mode', 'hintLevel', 'context', 'privacy', 'history']),
+  request: new Set(['version', 'question', 'mode', 'hintLevel', 'context', 'privacy', 'history', 'coachingState']),
+  coachingState: new Set(['sessionId', 'attemptId', 'consumedHintLevels', 'learningObjective']),
   context: new Set(['problem', 'execution', 'learner']),
   problem: new Set(['id']),
   execution: new Set([
@@ -74,8 +75,16 @@ function assertKnownKeys(value, allowed, label) {
 
 function validateTutorHttpRequest(body) {
   assertKnownKeys(body, ALLOWED_KEYS.request, 'Tutor request');
-  if (body.version !== 1) {
-    throw contractError('Tutor request version must be 1.', 'unsupported_tutor_version');
+  if (![1, 2].includes(body.version)) {
+    throw contractError('Tutor request version must be 1 or 2.', 'unsupported_tutor_version');
+  }
+
+  if (body.version === 2) {
+    assertKnownKeys(body.coachingState || {}, ALLOWED_KEYS.coachingState, 'Tutor coaching state');
+    const levels = body.coachingState?.consumedHintLevels || [];
+    if (!Array.isArray(levels) || levels.some((level) => !Number.isInteger(level) || level < 0 || level > 3)) {
+      throw contractError('Consumed hint levels must contain only integers from 0 to 3.');
+    }
   }
 
   assertKnownKeys(body.context, ALLOWED_KEYS.context, 'Tutor context');

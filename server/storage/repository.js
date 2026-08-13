@@ -666,6 +666,44 @@ class StorageRepository {
     return publicTutorProfile(record);
   }
 
+  async recordCoachingEvent(input = {}) {
+    await this.ready();
+    const userId = requiredText(input.userId, 'userId', 128);
+    if (!await this.adapter.findUserById(userId)) throw new StorageNotFoundError('The coaching user does not exist.', 'user_not_found');
+    const eventTypes = new Set(['tutor-turn', 'feedback', 'transfer-outcome']);
+    const eventType = enumInSet(input.eventType, 'eventType', eventTypes);
+    const rating = input.rating == null ? null : integerInRange(input.rating, 'rating', -1, 1);
+    if (rating === 0) throw new StorageValidationError('rating is not valid.', 'invalid_rating');
+    const event = {
+      id: crypto.randomUUID(), userId, eventType,
+      sessionId: optionalText(input.sessionId, 'sessionId', 96),
+      attemptId: optionalText(input.attemptId, 'attemptId', 96),
+      conceptId: optionalText(input.conceptId, 'conceptId', 160),
+      misconception: optionalText(input.misconception, 'misconception', 48) || 'none',
+      hintLevel: integerInRange(input.hintLevel || 0, 'hintLevel', 0, 3),
+      outcome: optionalText(input.outcome, 'outcome', 48), rating,
+      createdAt: this.currentDate(input.createdAt, 'createdAt').toISOString(),
+    };
+    await this.adapter.insertCoachingEvent(event);
+    return { ...event };
+  }
+
+  async getCoachingSummary(userId) {
+    await this.ready();
+    const events = await this.adapter.listCoachingEvents(requiredText(userId, 'userId', 128));
+    const misconceptionCounts = Object.create(null);
+    events.filter((event) => event.eventType === 'tutor-turn' && event.misconception !== 'none')
+      .forEach((event) => { misconceptionCounts[event.misconception] = (misconceptionCounts[event.misconception] || 0) + 1; });
+    const transfers = events.filter((event) => event.eventType === 'transfer-outcome');
+    return {
+      misconceptionCounts,
+      averageHintLevel: events.length ? events.reduce((sum, event) => sum + event.hintLevel, 0) / events.length : 0,
+      successfulTransfers: transfers.filter((event) => event.outcome === 'independent').length,
+      transferAttempts: transfers.length,
+      recommendedReviewAt: transfers.length ? transfers[0].createdAt : null,
+    };
+  }
+
   async healthCheck() {
     await this.ready();
     return typeof this.adapter.healthCheck === 'function'

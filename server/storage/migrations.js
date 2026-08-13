@@ -139,6 +139,29 @@ const POSTGRES_MIGRATIONS = Object.freeze([
         WHERE bookmarked = TRUE`,
     ]),
   }),
+  Object.freeze({
+    version: 4,
+    name: 'adaptive-coaching-events',
+    statements: Object.freeze([
+      `CREATE TABLE IF NOT EXISTS algovista_coaching_events (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES algovista_users(id) ON DELETE CASCADE,
+        event_type TEXT NOT NULL,
+        session_id TEXT NOT NULL DEFAULT '',
+        attempt_id TEXT NOT NULL DEFAULT '',
+        concept_id TEXT NOT NULL DEFAULT '',
+        misconception TEXT NOT NULL DEFAULT 'none',
+        hint_level SMALLINT NOT NULL DEFAULT 0,
+        outcome TEXT NOT NULL DEFAULT '',
+        rating SMALLINT,
+        created_at TIMESTAMPTZ NOT NULL,
+        CONSTRAINT algovista_coaching_event_type CHECK (event_type IN ('tutor-turn', 'feedback', 'transfer-outcome')),
+        CONSTRAINT algovista_coaching_hint CHECK (hint_level BETWEEN 0 AND 3),
+        CONSTRAINT algovista_coaching_rating CHECK (rating IS NULL OR rating IN (-1, 1))
+      )`,
+      'CREATE INDEX IF NOT EXISTS algovista_coaching_user_created_idx ON algovista_coaching_events (user_id, created_at DESC)',
+    ]),
+  }),
 ]);
 
 async function runPostgresMigrations(client) {

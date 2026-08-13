@@ -9,6 +9,17 @@ const PEDAGOGY_MODES = Object.freeze([
   'review',
 ]);
 
+const MISCONCEPTION_TYPES = Object.freeze([
+  'none',
+  'pattern-selection',
+  'invariant',
+  'state-update',
+  'boundary-case',
+  'complexity',
+  'language',
+  'debugging-strategy',
+]);
+
 const MODE_POLICIES = Object.freeze({
   socratic: {
     goal: 'Help the learner discover the next step through one focused question.',
@@ -61,6 +72,7 @@ const LIMITS = Object.freeze({
   responseQuestion: 500,
   citations: 6,
   warnings: 6,
+  learningObjective: 320,
 });
 
 const TUTOR_RESPONSE_SCHEMA = Object.freeze({
@@ -77,9 +89,13 @@ const TUTOR_RESPONSE_SCHEMA = Object.freeze({
     'citations',
     'masterySignal',
     'warnings',
+    'diagnosis',
+    'intervention',
+    'checkForUnderstanding',
+    'recommendedFollowUp',
   ],
   properties: {
-    version: { type: 'integer', const: 1 },
+    version: { type: 'integer', enum: [1, 2] },
     mode: { type: 'string', enum: PEDAGOGY_MODES },
     message: { type: 'string', maxLength: LIMITS.responseMessage },
     nextQuestion: { type: 'string', maxLength: LIMITS.responseQuestion },
@@ -119,12 +135,35 @@ const TUTOR_RESPONSE_SCHEMA = Object.freeze({
       maxItems: LIMITS.warnings,
       items: { type: 'string', maxLength: LIMITS.shortText },
     },
+    diagnosis: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['misconception', 'confidence', 'evidence'],
+      properties: {
+        misconception: { type: 'string', enum: MISCONCEPTION_TYPES },
+        confidence: { type: 'number', minimum: 0, maximum: 1 },
+        evidence: { type: 'string', maxLength: LIMITS.shortText },
+      },
+    },
+    intervention: { type: 'string', maxLength: LIMITS.shortText },
+    checkForUnderstanding: { type: 'string', maxLength: LIMITS.responseQuestion },
+    recommendedFollowUp: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['kind', 'conceptId', 'reason'],
+      properties: {
+        kind: { type: 'string', enum: ['none', 'retrieval-check', 'related-problem'] },
+        conceptId: { type: 'string', maxLength: LIMITS.id },
+        reason: { type: 'string', maxLength: LIMITS.shortText },
+      },
+    },
   },
 });
 
 module.exports = {
   LIMITS,
   MODE_POLICIES,
+  MISCONCEPTION_TYPES,
   PEDAGOGY_MODES,
   TUTOR_RESPONSE_SCHEMA,
 };

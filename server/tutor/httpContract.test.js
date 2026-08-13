@@ -25,6 +25,16 @@ test('accepts the minimal versioned tutor request', () => {
   assert.equal(validateTutorHttpRequest(request()).version, 1);
 });
 
+test('accepts bounded adaptive state in v2 and rejects malformed hint history', () => {
+  const valid = request({ version: 2, coachingState: {
+    sessionId: 'opaque-session', attemptId: 'attempt-1', consumedHintLevels: [0, 1],
+    learningObjective: 'Solve a related problem independently',
+  } });
+  assert.equal(validateTutorHttpRequest(valid).version, 2);
+  valid.coachingState.consumedHintLevels = [9];
+  assert.throws(() => validateTutorHttpRequest(valid), /consumed hint levels/i);
+});
+
 test('rejects unknown and solution-control fields', () => {
   assert.throws(() => validateTutorHttpRequest(request({ allowSolution: true })), /unsupported field/i);
   const input = request();

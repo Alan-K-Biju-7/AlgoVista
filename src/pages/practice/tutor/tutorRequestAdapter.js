@@ -1,4 +1,5 @@
 export const TUTOR_TURN_ENDPOINT = '/api/tutor/v1/turn';
+export const ADAPTIVE_TUTOR_TURN_ENDPOINT = '/api/tutor/v2/turn';
 
 export const TUTOR_REQUEST_LIMITS = Object.freeze({
   question: 2000,
@@ -310,8 +311,9 @@ export function buildTutorTurnRequest(payload = {}) {
   const { execution, shareCode } = buildExecution(payload);
   const { history, shareHistory } = buildHistory(payload);
 
-  return {
-    version: 1,
+  const version = payload.version === 2 ? 2 : 1;
+  const request = {
+    version,
     question,
     mode,
     hintLevel,
@@ -327,6 +329,18 @@ export function buildTutorTurnRequest(payload = {}) {
     },
     history,
   };
+  if (version === 2) {
+    const state = isRecord(payload.coachingState) ? payload.coachingState : {};
+    request.coachingState = {
+      sessionId: cleanId(state.sessionId),
+      attemptId: cleanId(state.attemptId),
+      consumedHintLevels: Array.isArray(state.consumedHintLevels)
+        ? [...new Set(state.consumedHintLevels.map((level) => clampInteger(level, 0, 3)).filter(Number.isInteger))]
+        : [],
+      learningObjective: cleanText(state.learningObjective, 320),
+    };
+  }
+  return request;
 }
 
 export async function askTutorTurn({ apiRequest, payload, signal } = {}) {
@@ -334,7 +348,7 @@ export async function askTutorTurn({ apiRequest, payload, signal } = {}) {
 
   const request = buildTutorTurnRequest(payload);
 
-  return apiRequest(TUTOR_TURN_ENDPOINT, {
+  return apiRequest(request.version === 2 ? ADAPTIVE_TUTOR_TURN_ENDPOINT : TUTOR_TURN_ENDPOINT, {
     method: 'POST',
     body: JSON.stringify(request),
     signal: signal ?? payload?.signal,

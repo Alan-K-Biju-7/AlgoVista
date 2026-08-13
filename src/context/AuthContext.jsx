@@ -161,7 +161,7 @@ export function AuthProvider({ children }) {
   const askTutor = async (request, { signal } = {}) => {
     const currentCsrfToken = requireSession('the personal tutor');
     try {
-      return await apiRequest('/api/tutor/v1/turn', {
+      return await apiRequest(request?.version === 2 ? '/api/tutor/v2/turn' : '/api/tutor/v1/turn', {
         method: 'POST',
         headers: csrfHeader(currentCsrfToken),
         body: JSON.stringify(request),
@@ -171,6 +171,20 @@ export function AuthProvider({ children }) {
       if (error.status === 401) expireSession();
       throw error;
     }
+  };
+
+  const recordCoachFeedback = async (feedback) => {
+    const currentCsrfToken = requireSession('coach feedback');
+    return apiRequest('/api/coach/feedback', {
+      method: 'POST', headers: csrfHeader(currentCsrfToken), body: JSON.stringify(feedback),
+    });
+  };
+
+  const recordTransferOutcome = async (outcome) => {
+    const currentCsrfToken = requireSession('learning outcomes');
+    return apiRequest('/api/coach/transfer-outcome', {
+      method: 'POST', headers: csrfHeader(currentCsrfToken), body: JSON.stringify(outcome),
+    });
   };
 
   const refreshPracticeProgress = async () => {
@@ -209,6 +223,8 @@ export function AuthProvider({ children }) {
     updatePracticeProgress,
     askCoach,
     askTutor,
+    recordCoachFeedback,
+    recordTransferOutcome,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
