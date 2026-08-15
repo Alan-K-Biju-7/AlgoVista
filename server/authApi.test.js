@@ -84,6 +84,20 @@ test('cookie sessions, stable cross-tab CSRF, account isolation, and AI auth are
   const rawSession = cookie.split('=')[1];
   const firstCsrf = registered.csrfToken;
 
+  const greeting = await fetch(`${baseUrl}/api/coach`, {
+    method: 'POST',
+    headers: { ...jsonHeaders, Cookie: cookie, 'X-CSRF-Token': firstCsrf },
+    body: JSON.stringify({ message: 'hi' }),
+  });
+  assert.equal(greeting.status, 200);
+  assert.deepEqual(await greeting.json(), {
+    provider: 'coach-guidance',
+    model: null,
+    reply: 'Hi! Pick a DSA concept or ask me a specific question. I can explain the intuition, trace an example, review complexity, or quiz you.',
+    coachRevision: 'direct-history-v2',
+    usage: null,
+  });
+
   assert.deepEqual(Object.keys(registered).sort(), ['csrfToken', 'progress', 'session', 'tutorProfile', 'user']);
   assert.equal('token' in registered, false);
   assert.match(setCookie, /HttpOnly/);

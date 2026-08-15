@@ -313,6 +313,11 @@ function isFollowUpCoachRequest(message) {
   ].some((pattern) => pattern.test(text));
 }
 
+function isCoachGreeting(message) {
+  return /^(?:hi|hello|hey|hiya|good\s+(?:morning|afternoon|evening))[!.\s]*$/i
+    .test(String(message || '').trim());
+}
+
 function resolvedCoachQuestion(message, history) {
   const cleanMessage = String(message || '').trim();
   if (!isFollowUpCoachRequest(cleanMessage)) return cleanMessage;
@@ -1034,6 +1039,17 @@ async function handleApi(req, res, url, origin, requestId) {
     }
     if (message.length > 2000) {
       sendJson(res, 413, { error: 'Coach questions must be 2000 characters or fewer.' }, origin);
+      return;
+    }
+
+    if (isCoachGreeting(message)) {
+      sendJson(res, 200, {
+        provider: 'coach-guidance',
+        model: null,
+        reply: 'Hi! Pick a DSA concept or ask me a specific question. I can explain the intuition, trace an example, review complexity, or quiz you.',
+        coachRevision: COACH_REVISION,
+        usage: null,
+      }, origin);
       return;
     }
 

@@ -135,7 +135,7 @@ export default function CoachPage() {
         history,
       });
       const coachReply = cleanCoachText(response.reply);
-      const hasLiveAnswer = response.provider === 'ai-provider'
+      const hasLiveAnswer = ['ai-provider', 'coach-guidance'].includes(response.provider)
         && !isUnhelpfulCoachReply(coachReply, coachMessage);
       setMessages((prev) => [
         ...prev,
@@ -144,7 +144,9 @@ export default function CoachPage() {
           content: hasLiveAnswer
             ? coachReply
             : 'Live AI coaching is unavailable right now. Your question was not answered; please retry after the provider is restored.',
-          provider: hasLiveAnswer ? 'AI-generated coaching' : 'AI unavailable · not answered',
+          provider: hasLiveAnswer
+            ? response.provider === 'coach-guidance' ? 'Coach guidance' : 'AI-generated coaching'
+            : 'AI unavailable · not answered',
         },
       ]);
     } catch (error) {
