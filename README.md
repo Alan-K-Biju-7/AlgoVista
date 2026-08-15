@@ -6,6 +6,12 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-production-4169E1?logo=postgresql&logoColor=fff)
 [![Live application](https://img.shields.io/badge/live%20app-Vercel-000?logo=vercel)](https://algovista-seven.vercel.app/)
 
+## Live demo
+
+**[Launch AlgoVista →](https://algovista-seven.vercel.app/)**
+
+Sign in to use synced progress and the live AI coach. Lessons, visualizations, and practice tools are available from the same deployment.
+
 **AlgoVista is a visual, full-stack DSA learning platform that connects understanding, simulation, deliberate practice, failure diagnosis, and personalized coaching.**
 
 The product is designed around a learning loop, not a problem counter:
