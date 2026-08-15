@@ -4,7 +4,7 @@
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=fff)
 ![Node.js](https://img.shields.io/badge/Node.js-24-5FA04E?logo=node.js&logoColor=fff)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-production-4169E1?logo=postgresql&logoColor=fff)
-[![Static demo](https://img.shields.io/badge/static%20demo-GitHub%20Pages-2EA44F?logo=github)](https://Alan-K-Biju-7.github.io/AlgoVista/)
+[![Live application](https://img.shields.io/badge/live%20app-Vercel-000?logo=vercel)](https://algovista-seven.vercel.app/)
 
 **AlgoVista is a visual, full-stack DSA learning platform that connects understanding, simulation, deliberate practice, failure diagnosis, and personalized coaching.**
 
@@ -188,8 +188,8 @@ server-side model provider key in the Vercel Production environment. Set
 `AI_TUTOR_OFFLINE=false` for live model responses. These values must remain server-side;
 do not prefix them with `VITE_`.
 
-The same-origin Vercel deployment is the production application. GitHub Pages remains a
-static guest demo and cannot execute the authenticated API by itself.
+The same-origin Vercel deployment is the production application. The GitHub Pages URL
+redirects to it so existing links open the authenticated application instead of a static-only copy.
 
 The same-origin topology is intentional. A static site on one domain calling an API on another needs `SameSite=None`, exact credentialed CORS, and browser acceptance of third-party cookies; modern privacy controls make that less reliable. Serve authenticated AlgoVista from the Node service (or same-site custom subdomains) for production.
 

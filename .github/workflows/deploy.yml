@@ -42,6 +42,11 @@ jobs:
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
         run: npm run build:spa
 
+      - name: Redirect Pages to the full application
+        run: |
+          cp .github/pages-redirect.html build/index.html
+          cp .github/pages-redirect.html build/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
