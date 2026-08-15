@@ -223,6 +223,32 @@ test('normalizes provider JSON, restricts citations, and caps hint escalation', 
   assert.equal(response.masterySignal.confidenceDelta, 1);
 });
 
+test('uses structured teaching text when a provider leaves message empty', () => {
+  const turn = prepareTutorTurn(sampleRequest());
+  const response = normalizeProviderResponse(JSON.stringify({
+    message: '',
+    intervention: 'Trace the complement lookup before inserting the current index.',
+    checkForUnderstanding: 'Which index should be stored first?',
+  }), turn.request, turn.grounding);
+
+  assert.equal(response.message, 'Trace the complement lookup before inserting the current index.');
+  assert.equal(response.warnings.includes('offline-tutor'), false);
+  assert.equal(response.warnings.includes('provider-response-empty'), false);
+});
+
+test('accepts a provider response wrapped in a tutor object', () => {
+  const turn = prepareTutorTurn(sampleRequest());
+  const response = normalizeProviderResponse(JSON.stringify({
+    tutor: {
+      message: 'Compare the lookup order with the insertion order.',
+      nextQuestion: 'What is stored before the second duplicate is visited?',
+    },
+  }), turn.request, turn.grounding);
+
+  assert.equal(response.message, 'Compare the lookup order with the insertion order.');
+  assert.equal(response.warnings.includes('offline-tutor'), false);
+});
+
 test('falls back when provider output is invalid or marks a withheld solution as revealed', () => {
   const turn = prepareTutorTurn(sampleRequest());
   const invalid = normalizeProviderResponse('not json', turn.request, turn.grounding);

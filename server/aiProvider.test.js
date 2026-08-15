@@ -81,3 +81,25 @@ test('does not send deprecated sampling parameters unless explicitly requested',
 
   assert.equal('temperature' in requestBody, false);
 });
+
+test('requests JSON mode only when the caller requires structured output', async () => {
+  let requestBody;
+  await requestChatCompletion({
+    messages: [{ role: 'user', content: 'Return JSON.' }],
+    responseFormat: 'json_object',
+    env: {
+      AI_PROVIDER_API_KEY: 'server-secret',
+      AI_PROVIDER_BASE_URL: 'https://provider.example/v1',
+      AI_PROVIDER_MODEL: 'test-model',
+    },
+    fetchImpl: async (_url, options) => {
+      requestBody = JSON.parse(options.body);
+      return {
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: '{"message":"hello"}' } }] }),
+      };
+    },
+  });
+
+  assert.deepEqual(requestBody.response_format, { type: 'json_object' });
+});

@@ -170,7 +170,11 @@ function createOfflineTutorResponse(normalizedRequest, suppliedGrounding) {
 }
 
 function parseProviderPayload(payload) {
-  if (isRecord(payload)) return payload;
+  if (isRecord(payload)) {
+    if (isRecord(payload.tutor)) return payload.tutor;
+    if (isRecord(payload.response)) return payload.response;
+    return payload;
+  }
   if (typeof payload !== 'string') return null;
 
   const trimmed = payload.trim();
@@ -179,7 +183,10 @@ function parseProviderPayload(payload) {
     .replace(/\s*```$/, '');
   try {
     const parsed = JSON.parse(unfenced);
-    return isRecord(parsed) ? parsed : null;
+    if (!isRecord(parsed)) return null;
+    if (isRecord(parsed.tutor)) return parsed.tutor;
+    if (isRecord(parsed.response)) return parsed.response;
+    return parsed;
   } catch {
     return null;
   }
@@ -202,7 +209,15 @@ function normalizeProviderResponse(payload, normalizedRequest, suppliedGrounding
     return { ...fallback, warnings: [...fallback.warnings, 'provider-response-invalid'].slice(0, LIMITS.warnings) };
   }
 
-  const rawMessage = cleanText(parsed.message, LIMITS.responseMessage);
+  const rawMessage = cleanText(
+    parsed.message
+      || parsed.intervention
+      || parsed.checkForUnderstanding
+      || parsed.nextQuestion
+      || parsed.diagnosis?.evidence
+      || parsed.recommendedFollowUp?.reason,
+    LIMITS.responseMessage
+  );
   const leakedSolution = request.solutionPolicy === 'withhold' && (
     parsed.solutionRevealed === true || looksLikeCompleteSolution(rawMessage)
   );

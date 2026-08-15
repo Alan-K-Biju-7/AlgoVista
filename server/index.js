@@ -459,7 +459,12 @@ async function callAiProvider({ message, concept, progress, history, tutorProfil
       consumedHintLevels: [],
     },
   });
-  const completion = await withProviderSlot(() => requestChatCompletion({ messages: turn.messages, maxTokens: 720 }));
+  const completion = await withProviderSlot(() => requestChatCompletion({
+    messages: turn.messages,
+    maxTokens: 720,
+    temperature: 0.2,
+    responseFormat: 'json_object',
+  }));
   const tutor = normalizeProviderResponse(completion.content, turn.request, turn.grounding);
   return {
     provider: 'ai-provider',
@@ -475,6 +480,8 @@ async function callTutorProvider(turn) {
   const completion = await withProviderSlot(() => requestChatCompletion({
     messages: turn.messages,
     maxTokens: 900,
+    temperature: 0.2,
+    responseFormat: 'json_object',
   }));
   return {
     model: completion.model,
@@ -1119,7 +1126,7 @@ function serveStatic(req, res, url, origin) {
   });
 }
 
-const server = http.createServer(async (req, res) => {
+async function requestHandler(req, res) {
   const origin = req.headers.origin || '';
   const requestId = crypto.randomUUID();
   res.setHeader('X-Request-Id', requestId);
@@ -1191,15 +1198,30 @@ const server = http.createServer(async (req, res) => {
       extraHeaders
     );
   }
-});
+}
+
+const server = http.createServer(requestHandler);
 
 server.headersTimeout = 15_000;
 server.requestTimeout = 45_000;
 server.keepAliveTimeout = 5_000;
 server.maxRequestsPerSocket = 1_000;
 
+let runtimeInitialization;
+
+async function initializeRuntime() {
+  if (!runtimeInitialization) {
+    runtimeInitialization = Promise.all([storage.initialize(), getDummyPasswordHash()])
+      .catch((error) => {
+        runtimeInitialization = undefined;
+        throw error;
+      });
+  }
+  await runtimeInitialization;
+}
+
 async function startServer({ port = PORT, host = HOST } = {}) {
-  await Promise.all([storage.initialize(), getDummyPasswordHash()]);
+  await initializeRuntime();
   return new Promise((resolve, reject) => {
     const onError = (error) => reject(error);
     server.once('error', onError);
@@ -1228,6 +1250,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  initializeRuntime,
+  requestHandler,
   server,
   startServer,
 };

@@ -177,17 +177,19 @@ Leave the key empty or set `AI_TUTOR_OFFLINE=true` to exercise the deterministic
 
 Use long, independently generated production peppers. Do not reuse a provider key, database password, or cookie secret as another secret.
 
-## Production deployment on Render
+## Production deployment on Vercel
 
-[`render.yaml`](render.yaml) defines:
+[`vercel.json`](vercel.json) deploys the Vite frontend and the catch-all API function in
+[`api/[...path].js`](api/%5B...path%5D.js) on one origin. The function reuses the same
+authenticated Node request handler used in local development.
 
-- one Node web service that builds the Vite app, serves it, and handles `/api` on the same origin;
-- one managed PostgreSQL database injected through `DATABASE_URL`;
-- `Secure`, `HttpOnly`, `SameSite=Lax` production sessions;
-- generated session, CSRF, and rate-limit peppers; and
-- a manually supplied provider key that never enters the frontend build.
+Configure `DATABASE_URL`, independent session/CSRF/rate-limit peppers, and one supported
+server-side model provider key in the Vercel Production environment. Set
+`AI_TUTOR_OFFLINE=false` for live model responses. These values must remain server-side;
+do not prefix them with `VITE_`.
 
-Create a Render Blueprint from the repository, review the selected service/database plans and current pricing, set `GEMINI_API_KEY` if live provider responses are wanted, and deploy. The checked-in Blueprint selects paid starter/database plans suitable for persistent accounts; switch the database to `free` only for disposable evaluation data.
+The same-origin Vercel deployment is the production application. GitHub Pages remains a
+static guest demo and cannot execute the authenticated API by itself.
 
 The same-origin topology is intentional. A static site on one domain calling an API on another needs `SameSite=None`, exact credentialed CORS, and browser acceptance of third-party cookies; modern privacy controls make that less reliable. Serve authenticated AlgoVista from the Node service (or same-site custom subdomains) for production.
 
@@ -237,7 +239,8 @@ server/
   tutor/                   tutoring contract, grounding and pedagogy policy
   security.js              cookies, CORS/origin checks and security headers
 docs/assets/               product screenshots and diagrams
-render.yaml                same-origin app + managed PostgreSQL Blueprint
+api/[...path].js           Vercel serverless entry point for the Node API
+vercel.json                same-origin frontend and API deployment
 ```
 
 ## Current boundaries and next platform steps

@@ -45,6 +45,7 @@ async function requestChatCompletion({
   messages,
   maxTokens = 720,
   temperature,
+  responseFormat,
   env = process.env,
   fetchImpl = globalThis.fetch,
 }) {
@@ -70,6 +71,9 @@ async function requestChatCompletion({
         model: config.model,
         messages,
         ...(Number.isFinite(temperature) ? { temperature } : {}),
+        ...(responseFormat === 'json_object'
+          ? { response_format: { type: 'json_object' } }
+          : {}),
         max_tokens: Math.min(1200, Math.max(64, Number(maxTokens) || 720)),
         stream: false,
       }),
